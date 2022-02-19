@@ -1,0 +1,59 @@
+#############################################
+# OpenMPI Compiler Wrapper
+#############################################
+CXX = mpicxx
+
+
+#############################################
+# Library Directories -> ADJUST!
+#############################################
+LDFLAGS = -L/path/to/sundials/instdir/lib
+
+
+#############################################
+# Binary Directories -> ADJUST!
+#############################################
+BDFLAGS = -I/path/to/sundials/instdir/include
+
+
+#############################################
+# Compiler Options
+#############################################
+CXXFLAGS  = -std=c++20 -O2 -fopenmp $(BDFLAGS)
+
+
+#############################################
+# Target, Sources, and Libs variables
+#############################################
+TARGET = Simulation
+CLASS_FILES = SimulationFunctions.cpp LatticePatch.cpp DerivationStencils.cpp SimulationClass.cpp TimeEvolutionFunctions.cpp ICSetters.cpp Outputters.cpp
+CLASS_HEADERS = $(CLASS_FILES:.cpp=.h)
+
+SOURCE = main.cpp $(CLASS_FILES)
+HEADER = Masterheader.h \
+		 $(CLASS_HEADER)
+
+LIBS = 	-lsundials_cvode \
+		-lsundials_nvecparallel
+
+
+##########################################################
+# Targets and Recipes for Compilation and Linking, Cleanup
+##########################################################
+
+all: $(TARGET)
+
+#######################################################################################
+OBJECTS = $(SOURCE:.cpp=.o)
+$(OBJECTS): $(SOURCE)
+	$(CXX) -c $(CXXFLAGS) $(SOURCE)
+
+$(TARGET): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
+#######################################################################################
+
+
+# Clean up
+.PHONY : clean
+clean:
+	$(RM) *.o $(TARGET)
