@@ -1,4 +1,4 @@
-# HEWES – Heisenberg-Euler Weak-Field Expansion Simulator
+# HEWES: Heisenberg-Euler Weak-Field Expansion Simulator
 
 ![Harmonic Generation](examples/figures/harmonic_generation.jpg)
 

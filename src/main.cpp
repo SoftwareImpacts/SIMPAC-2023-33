@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     if(rank==0 && !filesystem::exists(outputDirectory)) {
         cerr<<"\nOutput directory nonexistent.\n";
         MPI_Abort(comm,1);
+    }
 
     
     //------------ BEGIN OF CONFIGURATION ------------//

@@ -24,9 +24,6 @@ Simulation::Simulation(const int nx, const int ny, const int nz,
   retval = SUNContext_Create(&lattice.comm, &lattice.sunctx);
   if (check_retval(&retval, "SUNContext_Create", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
-  // if (flag != CV_SUCCESS) { printf("SUNContext_Create failed, flag=%d.\n",
-  // flag);
-  //     MPI_Abort(lattice.comm, 1); }
 }
 
 /// Free the CVode solver memory and Sundials context object with the finish of
@@ -34,8 +31,6 @@ Simulation::Simulation(const int nx, const int ny, const int nz,
 Simulation::~Simulation() {
   // Free solver memory
   if (statusFlags & CvodeObjectSetUp) {
-    // PrintFinalStats(cvode_mem); // TODO write this function as in cvodes
-    // cvAdvDiff_bnd.c SUNDIALS_MARK_FUNCTION_END(lattice.profobj);
     CVodeFree(&cvode_mem);
     SUNContext_Free(&lattice.sunctx);
   }
@@ -78,16 +73,6 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
   // CVode settings return value
   int retval = 0;
 
-  // Set the profiler
-  retval = SUNContext_GetProfiler(lattice.sunctx, &lattice.profobj);
-  if (check_retval(&retval, "SUNContext_GetProfiler", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
-  // if (flag != CV_SUCCESS) { printf("SUNContext_GetProfiler failed,
-  // flag=%d.\n", flag);
-  //     MPI_Abort(lattice.comm, 1); }
-
-  // SUNDIALS_MARK_FUNCTION_BEGIN(profobj);
-
   // Create CVODE object – returns a pointer to the cvode memory structure
   // with Adams method (Adams-Moulton formula) solver chosen for non-stiff ODE
   cvode_mem = CVodeCreate(CV_ADAMS, lattice.sunctx);
@@ -98,20 +83,13 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
       &latticePatch); // patch contains the user data as used in CVRhsFn
   if (check_retval(&retval, "CVodeSetUserData", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
-  // if (flag != CV_SUCCESS) { printf("CVodeSetUserData failed, flag=%d.\n",
-  // flag);
-  //     MPI_Abort(lattice.comm, 1); }
 
-  // Initialize CVODE solver -> can only be called after start of simulation to
-  // have data ready Provide required problem and solution specifications,
-  // allocate internal memory, and initialize cvode
+  // Initialize CVODE solver
   retval = CVodeInit(cvode_mem, TimeEvolution::f, 0,
                      latticePatch.u); // allocate memory, CVRhsFn f, t_i=0, u
                                       // contains the initial values
   if (check_retval(&retval, "CVodeInit", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
-  // if (flag != CV_SUCCESS) { printf("CVodeInit failed, flag=%d.\n", flag);
-  //     MPI_Abort(lattice.comm, 1); }
 
   // Create fixed point nonlinear solver object (suitable for non-stiff ODE) and
   // attach it to CVode
@@ -120,27 +98,18 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
   retval = CVodeSetNonlinearSolver(cvode_mem, NLS);
   if (check_retval(&retval, "CVodeSetNonlinearSolver", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
-  // if (flag != CV_SUCCESS) {printf("CVodeSetNonlinearSolver failed,
-  // flag=%d.\n", flag);
-  //     MPI_Abort(lattice.comm, 1); }
 
   // Specify the maximum number of steps to be taken by the solver in its
   // attempt to reach the next output time
   retval = CVodeSetMaxNumSteps(cvode_mem, 10000);
   if (check_retval(&retval, "CVodeSetMaxNumSteps", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
-  // if (flag != CV_SUCCESS) { printf("CVodeSetMaxNumSteps failed, flag=%d.\n",
-  // flag);
-  //     MPI_Abort(lattice.comm, 1); }
 
   // Specify integration tolerances – a scalar relative tolerance and scalar
   // absolute tolerance
   retval = CVodeSStolerances(cvode_mem, reltol, abstol);
   if (check_retval(&retval, "CVodeSStolerances", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
-  // if (flag != CV_SUCCESS) { printf("CVodeSStolerances failed, flag=%d.\n",
-  // flag);
-  //     MPI_Abort(lattice.comm, 1); }
 
   statusFlags |= CvodeObjectSetUp;
 }

@@ -92,8 +92,6 @@ public:
   Lattice(const int StO);
   /// SUNContext object
   SUNContext sunctx;
-  /// SUNProfiler object
-  SUNProfiler profobj;
   /// component function for resizing the discrete dimensions of the lattice
   void setDiscreteDimensions(const sunindextype _nx,
           const sunindextype _ny, const sunindextype _nz);
