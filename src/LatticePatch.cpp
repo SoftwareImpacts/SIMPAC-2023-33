@@ -548,21 +548,21 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   } else if (dir == 3) {
     dim = 0;
   }
-  MPI_Request requests[2];
   int rank_source = 0, rank_dest = 0;
   MPI_Cart_shift(envelopeLattice->comm, dim, -1, &rank_source,
                  &rank_dest); // s.t. rank_dest is left & v.v.
 
   // nonblocking Isend/Irecv
   /*
+  MPI_Request requests[2];
   MPI_Isend(&ghostCellLeftToSend[0], exchangeSize, MPI_SUNREALTYPE, rank_dest,
-  1, envelopeLattice->comm, &requests[0]); MPI_Irecv(&ghostCellRight[0],
-  exchangeSize, MPI_SUNREALTYPE, rank_source, 1, envelopeLattice->comm,
-  &requests[0]); MPI_Isend(&ghostCellRightToSend[0], exchangeSize,
-  MPI_SUNREALTYPE, rank_source, 2, envelopeLattice->comm, &requests[1]);
+  1, envelopeLattice->comm, &requests[0]);
+  MPI_Irecv(&ghostCellRight[0], exchangeSize, MPI_SUNREALTYPE, rank_source, 1,
+  envelopeLattice->comm, &requests[0]);
+  MPI_Isend(&ghostCellRightToSend[0], exchangeSize, MPI_SUNREALTYPE,
+  rank_source, 2, envelopeLattice->comm, &requests[1]);
   MPI_Irecv(&ghostCellLeft[0], exchangeSize, MPI_SUNREALTYPE, rank_dest, 2,
   envelopeLattice->comm, &requests[1]);
-
   MPI_Waitall(2, requests, MPI_STATUS_IGNORE);
   */
 
