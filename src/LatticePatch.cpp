@@ -552,28 +552,29 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   MPI_Cart_shift(envelopeLattice->comm, dim, -1, &rank_source,
                  &rank_dest); // s.t. rank_dest is left & v.v.
 
-  // nonblocking Isend/Irecv
-  /*
-  MPI_Request requests[2];
-  MPI_Isend(&ghostCellLeftToSend[0], exchangeSize, MPI_SUNREALTYPE, rank_dest,
-  1, envelopeLattice->comm, &requests[0]);
+  // nonblocking Irecv/Isend
+  
+  MPI_Request requests[4];
   MPI_Irecv(&ghostCellRight[0], exchangeSize, MPI_SUNREALTYPE, rank_source, 1,
   envelopeLattice->comm, &requests[0]);
-  MPI_Isend(&ghostCellRightToSend[0], exchangeSize, MPI_SUNREALTYPE,
-  rank_source, 2, envelopeLattice->comm, &requests[1]);
+  MPI_Isend(&ghostCellLeftToSend[0], exchangeSize, MPI_SUNREALTYPE, rank_dest,
+  1, envelopeLattice->comm, &requests[1]);
   MPI_Irecv(&ghostCellLeft[0], exchangeSize, MPI_SUNREALTYPE, rank_dest, 2,
-  envelopeLattice->comm, &requests[1]);
-  MPI_Waitall(2, requests, MPI_STATUS_IGNORE);
-  */
+  envelopeLattice->comm, &requests[2]);
+  MPI_Isend(&ghostCellRightToSend[0], exchangeSize, MPI_SUNREALTYPE,
+  rank_source, 2, envelopeLattice->comm, &requests[3]);
+  MPI_Waitall(4, requests, MPI_STATUS_IGNORE);
+  
 
   // blocking Sendrecv:
-
+  /*
   MPI_Sendrecv(&ghostCellLeftToSend[0], exchangeSize, MPI_SUNREALTYPE,
                rank_dest, 1, &ghostCellRight[0], exchangeSize, MPI_SUNREALTYPE,
                rank_source, 1, envelopeLattice->comm, MPI_STATUS_IGNORE);
   MPI_Sendrecv(&ghostCellRightToSend[0], exchangeSize, MPI_SUNREALTYPE,
                rank_source, 2, &ghostCellLeft[0], exchangeSize, MPI_SUNREALTYPE,
                rank_dest, 2, envelopeLattice->comm, MPI_STATUS_IGNORE);
+  */
 }
 
 /// Check if all flags are set
