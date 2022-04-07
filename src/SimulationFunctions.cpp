@@ -51,10 +51,10 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   sim.initializePatchwork(patches[0], patches[1], patches[2]);
 
   // Add em-waves
-  for (const auto gauss : gaussians)
+  for (const auto &gauss : gaussians)
     sim.icsettings.addGauss1D(gauss.k, gauss.p, gauss.x0, gauss.phig,
                               gauss.phi);
-  for (const auto plane : planes)
+  for (const auto &plane : planes)
     sim.icsettings.addPlaneWave1D(plane.k, plane.p, plane.phi);
 
   // Check that the patchwork is ready and set the initial conditions
@@ -127,10 +127,10 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
   sim.initializePatchwork(patches[0], patches[1], 1);
 
   // Add em-waves
-  for (const auto gauss : gaussians)
+  for (const auto &gauss : gaussians)
     sim.icsettings.addGauss2D(gauss.x0, gauss.axis, gauss.amp, gauss.phip,
                               gauss.w0, gauss.zr, gauss.ph0, gauss.phA);
-  for (const auto plane : planes)
+  for (const auto &plane : planes)
     sim.icsettings.addPlaneWave2D(plane.k, plane.p, plane.phi);
 
   // Check that the patchwork is ready and set the initial conditions
@@ -211,9 +211,9 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   sim.initializePatchwork(patches[0], patches[1], patches[2]);
 
   // Add em-waves
-  for (const auto plane : planes)
+  for (const auto &plane : planes)
     sim.icsettings.addPlaneWave3D(plane.k, plane.p, plane.phi);
-  for (const auto gauss : gaussians)
+  for (const auto &gauss : gaussians)
     sim.icsettings.addGauss3D(gauss.x0, gauss.axis, gauss.amp, gauss.phip,
                               gauss.w0, gauss.zr, gauss.ph0, gauss.phA);
 

@@ -333,7 +333,6 @@ inline void LatticePatch::rotateToX(sunrealtype *outArray,
                                     const sunrealtype *inArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
-#pragma ivdep
 #pragma omp simd // safelen(6)
   for (int i = 0; i < lookup.size(); i++) {
     // get correct u-vector and spatial indices along previously defined lookup
@@ -355,7 +354,6 @@ inline void LatticePatch::rotateToY(sunrealtype *outArray,
                                     const sunrealtype *inArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
-#pragma ivdep
 #pragma omp simd
   for (int i = 0; i < lookup.size(); i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
@@ -375,7 +373,6 @@ inline void LatticePatch::rotateToZ(sunrealtype *outArray,
                                     const sunrealtype *inArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
-#pragma ivdep
 #pragma omp simd
   for (int i = 0; i < lookup.size(); i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
@@ -402,7 +399,6 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
   int ii = 0, target = 0;
   switch (dir) {
   case 1:
-#pragma ivdep
 #pragma omp simd
     for (int i = 0; i < uSize; i++) {
       // get correct indices in u and rotation space

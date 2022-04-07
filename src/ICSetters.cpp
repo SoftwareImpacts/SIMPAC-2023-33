@@ -301,17 +301,17 @@ void ICSetter::eval(sunrealtype x, sunrealtype y, sunrealtype z,
 /** Add all initial field values to the lattice space */
 void ICSetter::add(sunrealtype x, sunrealtype y, sunrealtype z,
                    sunrealtype *pTo6Space) {
-  for (const auto wave : planeWaves1D)
+  for (const auto &wave : planeWaves1D)
     wave.addToSpace(x, y, z, pTo6Space);
-  for (const auto wave : planeWaves2D)
+  for (const auto &wave : planeWaves2D)
     wave.addToSpace(x, y, z, pTo6Space);
-  for (const auto wave : planeWaves3D)
+  for (const auto &wave : planeWaves3D)
     wave.addToSpace(x, y, z, pTo6Space);
-  for (const auto wave : gauss1Ds)
+  for (const auto &wave : gauss1Ds)
     wave.addToSpace(x, y, z, pTo6Space);
-  for (const auto wave : gauss2Ds)
+  for (const auto &wave : gauss2Ds)
     wave.addToSpace(x, y, z, pTo6Space);
-  for (const auto wave : gauss3Ds)
+  for (const auto &wave : gauss3Ds)
     wave.addToSpace(x, y, z, pTo6Space);
 }
 
