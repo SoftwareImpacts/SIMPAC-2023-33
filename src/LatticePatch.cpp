@@ -249,7 +249,7 @@ void LatticePatch::generateTranslocationLookup() {
   zTou.resize(nx * ny * mz);
   // variables for cartesian position in the 3D discrete lattice
   int px = 0, py = 0, pz = 0;
-  for (int i = 0; i < uToy.size(); i++) { // loop over all points in the patch
+  for (unsigned int i = 0; i < uToy.size(); i++) { // loop over all points in the patch
     // calulate cartesian coordinates
     px = i % nx;
     py = (i / nx) % ny;
@@ -267,7 +267,7 @@ void LatticePatch::generateTranslocationLookup() {
   // same for ghost layer lookup tables
   lgcTox.resize(gLW * ny * nz);
   rgcTox.resize(gLW * ny * nz);
-  for (int i = 0; i < lgcTox.size(); i++) {
+  for (unsigned int i = 0; i < lgcTox.size(); i++) {
     px = i % gLW;
     py = (i / gLW) % ny;
     pz = (i / gLW) / ny;
@@ -276,7 +276,7 @@ void LatticePatch::generateTranslocationLookup() {
   }
   lgcToy.resize(gLW * nx * nz);
   rgcToy.resize(gLW * nx * nz);
-  for (int i = 0; i < lgcToy.size(); i++) {
+  for (unsigned int i = 0; i < lgcToy.size(); i++) {
     px = i % nx;
     py = (i / nx) % gLW;
     pz = (i / nx) / gLW;
@@ -285,7 +285,7 @@ void LatticePatch::generateTranslocationLookup() {
   }
   lgcToz.resize(gLW * nx * ny);
   rgcToz.resize(gLW * nx * ny);
-  for (int i = 0; i < lgcToz.size(); i++) {
+  for (unsigned int i = 0; i < lgcToz.size(); i++) {
     px = i % nx;
     py = (i / nx) % ny;
     pz = (i / nx) / ny;
@@ -334,7 +334,7 @@ inline void LatticePatch::rotateToX(sunrealtype *outArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
 #pragma omp simd // safelen(6)
-  for (int i = 0; i < lookup.size(); i++) {
+  for (unsigned int i = 0; i < lookup.size(); i++) {
     // get correct u-vector and spatial indices along previously defined lookup
     // tables
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
@@ -355,7 +355,7 @@ inline void LatticePatch::rotateToY(sunrealtype *outArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
 #pragma omp simd
-  for (int i = 0; i < lookup.size(); i++) {
+  for (unsigned int i = 0; i < lookup.size(); i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
     ii = envelopeLattice->get_dataPointDimension() * i;
     outArray[target + 0] = inArray[ii] + inArray[5 + ii];
@@ -374,7 +374,7 @@ inline void LatticePatch::rotateToZ(sunrealtype *outArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
 #pragma omp simd
-  for (int i = 0; i < lookup.size(); i++) {
+  for (unsigned int i = 0; i < lookup.size(); i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
     ii = envelopeLattice->get_dataPointDimension() * i;
     outArray[target + 0] = -inArray[ii] + inArray[4 + ii];
