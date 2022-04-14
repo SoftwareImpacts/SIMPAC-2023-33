@@ -50,6 +50,7 @@ void OutputManager::generateOutputFolder(const string &dir) {
   // path variable for the output generation
   Path = dir + "/SimResults/" + simCode + "/";
 
+  // Logging configurations from main.cpp
   ifstream fin("main.cpp");
   ofstream fout(Path + "config.txt");
   string line;

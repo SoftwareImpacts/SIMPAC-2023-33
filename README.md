@@ -76,6 +76,7 @@ A doxygen-generated complete code reference is provided with [ref.pdf](docs/ref.
 - Third, in the `src` directory, build the executable `Simulation` via the `make` command.
 
 - Forth, run the simulation.  
+Make sure to use `src` as working directory as the code uses a relative path to log the configuration in `main.cpp`.  
 You determine the number of processes via the MPI execution command.
 Note that in 2D and 3D simulations this number has to coincide with the actual number of patches, as described above.  
 Here, the simulation would be executed distributed over four processes:
