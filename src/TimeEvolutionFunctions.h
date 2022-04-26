@@ -5,9 +5,7 @@
 /// orders in the HE weak-field expansion
 ////////////////////////////////////////////////////////
 
-// Include Guard
-#ifndef TIMEEVOLVER
-#define TIMEEVOLVER
+#pragma once
 
 #include "LatticePatch.h"
 #include "SimulationClass.h"
@@ -26,18 +24,16 @@ public:
   static int f(sunrealtype t, N_Vector u, N_Vector udot, void *data_loc);
 };
 
-/// Maxwell propagation function for 1D – only for reference
+/// Maxwell propagation function for 1D -- only for reference
 void linear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c);
 /// HE propagation function for 1D
 void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c);
-/// Maxwell propagation function for 2D – only for reference
+/// Maxwell propagation function for 2D -- only for reference
 void linear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c);
 /// HE propagation function for 2D
 void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c);
-/// Maxwell propagation function for 3D – only for reference
+/// Maxwell propagation function for 3D -- only for reference
 void linear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c);
 /// HE propagation function for 3D
 void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c);
 
-// End of Includeguard
-#endif

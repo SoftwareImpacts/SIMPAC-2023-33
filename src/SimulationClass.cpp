@@ -73,7 +73,7 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
   // CVode settings return value
   int retval = 0;
 
-  // Create CVODE object – returns a pointer to the cvode memory structure
+  // Create CVODE object -- returns a pointer to the cvode memory structure
   // with Adams method (Adams-Moulton formula) solver chosen for non-stiff ODE
   cvode_mem = CVodeCreate(CV_ADAMS, lattice.sunctx);
 
@@ -105,7 +105,7 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
   if (check_retval(&retval, "CVodeSetMaxNumSteps", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
 
-  // Specify integration tolerances – a scalar relative tolerance and scalar
+  // Specify integration tolerances -- a scalar relative tolerance and scalar
   // absolute tolerance
   retval = CVodeSStolerances(cvode_mem, reltol, abstol);
   if (check_retval(&retval, "CVodeSStolerances", 1, lattice.my_prc))
@@ -194,7 +194,7 @@ void Simulation::addPeriodicICLayerInXY() {
   return;
 }
 
-/// Advance the solution in time – integrate the ODE over an interval t
+/// Advance the solution in time -> integrate the ODE over an interval t
 void Simulation::advanceToTime(const sunrealtype &tEnd) {
   checkFlag(SimulationStarted);
   int flag = 0;

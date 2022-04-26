@@ -5,9 +5,7 @@
 /// initialization of the CVode object
 /////////////////////////////////////////////////////////////////////////////
 
-// Include Guard
-#ifndef SIMULATIONCLASS
-#define SIMULATIONCLASS
+#pragma once
 
 /* access to the fixed point SUNNonlinearSolver */
 #include "sunnonlinsol/sunnonlinsol_fixedpoint.h"
@@ -52,7 +50,7 @@ public:
   ICSetter icsettings;
   /// Output Manager object
   OutputManager outputManager;
-  /// Pointer to CVode memory object – public to avoid cross library errors
+  /// Pointer to CVode memory object -- public to avoid cross library errors
   void *cvode_mem;
   /// constructor function for the creation of the cartesian communicator
   Simulation(const int nx, const int ny, const int nz, const int StencilOrder,
@@ -94,5 +92,3 @@ public:
   void checkNoFlag(unsigned int flag) const;
 };
 
-// End of Includeguard
-#endif

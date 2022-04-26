@@ -3,14 +3,12 @@
 /// @brief Definition of derivation stencils from order 1 to 13
 /////////////////////////////////////////////////////////////////
 
-// Include Guard
-#ifndef DERIVATIONSTENCILS
-#define DERIVATIONSTENCILS
+#pragma once
 
 #include <sundials/sundials_types.h> /* definition of type sunrealtype */
 
 ///////////////////////////////////////////////////////
-// Stencils with variable nx –> data point dimension //
+// Stencils with variable nx -- data point dimension //
 ///////////////////////////////////////////////////////
 
 // Downwind (forward) dfferentiating
@@ -249,5 +247,3 @@ inline sunrealtype s12b(sunrealtype *udata) { return s12b(udata, 6); }
 inline sunrealtype s13f(sunrealtype *udata) { return s13f(udata, 6); }
 inline sunrealtype s13b(sunrealtype *udata) { return s13b(udata, 6); }
 
-// End of Includeguard
-#endif

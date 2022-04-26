@@ -99,7 +99,7 @@ You can remove the object files and the executable via `make clean`.
 ### Note on Simulation Settings
 You may want to start with two Gaussian pulses in 1D colliding head-on in a pump-probe setup.
 For this event, specify a high-frequency probe pulse with a low amplitude and a low-frequency pump pulse with a high frequency.
-Both frequencies should be chosen to be below a forth of the Nyquist frequency to avoid unphysical dispersion effects.
+Both frequencies should be chosen to be below a forth of the Nyquist frequency to avoid nonphysical dispersion effects.
 The wavelengths should neither be chosen too large (bulky wave) on a fine patchwork of narrow patches.
 Their communication might be problematic with too small halo layer depths.
 You would observe a blurring over time.
@@ -114,8 +114,8 @@ Example scenarios of colliding Gaussians are preconfigured for any dimension.
 
 
 ### Note on Resource Occupation
-The computational load depends mostly on the grid size.
-The order of accuracy of the numerical scheme and CVode are rather secondary except for simulations running on many processing units, as the communication load is dependend on the stencil order.  
+The computational load mostly depends on the grid size and resolution.
+The order of accuracy of the numerical scheme and CVode are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
 Simulations in 1D are relatively cheap and can easily be run on a modern laptop within minutes.
 The output size per step is less than a megabyte.  
 Simulations in 2D with about one million grid points are still feasible for a personal machine but might take about an hour of time to finish.
@@ -126,14 +126,13 @@ The output size quickly amounts to dozens of gigabytes for just a single state.
 
 
 ### Note on Output Analysis
-The field data are written to csv files.
+The field data are written in csv format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
+This is not an elegant solution, but the best portable way that also works fast.  
 A `SimResults` folder is created in the chosen output directory if it does not exist and a folder named after the starting timestep of the simulation is created where the csv files are written into.
 The timestep filename is given in the form `yy-mm-dd_hh-MM-ss`.  
 There are six columns, corresponding to the six components of the electromagnetic field: $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
 Each row corresponds to one lattice point.  
-Every process writes to its own csv file, the ending of which (after an underscore) corresponds to the process number, as described above.
-This is not an elegant solution, but the best portable way that also works fast.
-On the other hand, it requires some postprocessing to read-in the files in order.
+Postprocessing is required to read-in the files in order.
 A Python [module](examples/get_field_data.py) taking care of this is provided.  
 The process numbers first align along dimension 1 until the number of patches is that direction is reached, then continue on dimension two and finally fill dimension 3.
 For example, for a 3D simulation on 4x4x4=64 cores, the field data is divided over the patches as follows:
@@ -141,7 +140,7 @@ For example, for a 3D simulation on 4x4x4=64 cores, the field data is divided ov
 z=1                          z=2                         z=3            z=4
                                                          ...            ...
 x                            x 
-                              
+  ^                            ^
 1 | 0  4  8 12               1 |16 20 24 28
 2 | 1  5  9 13               2 |17 21 25 29
 3 | 2  6 10 14               3 |18 22 26 30

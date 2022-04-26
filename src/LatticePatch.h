@@ -3,9 +3,7 @@
 /// @brief Declaration of the lattice and lattice patches
 //////////////////////////////////////////////////////////////////////////
 
-// Include Guard
-#ifndef LATTICEPATCH
-#define LATTICEPATCH
+#pragma once
 
 // IO
 #include <iomanip>
@@ -260,5 +258,3 @@ void errorKill(const string & errorMessage);
 // helper function to check for CVode success
 int check_retval(void *returnvalue, const char *funcname, int opt, int id);
 
-// End of Includeguard
-#endif

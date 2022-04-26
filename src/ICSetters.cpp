@@ -213,7 +213,7 @@ void Gauss2D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   // \f$ \Phi_F = kr^2/(2*R(z))+g(z)-kz_g \f$
   const sunrealtype PhF =
       -k * r * r / (2 * Rz) + gz - k * zg; // to be inserted into cosine
-  // \f$ G = \sqrt{w_0/w_z}\e^{-(r/w(z))^2}\e^{(zg-Ph0)^2/PhA^2}\cos(PhF) \f$ –
+  // \f$ G = \sqrt{w_0/w_z}\e^{-(r/w(z))^2}\e^{(zg-Ph0)^2/PhA^2}\cos(PhF) \f$
   // CVode is a diva, no chance to remove the square in the second exponential
   // -> h too small
   const sunrealtype G2D = sqrt(w0 / wz) * exp(-r * r / wz / wz) *

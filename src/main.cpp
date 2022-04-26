@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     
     //------------ BEGIN OF CONFIGURATION ------------//
     
-    ///////////////////// – 1D – ///////////////////////
+    ///////////////////// -- 1D -- ///////////////////////
     /** A 1D simulation with specified */
     /*
     //// Specify your settings here ////
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     ////////////////////////////////////////////////////
 
 
-    ///////////////////// – 2D – ///////////////////////
+    ///////////////////// -- 2D -- ///////////////////////
     /** A 2D simulation with specified */
     /*
     //// Specify your settings here ////
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
     ////////////////////////////////////////////////////
 
 
-    ///////////////////// – 3D – ///////////////////////
+    ///////////////////// -- 3D -- ///////////////////////
     /** A 3D simulation with specified */
     /*
     //// Specify your settings here ////

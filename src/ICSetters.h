@@ -3,9 +3,7 @@
 /// @brief Declaration of the plane wave and Gaussian wave packets in 1D, 2D, 3D
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Include Guard
-#ifndef ICSETTERS
-#define ICSETTERS
+#pragma once
 
 // math, constants, vector, and array
 #include <cmath>
@@ -288,5 +286,3 @@ public:
                   sunrealtype Ph0_ = 2e-5, sunrealtype PhA_ = 0.45e-5);
 };
 
-// End of Includeguard
-#endif

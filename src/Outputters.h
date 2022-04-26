@@ -3,9 +3,7 @@
 /// @brief OutputManager class to outstream simulation data
 /////////////////////////////////////////////////////////////
 
-// Include Guard
-#ifndef OUTPUTTERS
-#define OUTPUTTERS
+#pragma once
 
 // perform operations on the filesystem
 #include <filesystem>
@@ -46,5 +44,3 @@ public:
   string getSimCode();
 };
 
-// End of Includeguard
-#endif

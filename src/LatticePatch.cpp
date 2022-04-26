@@ -118,7 +118,7 @@ int generatePatchwork(const Lattice &envelopeLattice, LatticePatch &patchToMold,
   const sunindextype tot_NOXP = envelopeLattice.get_tot_nx(); // total points of lattice
   const sunindextype tot_NOYP = envelopeLattice.get_tot_ny();
   const sunindextype tot_NOZP = envelopeLattice.get_tot_nz();
-  // position of the patch in the lattice of patches – process associated to
+  // position of the patch in the lattice of patches -> process associated to
   // position
   const sunindextype LIx = my_prc % DLx;
   const sunindextype LIy = (my_prc / DLx) % DLy;
@@ -387,7 +387,7 @@ inline void LatticePatch::rotateToZ(sunrealtype *outArray,
 }
 
 /// Derotate uAux with transposed rotation matrices and write to derivative
-/// buffer – normalization is done here by the factor 1/2
+/// buffer -- normalization is done here by the factor 1/2
 void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
   // Check that the lattice as well as the translocation lookups have been set
   // up;
