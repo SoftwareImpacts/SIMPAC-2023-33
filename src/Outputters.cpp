@@ -8,7 +8,7 @@
 /// Directly generate the simCode at construction
 OutputManager::OutputManager() {
   simCode = SimCodeGenerator();
-  MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
+  outputStyle = 'c';
 }
 
 /// Generate the identifier number reverse from year to minute in the format
@@ -28,8 +28,8 @@ string OutputManager::SimCodeGenerator() {
        << setfill('0') << setw(2) << hms.hours().count() << "-" << setfill('0')
        << setw(2) << hms.minutes().count() << "-" << setfill('0') << setw(2)
        << hms.seconds().count();
-  //<< "_" << hms.subseconds().count(); // subseconds render the filename too
-  //large
+       //<< "_" << hms.subseconds().count(); // subseconds render the filename
+       // too large
   return temp.str();
 }
 
@@ -39,6 +39,8 @@ string OutputManager::SimCodeGenerator() {
  * "config.txt" file in that directory to log the settings. */
 void OutputManager::generateOutputFolder(const string &dir) {
   // Do this only once for the first process
+  int myPrc;
+  MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
   if (myPrc == 0) {
     if (!fs::is_directory(dir))
       fs::create_directory(dir);
@@ -68,18 +70,25 @@ void OutputManager::generateOutputFolder(const string &dir) {
         break;
     }
   }
-
   return;
 }
 
-/** Write the field data to a csv file from each process (patch) with the field
- * data into the simCode directory. The state (simulation step) denotes the
+void OutputManager::set_outputStyle(const char _outputStyle){
+    outputStyle = _outputStyle;
+}
+
+/** Write the field data either in csv format to one file per each process
+ * (patch) or in binary form to a single file. Files are stores inthe simCode
+ * directory. For csv files the state (simulation step) denotes the
  * prefix and the suffix after an underscore is given by the process/patch
- * number */
-void OutputManager::outUState(const int &state, const LatticePatch &latticePatch) {
+ * number. Binary files are simply named after the step number. */
+void OutputManager::outUState(const int &state, const Lattice &lattice,
+        const LatticePatch &latticePatch) {
+  switch(outputStyle){
+      case 'c': { // one csv file per process
   ofstream ofs;
-  ofs.open(Path + to_string(state) + "_" + to_string(myPrc) + ".csv");
-  // Set precision, number of digits for the values
+  ofs.open(Path + to_string(state) + "_" + to_string(lattice.my_prc) + ".csv");
+  // Precision of sunrealtype in significant decimal digits; 15 for IEEE double
   ofs << setprecision(numeric_limits<sunrealtype>::digits10);
 
   // Walk through each lattice point
@@ -90,11 +99,32 @@ void OutputManager::outUState(const int &state, const LatticePatch &latticePatch
         << latticePatch.uData[i + 4] << "," << latticePatch.uData[i + 5]
         << endl;
   }
-
   ofs.close();
+  break;
+                }
 
+      case 'b': { // a single binary file
+  // Open the output file
+  MPI_File fh;
+  const string filename = Path+to_string(state);
+  MPI_File_open(lattice.comm,&filename[0],MPI_MODE_WRONLY|MPI_MODE_CREATE,
+          MPI_INFO_NULL,&fh);
+  // number of datapoints in the patch with process offset
+  const int count = latticePatch.discreteSize()*lattice.get_dataPointDimension();
+  MPI_Offset offset = lattice.my_prc*count*sizeof(MPI_SUNREALTYPE);
+  // Go to offset in file and write data to it; maximal precision in
+  // "native" representation
+  MPI_File_set_view(fh,offset,MPI_SUNREALTYPE,MPI_SUNREALTYPE,"native",
+          MPI_INFO_NULL);
+  MPI_File_write_all(fh,latticePatch.uData,count,MPI_SUNREALTYPE,MPI_STATUS_IGNORE);
+  break;
+                }
+      default: {
+  errorKill("No valid output style defined."
+          " Choose between (c): one csv file per process, (b) one binary file");
+  break;
+               }
   return;
+  }
 }
 
-/// Return the date+time simulation identifier for logging
-string OutputManager::getSimCode() { return simCode; }

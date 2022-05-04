@@ -63,7 +63,10 @@ You can then specify
     - the number of time steps that will be solved stepwise by CVode.   
     In order to keep interpolation errors small do not choose this number too small.
     - the multiple of steps at which you want the data to be written to disk.  
-    The name of the files written to the output directory is of the form `{step_number}_{process_number}`.
+    - the output format. It can be 'c' for comma separated values (csv), or 'b' for binary.
+    For csv format the name of the files written to the output directory is of the form `{step_number}_{process_number}.csv`.
+    For binary output all data per step is written into one file and the step number is the name of
+    the file.
     - which electromagnetic waveform(s) you want to propagate.  
     You can choose between a plane wave (not much physical content, but useful for checks) and implementations of Gaussians in 1D, 2D, and 3D.
     Their parameters can be tuned.  
@@ -114,7 +117,7 @@ Example scenarios of colliding Gaussians are preconfigured for any dimension.
 
 
 ### Note on Resource Occupation
-The computational load mostly depends on the grid size and resolution.
+The computational load depends mostly on the grid size and resolution.
 The order of accuracy of the numerical scheme and CVode are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
 Simulations in 1D are relatively cheap and can easily be run on a modern laptop within minutes.
 The output size per step is less than a megabyte.  
@@ -126,14 +129,22 @@ The output size quickly amounts to dozens of gigabytes for just a single state.
 
 
 ### Note on Output Analysis
-The field data are written in csv format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
-This is not an elegant solution, but the best portable way that also works fast.  
-A `SimResults` folder is created in the chosen output directory if it does not exist and a folder named after the starting timestep of the simulation is created where the csv files are written into.
-The timestep filename is given in the form `yy-mm-dd_hh-MM-ss`.  
-There are six columns, corresponding to the six components of the electromagnetic field: $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
+The field data are either written in csv format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
+This is not an elegant solution, but a portable way that also works fast and is
+straightforward to analyze.  
+Or, the option recommended for many larger write operations, in binary format with a single file per
+output step.
+Raw bytes are written to the files as they are in memory.
+This option is more performant and achieved with MPI IO.
+However, there is no guarantee of portability; postprocessing/conversion is required.
+The step number is the file name.  
+A `SimResults` folder is created in the chosen output directory if it does not exist and a folder named after the starting timestep of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created where the output files are written into.
+There are six columns in the csv files, corresponding to the six components of the electromagnetic field: $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
 Each row corresponds to one lattice point.  
 Postprocessing is required to read-in the files in order.
 A Python [module](examples/get_field_data.py) taking care of this is provided.  
+Likewise, a Python [module](examples/get_binary_field_data.py) is provided to read the binary
+data of a selected field component into a numpy array – its portability, however, cannot be guaranteed.  
 The process numbers first align along dimension 1 until the number of patches is that direction is reached, then continue on dimension two and finally fill dimension 3.
 For example, for a 3D simulation on 4x4x4=64 cores, the field data is divided over the patches as follows:
 <pre>

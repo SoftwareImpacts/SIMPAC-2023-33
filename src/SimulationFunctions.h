@@ -3,6 +3,8 @@
 /// @brief Full simulation functions for 1D, 2D, and 3D used in main.cpp
 //////////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 // math
 #include <cmath>
 //#include <mathimf.h>
@@ -59,17 +61,17 @@ struct gaussian3D {
 /// complete 1D Simulation function
 void Sim1D(const array<sunrealtype,2>, const int, const sunrealtype,
         const sunindextype, const bool, int *, const sunrealtype, const int,
-        const string, const int, const vector<planewave> &,
+        const string, const int, const char, const vector<planewave> &,
         const vector<gaussian1D> &);
 /// complete 2D Simulation function
 void Sim2D(const array<sunrealtype,2>, const int, const array<sunrealtype,2>,
         const array<sunindextype,2>, const array<int,2>, const bool, int *,
-        const sunrealtype, const int, const string, const int,
+        const sunrealtype, const int, const string, const int, const char,
         const vector<planewave> &, const vector<gaussian2D> &);
 /// complete 3D Simulation function
 void Sim3D(const array<sunrealtype,2>, const int, const array<sunrealtype,3>,
         const array<sunindextype,3>, const array<int,3>, const bool, int *,
-        const sunrealtype, const int, const string, const int,
+        const sunrealtype, const int, const string, const int, const char,
         const vector<planewave> &, const vector<gaussian3D> &);
 
 /** MPI timer function */

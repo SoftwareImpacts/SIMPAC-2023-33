@@ -30,17 +30,18 @@ private:
   string simCode;
   /// variable for the path to the output folder
   string Path;
-  /// process ID
-  int myPrc;
-
+  /// output style; csv or binary
+  char outputStyle;
 public:
   /// default constructor
   OutputManager();
-  /// function that creates folder to save simulation info
+  /// function that creates folder to save simulation data
   void generateOutputFolder(const string &dir);
-  /// output function for the whole lattice
-  void outUState(const int &state, const LatticePatch &latticePatch);
+  /// set the output style
+  void set_outputStyle(const char _outputStyle);
+  /// function to write data to disk in specified way
+  void outUState(const int &state, const Lattice &lattice, const LatticePatch &latticePatch);
   /// simCode getter function
-  string getSimCode();
+  [[nodiscard]] const string &getSimCode() const { return simCode; }
 };
 

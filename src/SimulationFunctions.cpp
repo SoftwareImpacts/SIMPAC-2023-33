@@ -25,6 +25,7 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
         const bool periodic, int *interactions,
         const sunrealtype endTime, const int numberOfSteps,
         const string outputDirectory, const int outputStep,
+        const char outputStyle,
         const vector<planewave> &planes,
         const vector<gaussian1D> &gaussians) {
 
@@ -73,9 +74,12 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   if (!myPrc) {
     cout << "Simulation code: " << sim.outputManager.getSimCode() << endl;
   }
+  sim.outputManager.set_outputStyle(outputStyle);
 
-  // Conduct the propagation in space and time
   double ts = MPI_Wtime();
+
+  //sim.outAllFieldData(0);  // output of initial state
+  // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
     if (step % outputStep == 0) {
@@ -96,9 +100,8 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
         const array<sunrealtype,2> phys_dims, const array<sunindextype,2> disc_dims,
         const array<int,2> patches, const bool periodic, int *interactions,
         const sunrealtype endTime, const int numberOfSteps,
-        const string outputDirectory, const int outputStep,
-        const vector<planewave> &planes,
-        const vector<gaussian2D> &gaussians) {
+        const string outputDirectory, const int outputStep, const char outputStyle,
+        const vector<planewave> &planes, const vector<gaussian2D> &gaussians) {
 
   // MPI data
   int myPrc = 0, nprc = 0; // Get process rank and number of processes
@@ -150,8 +153,11 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
   if (!myPrc) {
     cout << "Simulation code: " << sim.outputManager.getSimCode() << endl;
   }
+  sim.outputManager.set_outputStyle(outputStyle);
+
   double ts = MPI_Wtime();
 
+  //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
@@ -174,8 +180,8 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
         const array<sunindextype,3> disc_dims, const array<int,3> patches,
         const bool periodic, int *interactions, const sunrealtype endTime,
         const int numberOfSteps, const string outputDirectory,
-        const int outputStep, const vector<planewave> &planes,
-        const vector<gaussian3D> &gaussians) {
+        const int outputStep, const char outputStyle,
+        const vector<planewave> &planes, const vector<gaussian3D> &gaussians) {
 
   // MPI data
   int myPrc = 0, nprc = 0; // Get process rank and numer of process
@@ -232,8 +238,11 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   if (!myPrc) {
     cout << "Simulation code: " << sim.outputManager.getSimCode() << endl;
   }
+  sim.outputManager.set_outputStyle(outputStyle);
+
   double ts = MPI_Wtime();
 
+  //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);

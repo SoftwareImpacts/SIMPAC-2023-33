@@ -823,9 +823,13 @@ void LatticePatch::derive(const int dir) {
 
 /// Print a specific error message to stdout
 void errorKill(const string & errorMessage) {
-  cerr << endl << "Error: " << errorMessage << " Aborting..." << endl;
-  MPI_Abort(MPI_COMM_WORLD, 1);
-  return;
+  int my_prc=0;
+  MPI_Comm_rank(MPI_COMM_WORLD,&my_prc);
+  if (my_prc==0) {
+    cerr << endl << "Error: " << errorMessage << "\nAborting..." << endl;
+    MPI_Abort(MPI_COMM_WORLD, 1);
+    return;
+  }
 }
 
 /** Check function return value. From CVode examples.

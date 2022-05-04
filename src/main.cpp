@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
     constexpr sunrealtype simulationTime=100.0e-6l;                    /// -  physical total simulation time
     constexpr int numberOfSteps=100;                                   /// -  discrete time steps
     constexpr int outputStep=100;                                      /// -  output step multiples
+    constexpr char outputStyle='c';                                    /// - output in csv (c) or binary (b)
 
     /// Add electromagnetic waves.
     planewave plane1;                /// A plane wave with
@@ -81,7 +82,7 @@ int main(int argc, char *argv[])
     int *interactions = &processOrder;
     Sim1D(CVodeTolerances,StencilOrder,physical_sidelength,latticepoints,
             periodic,interactions,simulationTime,numberOfSteps,
-            outputDirectory,outputStep,
+            outputDirectory,outputStep,outputStyle,
             planewaves,Gaussians1D);
     */
     ////////////////////////////////////////////////////
@@ -101,6 +102,7 @@ int main(int argc, char *argv[])
     constexpr sunrealtype simulationTime=40e-6l;                       /// - physical total simulation time
     constexpr int numberOfSteps=100;                                   /// - discrete time steps
     constexpr int outputStep=100;                                      /// - output step multiples
+    constexpr char outputStyle='c';                                    /// - output in csv (c) or binary (b)
 
     /// Add electromagnetic waves.
     planewave plane1;                  /// A plane wave with 
@@ -149,7 +151,7 @@ int main(int argc, char *argv[])
     Sim2D(CVodeTolerances,StencilOrder,physical_sidelengths,
             latticepoints_per_dim,patches_per_dim,periodic,interactions,
             simulationTime,numberOfSteps,outputDirectory,outputStep,
-            planewaves,Gaussians2D);
+            outputStyle,planewaves,Gaussians2D);
     */
     ////////////////////////////////////////////////////
 
@@ -168,6 +170,7 @@ int main(int argc, char *argv[])
     constexpr sunrealtype simulationTime=20e-6;                              /// - physical total simulation time
     constexpr int numberOfSteps=50;                                          /// - discrete time steps
     constexpr int outputStep=50;                                             /// - output step multiples
+    constexpr char outputStyle='b';                                          /// - output in csv (c) or binary (b)
     /// Add electromagnetic waves.
     planewave plane1;                   /// A plane wave with
     plane1.k = {1e5,0,0};               /// - wavevector (normalized to \f$ 1/\lambda \f$)
@@ -216,7 +219,7 @@ int main(int argc, char *argv[])
     Sim3D(CVodeTolerances,StencilOrder,physical_sidelengths,
             latticepoints_per_dim,patches_per_dim,periodic,interactions,
             simulationTime,numberOfSteps,outputDirectory,outputStep,
-            planewaves,Gaussians3D);
+            outputStyle,planewaves,Gaussians3D);
     */
     ////////////////////////////////////////////////////
 

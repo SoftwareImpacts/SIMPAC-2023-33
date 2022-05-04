@@ -209,7 +209,7 @@ void Simulation::advanceToTime(const sunrealtype &tEnd) {
 /// Write specified simulations steps to disk
 void Simulation::outAllFieldData(const int & state) {
   checkFlag(SimulationStarted);
-  outputManager.outUState(state, latticePatch);
+  outputManager.outUState(state, lattice, latticePatch);
 }
 
 /// Check the presence configuration flags

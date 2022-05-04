@@ -43,7 +43,8 @@ def get_field1D(path,component,n_prc,step):
 def get_field2D(path,component,n_prc,patch_shape,n_patches,step):
     """Gather the output data of 2D simulations and return them as a numpy array.
     
-    The output is such that x-components are in the first dimension of the output and y-components in the second dimension. This has to be kept in mind when visualizing.
+    The output is such that x-components are in the first dimension of the output and y-components in the second dimension.
+    This has to be kept in mind when visualizing.
     
     Parameters
     ----------
@@ -53,9 +54,9 @@ def get_field2D(path,component,n_prc,patch_shape,n_patches,step):
         Electromagnetic field component. Number from 1 to 6, corresponding to Ex, Ey, Ez, Bx, By, Bz.
     n_prc : int
         Total number of processes/patches the simulation was running on.
-    patch_shape : tuple
+    patch_shape : tuple or list
         The shape of one patch. In 2D the patches do not have to be squares, so the shape has to be given as a tuple.
-    n_patches : list
+    n_patches : list or list
         The slicing of the patchwork into patches as defined in the main program.
     step : string
         Name for the output step of the data.
@@ -84,9 +85,10 @@ def get_field2D(path,component,n_prc,patch_shape,n_patches,step):
 
 
 def get_field3D(path,component,n_prc,patch_shape,n_patches,step):
-    """Gather the output data of 2D simulations and return them as a numpy array.
+    """Gather the output data of 3D simulations and return them as a numpy array.
     
-    The output is such that x-components are in the first dimension of the output, y-components in the second dimension and z-components in the last.
+    The output is such that x-components are in the first dimension of the output,
+    y-components in the second dimension and z-components in the last.
     
     Parameters
     ----------
@@ -96,9 +98,9 @@ def get_field3D(path,component,n_prc,patch_shape,n_patches,step):
         Electromagnetic field component. Number from 1 to 6, corresponding to Ex, Ey, Ez, Bx, By, Bz.
     n_prc : list
         The processes/patches you want to view. This is helpful in order to get a slice out ot the 3D object.
-    patch_shape : list
+    patch_shape : tuple or list
         The shape in terms of lattice points of one patch.
-    n_patches : list
+    n_patches : tuple or list
         The slicing of the patchwork into patches as defined in the main program.
     step : string
         Name for the output step of the data.
@@ -116,15 +118,14 @@ def get_field3D(path,component,n_prc,patch_shape,n_patches,step):
         temp.append(tmp.reshape((patch_shape[2],patch_shape[1],patch_shape[0]),order='C'))
         
     del tmp
-            
     temp = np.array(temp)
-    temp=np.dstack(temp)  # Align in dim 0 (MPI)
-    temp=np.dsplit(temp,n_patches[2]*n_patches[1])  # Split in dim 0 according to patches in dim 2,1 
+    temp=np.dstack(temp)  # Align in dim 0 (MPI convention)
+    temp=np.dsplit(temp,n_patches[2]*n_patches[1])  # Split in dim 0 according to patches in dim 2 and 1 
     temp=np.array(temp)
     temp=np.hstack(temp)  # Align in dim 1
     temp=np.hsplit(temp,n_patches[2])  # Split in dim 1 according to patches in dim 2
     temp=np.array(temp)
-    temp=np.vstack(temp) # Align in dim 2
+    temp=np.vstack(temp)  # Align in dim 2
     temp=np.swapaxes(temp,0,2)  # Clear for MPI convention    
     
     return temp
