@@ -116,7 +116,10 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   // "native" representation
   MPI_File_set_view(fh,offset,MPI_SUNREALTYPE,MPI_SUNREALTYPE,"native",
           MPI_INFO_NULL);
-  MPI_File_write_all(fh,latticePatch.uData,count,MPI_SUNREALTYPE,MPI_STATUS_IGNORE);
+  MPI_Request write_request;
+  MPI_File_iwrite_all(fh,latticePatch.uData,count,MPI_SUNREALTYPE,&write_request);
+  MPI_Wait(&write_request,MPI_STATUS_IGNORE);
+  MPI_File_close(&fh);
   break;
                 }
       default: {

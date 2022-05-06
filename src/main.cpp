@@ -161,15 +161,15 @@ int main(int argc, char *argv[])
     /*
     //// Specify your settings here ////
     constexpr array<sunrealtype,2> CVodeTolerances={1.0e-12,1.0e-12};        /// - relative and absolute tolerances of the CVode solver
-    constexpr int StencilOrder=4;                                            /// - accuracy order of the stencils in the range 1-13
+    constexpr int StencilOrder=13;                                           /// - accuracy order of the stencils in the range 1-13
     constexpr array<sunrealtype,3> physical_sidelengths={80e-6,80e-6,20e-6}; /// - physical dimensions in meters
-    constexpr array<sunindextype,3> latticepoints_per_dim={800,800,200};     /// - number of lattice points in any dimension
-    constexpr array<int,3> patches_per_dim= {8,8,2};                         /// - slicing of discrete dimensions into patches
-    constexpr bool periodic=false;                                           /// - perodic or non-periodic boundaries
+    constexpr array<sunindextype,3> latticepoints_per_dim={1200,1200,300};   /// - number of lattice points in any dimension
+    constexpr array<int,3> patches_per_dim= {12,12,3};                       /// - slicing of discrete dimensions into patches
+    constexpr bool periodic=true;                                            /// - perodic or non-periodic boundaries
     int processOrder=3;                                                      /// - processes of the weak-field expansion, see README.md
-    constexpr sunrealtype simulationTime=20e-6;                              /// - physical total simulation time
-    constexpr int numberOfSteps=50;                                          /// - discrete time steps
-    constexpr int outputStep=50;                                             /// - output step multiples
+    constexpr sunrealtype simulationTime=40e-6;                              /// - physical total simulation time
+    constexpr int numberOfSteps=40;                                          /// - discrete time steps
+    constexpr int outputStep=10;                                             /// - output step multiples
     constexpr char outputStyle='b';                                          /// - output in csv (c) or binary (b)
     /// Add electromagnetic waves.
     planewave plane1;                   /// A plane wave with
