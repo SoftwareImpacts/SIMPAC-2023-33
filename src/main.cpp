@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     constexpr sunrealtype simulationTime=100.0e-6l;                    /// -  physical total simulation time
     constexpr int numberOfSteps=100;                                   /// -  discrete time steps
     constexpr int outputStep=100;                                      /// -  output step multiples
-    constexpr char outputStyle='c';                                    /// - output in csv (c) or binary (b)
+    constexpr char outputStyle='c';                                    /// - output in csv (c) or binary (b) format
 
     /// Add electromagnetic waves.
     planewave plane1;                /// A plane wave with
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     constexpr sunrealtype simulationTime=40e-6l;                       /// - physical total simulation time
     constexpr int numberOfSteps=100;                                   /// - discrete time steps
     constexpr int outputStep=100;                                      /// - output step multiples
-    constexpr char outputStyle='c';                                    /// - output in csv (c) or binary (b)
+    constexpr char outputStyle='c';                                    /// - output in csv (c) or binary (b) format
 
     /// Add electromagnetic waves.
     planewave plane1;                  /// A plane wave with 
@@ -170,7 +170,8 @@ int main(int argc, char *argv[])
     constexpr sunrealtype simulationTime=40e-6;                              /// - physical total simulation time
     constexpr int numberOfSteps=40;                                          /// - discrete time steps
     constexpr int outputStep=10;                                             /// - output step multiples
-    constexpr char outputStyle='b';                                          /// - output in csv (c) or binary (b)
+    constexpr char outputStyle='b';                                          /// - output in csv (c) or binary (b) format
+
     /// Add electromagnetic waves.
     planewave plane1;                   /// A plane wave with
     plane1.k = {1e5,0,0};               /// - wavevector (normalized to \f$ 1/\lambda \f$)
