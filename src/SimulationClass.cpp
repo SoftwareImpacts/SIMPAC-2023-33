@@ -32,6 +32,7 @@ Simulation::~Simulation() {
   // Free solver memory
   if (statusFlags & CvodeObjectSetUp) {
     CVodeFree(&cvode_mem);
+    SUNNonlinSolFree(NLS);
     SUNContext_Free(&lattice.sunctx);
   }
 }
@@ -93,8 +94,7 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
 
   // Create fixed point nonlinear solver object (suitable for non-stiff ODE) and
   // attach it to CVode
-  SUNNonlinearSolver NLS =
-      SUNNonlinSol_FixedPoint(latticePatch.u, 0, lattice.sunctx);
+  NLS = SUNNonlinSol_FixedPoint(latticePatch.u, 0, lattice.sunctx);
   retval = CVodeSetNonlinearSolver(cvode_mem, NLS);
   if (check_retval(&retval, "CVodeSetNonlinearSolver", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);

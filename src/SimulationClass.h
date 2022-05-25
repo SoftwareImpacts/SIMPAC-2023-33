@@ -50,14 +50,16 @@ public:
   ICSetter icsettings;
   /// Output Manager object
   OutputManager outputManager;
-  /// Pointer to CVode memory object -- public to avoid cross library errors
+  /// pointer to CVode memory object
   void *cvode_mem;
+  /// nonlinear solver object
+  SUNNonlinearSolver NLS;
   /// constructor function for the creation of the cartesian communicator
   Simulation(const int nx, const int ny, const int nz, const int StencilOrder,
           const bool periodicity);
   /// destructor function freeing CVode memory and Sundials context
   ~Simulation();
-  /// Reference to the cartesian communicator of the lattice -> for debugging
+  /// reference to the cartesian communicator of the lattice -> for debugging
   MPI_Comm *get_cart_comm() { return &lattice.comm; };
   /// function to set discrete dimensions of the lattice
   void setDiscreteDimensionsOfLattice(const sunindextype _tot_nx,
