@@ -7,27 +7,19 @@
 
 int main(int argc, char *argv[])
 {
-    // Initialize MPI environment
-    MPI_Init (&argc, &argv);
-    MPI_Comm comm = MPI_COMM_WORLD;
-    // Prepare MPI for Master-only threading
-    //int provided;
-    //MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
-
-    int rank = 0;
-    MPI_Comm_rank(comm,&rank);
-    double ti=MPI_Wtime(); // Overall start time
-
     /** Determine the output directory.                      
      * A "SimResults" folder will be created if non-existent 
      * with a subdirectory named in the identifier format    
      * "yy-mm-dd_hh-MM-ss" that contains the csv files     */
     constexpr auto outputDirectory = "/path/to/directory/";
 
-    if(rank==0 && !filesystem::exists(outputDirectory)) {
+    if(!filesystem::exists(outputDirectory)) {
         cerr<<"\nOutput directory nonexistent.\n";
-        MPI_Abort(comm,1);
+        exit(1);
     }
+
+    // Initialize MPI environment
+    MPI_Init (&argc, &argv);
 
     
     //------------ BEGIN OF CONFIGURATION ------------//
@@ -225,9 +217,6 @@ int main(int argc, char *argv[])
     ////////////////////////////////////////////////////
 
     //------------- END OF CONFIGURATION -------------//
-
-    double tf=MPI_Wtime(); // Overall finish time
-    if(rank==0) {cout<<endl; timer(ti,tf);} // Print the elapsed time
 
     // Finalize MPI environment
     MPI_Finalize();

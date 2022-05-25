@@ -9,7 +9,7 @@
 using namespace std;
 
 /** Calculate and print the total simulation time */
-void timer(double &t1, double &t2) {
+inline void timer(double &t1, double &t2) {
   printf("Elapsed time:  %fs\n", (t2 - t1));
 }
 
@@ -30,6 +30,7 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
         const vector<gaussian1D> &gaussians) {
 
   // MPI data
+  double ts = MPI_Wtime();
   int myPrc = 0, nprc = 0;
   MPI_Comm_size(MPI_COMM_WORLD, &nprc);
   MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
@@ -76,8 +77,6 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
-  double ts = MPI_Wtime();
-
   //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
@@ -104,6 +103,7 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
         const vector<planewave> &planes, const vector<gaussian2D> &gaussians) {
 
   // MPI data
+  double ts = MPI_Wtime();
   int myPrc = 0, nprc = 0; // Get process rank and number of processes
   MPI_Comm_rank(MPI_COMM_WORLD,
                 &myPrc); // Return process rank, number \in [1,nprc]
@@ -155,8 +155,6 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
-  double ts = MPI_Wtime();
-
   //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
@@ -184,6 +182,7 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
         const vector<planewave> &planes, const vector<gaussian3D> &gaussians) {
 
   // MPI data
+  double ts = MPI_Wtime();
   int myPrc = 0, nprc = 0; // Get process rank and numer of process
   MPI_Comm_rank(MPI_COMM_WORLD,
                 &myPrc); // rank of the process inside the world communicator
@@ -239,8 +238,6 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
     cout << "Simulation code: " << sim.outputManager.getSimCode() << endl;
   }
   sim.outputManager.set_outputStyle(outputStyle);
-
-  double ts = MPI_Wtime();
 
   //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
