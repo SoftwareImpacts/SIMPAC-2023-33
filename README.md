@@ -168,6 +168,9 @@ More information describing settings and analysis procedures used for actual sci
 Some example Python analysis scripts can be found in the [examples](examples).
 The [first steps](examples/first_steps) demonstrate how the simulated data is accurately read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.
+Analyses of 3D simulations are more involved due to large volumes of data.
+Visualization requires tools like Paraview; examples are shown
+[here](examples/3d_paraview_visualizations).
 There is however _no simulation data provided_ as it would make the repository size unnecessarily large.
 
 
