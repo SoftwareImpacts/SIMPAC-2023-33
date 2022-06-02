@@ -1,56 +1,64 @@
 #############################################
-# OpenMPI Compiler Wrapper
+# OpenMPI compiler wrapper
 #############################################
 CXX = mpicxx
 
 
 #############################################
-# Library Directories -> ADJUST!
+# Library directories -> ADJUST!
 #############################################
 LDFLAGS = -L/path/to/sundials/instdir/lib
 
 
 #############################################
-# Binary Directories -> ADJUST!
+# Include directories -> ADJUST!
 #############################################
-BDFLAGS = -I/path/to/sundials/instdir/include
+IDFLAGS = -I/path/to/sundials/instdir/include
 
 
 #############################################
-# Compiler Options
+# Compiler options
 #############################################
-CXXFLAGS  = -std=c++20 -O2 -fopenmp $(BDFLAGS)
+CXXFLAGS  = -std=c++20 -O2 -fopenmp $(IDFLAGS)
 
 
 #############################################
-# Target, Sources, and Libs variables
+# Overal target, files, headers, libraries
 #############################################
 TARGET = Simulation
-CLASS_FILES = SimulationFunctions.cpp LatticePatch.cpp DerivationStencils.cpp SimulationClass.cpp TimeEvolutionFunctions.cpp ICSetters.cpp Outputters.cpp
+CLASS_FILES = SimulationFunctions.cpp \
+			  LatticePatch.cpp \
+			  DerivationStencils.cpp \
+			  SimulationClass.cpp \
+			  TimeEvolutionFunctions.cpp \
+			  ICSetters.cpp \
+			  Outputters.cpp
+
 CLASS_HEADERS = $(CLASS_FILES:.cpp=.h)
 
 SOURCE = main.cpp $(CLASS_FILES)
 HEADER = Masterheader.h \
 		 $(CLASS_HEADER)
 
+# Used libraries
 LIBS = 	-lsundials_cvode \
 		-lsundials_nvecparallel
 
 
 ##########################################################
-# Targets and Recipes for Compilation and Linking, Cleanup
+# Targets and recipes for compilation and linking, cleanup
 ##########################################################
 
 all: $(TARGET)
 
-#######################################################################################
+################################################################
 OBJECTS = $(SOURCE:.cpp=.o)
 $(OBJECTS): $(SOURCE)
 	$(CXX) -c $(CXXFLAGS) $(SOURCE)
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
-#######################################################################################
+################################################################
 
 
 # Clean up
