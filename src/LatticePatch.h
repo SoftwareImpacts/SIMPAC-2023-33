@@ -252,9 +252,12 @@ public:
   void checkFlag(unsigned int flag) const;
 };
 
-// helper function for error messages
+/// helper function for error messages
 void errorKill(const string & errorMessage);
 
-// helper function to check for CVode success
+/// helper function to check MPI errors
+int check_error(int error, const char *funcname, int id);
+
+/// helper function to check CVode errors
 int check_retval(void *returnvalue, const char *funcname, int opt, int id);
 

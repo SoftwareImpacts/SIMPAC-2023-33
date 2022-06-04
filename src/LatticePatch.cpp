@@ -821,7 +821,7 @@ void LatticePatch::derive(const int dir) {
 
 ///////// Helper functions /////////
 
-/// Print a specific error message to stdout
+/// Print a specific error message to stderr
 void errorKill(const string & errorMessage) {
   int my_prc=0;
   MPI_Comm_rank(MPI_COMM_WORLD,&my_prc);
@@ -832,7 +832,21 @@ void errorKill(const string & errorMessage) {
   }
 }
 
-/** Check function return value. From CVode examples.
+/** Check MPI errors. Error handler must be set. */
+int check_error(int error, const char *funcname, int id) {
+    int eclass, len;
+    char errorstring[MPI_MAX_ERROR_STRING];
+    if( error != MPI_SUCCESS ) {
+        MPI_Error_class(error,&eclass);
+        MPI_Error_string(error,errorstring,&len);
+        cerr << "MPI Error(process " << id << ") in " << funcname << " : "
+            << errorstring << ", from class " << eclass << endl;
+        return 1;
+    }
+    return 0;
+}
+
+/** Check function return value. Adapted from CVode examples.
      opt == 0 means SUNDIALS function allocates memory so check if
               returned NULL pointer
      opt == 1 means SUNDIALS function returns an integer value so check if
@@ -853,9 +867,10 @@ int check_retval(void *returnvalue, const char *funcname, int opt, int id) {
   /* Check if retval < 0 */
   else if (opt == 1) {
     retval = (int *)returnvalue;
+    char *flagname = CVodeGetReturnFlagName(*retval);
     if (*retval < 0) {
-      fprintf(stderr, "\nSUNDIALS_ERROR(%d): %s() failed with retval = %d\n\n",
-              id, funcname, *retval);
+      fprintf(stderr, "\nSUNDIALS_ERROR(%d): %s() failed with retval = %d: %s\n\n",
+              id, funcname, *retval, flagname);
       return (1);
     }
   }
