@@ -99,16 +99,26 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
   if (check_retval(&retval, "CVodeSetNonlinearSolver", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
 
-  // Specify the maximum number of steps to be taken by the solver in its
-  // attempt to reach the next output time
-  retval = CVodeSetMaxNumSteps(cvode_mem, 10000);
-  if (check_retval(&retval, "CVodeSetMaxNumSteps", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+  // Anderson damping factor
+  retval = SUNNonlinSolSetDamping_FixedPoint(NLS,1);
+  if (check_retval(&retval, "SUNNonlinSolSetDamping_FixedPoint", 1,
+              lattice.my_prc)) MPI_Abort(lattice.comm, 1);
 
   // Specify integration tolerances -- a scalar relative tolerance and scalar
   // absolute tolerance
   retval = CVodeSStolerances(cvode_mem, reltol, abstol);
   if (check_retval(&retval, "CVodeSStolerances", 1, lattice.my_prc))
+    MPI_Abort(lattice.comm, 1);
+
+  // Specify the maximum number of steps to be taken by the solver in its
+  // attempt to reach the next tout
+  retval = CVodeSetMaxNumSteps(cvode_mem, 10000);
+  if (check_retval(&retval, "CVodeSetMaxNumSteps", 1, lattice.my_prc))
+    MPI_Abort(lattice.comm, 1);
+
+  // maximum number of warnings for too small h
+  retval = CVodeSetMaxHnilWarns(cvode_mem,3);
+  if (check_retval(&retval, "CVodeSetMaxHnilWarns", 1, lattice.my_prc))
     MPI_Abort(lattice.comm, 1);
 
   statusFlags |= CvodeObjectSetUp;
