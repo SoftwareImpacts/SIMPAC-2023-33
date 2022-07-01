@@ -31,15 +31,15 @@
 
 using namespace std;
 
-// lattice construction checking flags
-enum LatticeOptions {
-    FLatticeDimensionSet = 0x01,  // 1
-    /*OPT_B = 0x02,  // 2
-    OPT_C = 0x04,  // 4
-    OPT_D = 0x08,  // 8
-    OPT_E = 0x10,  // 16
-    OPT_F = 0x20,*/  // 32
-};
+// lattice construction checking flag
+constexpr unsigned int FLatticeDimensionSet = 0x01;
+
+/// lattice patch construction checking flags
+constexpr unsigned int FLatticePatchSetUp = 0x01;
+constexpr unsigned int TranslocationLookupSetUp = 0x02;
+constexpr unsigned int GhostLayersInitialized = 0x04;
+constexpr unsigned int BuffersInitialized = 0x08;
+
 
 /** @brief Lattice class for the construction of the enveloping discrete
  * simulation space */
@@ -73,8 +73,8 @@ private:
   const int stencilOrder;
   /// required width of ghost layers (depends on the stencil order)
   const int ghostLayerWidth;
-  /// char for checking if lattice flags are set
-  unsigned char statusFlags;
+  /// lattice status flags
+  unsigned int statusFlags;
 
 public:
   /// number of MPI processes
@@ -117,17 +117,6 @@ public:
     return ghostLayerWidth;
   }
   ///@}
-};
-
-/// lattice patch construction checking flags
-enum LatticePatchOptions {
-  FLatticePatchSetUp = 0x01,
-  TranslocationLookupSetUp = 0x02,
-  GhostLayersInitialized = 0x04,
-  BuffersInitialized = 0x08
-  /*OPT_D = 0x08,
-  OPT_E = 0x10,
-  OPT_F = 0x20,*/
 };
 
 /** @brief LatticePatch class for the construction of the patches in the
@@ -185,8 +174,8 @@ private:
   /** ghost cell translocation lookup table */
   vector<int> lgcTox, rgcTox, lgcToy, rgcToy, lgcToz, rgcToz;
   ///@}
-  /** char for checking flags */
-  unsigned char statusFlags;
+  /** lattice patch status flags */
+  unsigned int statusFlags;
   ///@{
   /** rotate and translocate an input array according to a lookup into an output
    * array */

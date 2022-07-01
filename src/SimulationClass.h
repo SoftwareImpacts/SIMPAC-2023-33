@@ -19,18 +19,11 @@
 using namespace std;
 
 /// simulation checking flags
-enum SimulationOptions {
-  LatticeDiscreteSetUp = 0x01,
-  LatticePhysicalSetUp = 0x02,
-  LatticePatchworkSetUp = 0x04, // not used anymore
-  CvodeObjectSetUp = 0x08,
-  SimulationStarted = 0x10
-  /*OPT_B = 0x02,
-  OPT_C = 0x04,
-  OPT_D = 0x08,
-  OPT_E = 0x10,
-  OPT_F = 0x20,*/
-};
+constexpr unsigned int LatticeDiscreteSetUp = 0x01;
+constexpr unsigned int LatticePhysicalSetUp = 0x02;
+constexpr unsigned int LatticePatchworkSetUp = 0x04; // not used anymore
+constexpr unsigned int CvodeObjectSetUp = 0x08;
+constexpr unsigned int SimulationStarted = 0x10;
 
 /** @brief Simulation class to instantiate the whole walkthrough of a Simulation
  */
@@ -42,8 +35,8 @@ private:
   LatticePatch latticePatch;
   /// current time of the simulation
   sunrealtype t;
-  /// char for checking simulation flags
-  unsigned char statusFlags;
+  /// simulation status flags
+  unsigned int statusFlags;
 
 public:
   /// IC Setter object
