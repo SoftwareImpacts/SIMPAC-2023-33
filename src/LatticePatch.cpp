@@ -29,9 +29,9 @@ void Lattice::initializeCommunicator(const int nx, const int ny,
 
   // Test if process naming is the same for both communicators
   /*
-  int MYPRC;
-  MPI_Comm_rank(MPI_COMM_WORLD,&MYPRC);
-  cout<<"\r"<<my_prc<<"\t"<<MYPRC<<endl;
+  int myPrc;
+  MPI_Comm_rank(MPI_COMM_WORLD,&myPrc);
+  cout<<"\r"<<my_prc<<"\t"<<myPrc<<endl;
   */
 }
 

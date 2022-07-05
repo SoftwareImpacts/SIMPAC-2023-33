@@ -31,20 +31,20 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
 
   // MPI data
   double ts = MPI_Wtime();
-  int myPrc = 0, nprc = 0;
-  MPI_Comm_size(MPI_COMM_WORLD, &nprc);
+  int myPrc = 0, nPrc = 0;
+  MPI_Comm_size(MPI_COMM_WORLD, &nPrc);
   MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
 
   // Check feasibility of the patchwork decomposition
   if (myPrc == 0) {
-      if (disc_dim % nprc != 0) {
+      if (disc_dim % nPrc != 0) {
         errorKill("The number of lattice points must be "
                   "divisible by the number of processes.");
       }
   }
 
   // Initialize the simulation, set up the cartesian communicator
-  array<int, 3> patches = {nprc, 1, 1};
+  array<int, 3> patches = {nPrc, 1, 1};
   Simulation sim(patches[0], patches[1], patches[2], StencilOrder, periodic);
 
   // Configure the patchwork
@@ -77,11 +77,13 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
+  //MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
   //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
     if (step % outputStep == 0) {
+      MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
       sim.outAllFieldData(step);
     }
     double tn = MPI_Wtime();
@@ -104,15 +106,15 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
 
   // MPI data
   double ts = MPI_Wtime();
-  int myPrc = 0, nprc = 0; // Get process rank and number of processes
+  int myPrc = 0, nPrc = 0; // Get process rank and number of processes
   MPI_Comm_rank(MPI_COMM_WORLD,
-                &myPrc); // Return process rank, number \in [1,nprc]
+                &myPrc); // Return process rank, number \in [1,nPrc]
   MPI_Comm_size(MPI_COMM_WORLD,
-                &nprc); // Return number of processes (communicator size)
+                &nPrc); // Return number of processes (communicator size)
 
   // Check feasibility of the patchwork decomposition
   if (myPrc == 0) {
-    if (nprc != patches[0] * patches[1]) {
+    if (nPrc != patches[0] * patches[1]) {
       errorKill(
           "The number of MPI processes must match the number of patches.");
     }
@@ -155,11 +157,13 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
+  //MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
   //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
     if (step % outputStep == 0) {
+      MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
       sim.outAllFieldData(step);
     }
     double tn = MPI_Wtime();
@@ -183,15 +187,15 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
 
   // MPI data
   double ts = MPI_Wtime();
-  int myPrc = 0, nprc = 0; // Get process rank and numer of process
+  int myPrc = 0, nPrc = 0; // Get process rank and numer of process
   MPI_Comm_rank(MPI_COMM_WORLD,
                 &myPrc); // rank of the process inside the world communicator
   MPI_Comm_size(MPI_COMM_WORLD,
-                &nprc); // Size of the communicator is the number of processes
+                &nPrc); // Size of the communicator is the number of processes
 
   // Check feasibility of the patchwork decomposition
   if (myPrc == 0) {
-    if (nprc != patches[0] * patches[1] * patches[2]) {
+    if (nPrc != patches[0] * patches[1] * patches[2]) {
       errorKill(
           "The number of MPI processes must match the number of patches.");
     }
@@ -239,11 +243,13 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
+  //MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
   //sim.outAllFieldData(0);  // output of initial state
   // Conduct the propagation in space and time
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
     if (step % outputStep == 0) {
+      MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
       sim.outAllFieldData(step);
     }
     double tn = MPI_Wtime();
