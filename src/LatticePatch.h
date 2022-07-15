@@ -19,7 +19,9 @@
 
 // MPI & OpenMP
 #include <mpi.h>
+#if defined(ENABLE_OPENMP)
 #include <omp.h>
+#endif
 
 // Sundials
 #include <cvode/cvode.h>              /* prototypes for CVODE fcts. */

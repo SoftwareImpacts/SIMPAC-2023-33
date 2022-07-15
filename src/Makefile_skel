@@ -19,7 +19,7 @@ IDFLAGS = -I/path/to/sundials/instdir/include
 #############################################
 # Compiler options
 #############################################
-CXXFLAGS  = -std=c++20 -O2 -fopenmp $(IDFLAGS)
+CXXFLAGS  = -std=c++20 -O2 $(IDFLAGS)
 
 
 #############################################

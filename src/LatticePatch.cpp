@@ -333,7 +333,7 @@ inline void LatticePatch::rotateToX(sunrealtype *outArray,
                                     const sunrealtype *inArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
-#pragma omp simd // safelen(6)
+  #pragma omp simd // safelen(6)
   for (unsigned int i = 0; i < lookup.size(); i++) {
     // get correct u-vector and spatial indices along previously defined lookup
     // tables
@@ -354,7 +354,7 @@ inline void LatticePatch::rotateToY(sunrealtype *outArray,
                                     const sunrealtype *inArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
-#pragma omp simd
+  #pragma omp simd
   for (unsigned int i = 0; i < lookup.size(); i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
     ii = envelopeLattice->get_dataPointDimension() * i;
@@ -373,7 +373,7 @@ inline void LatticePatch::rotateToZ(sunrealtype *outArray,
                                     const sunrealtype *inArray,
                                     const vector<int> &lookup) {
   int ii = 0, target = 0;
-#pragma omp simd
+  #pragma omp simd
   for (unsigned int i = 0; i < lookup.size(); i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
     ii = envelopeLattice->get_dataPointDimension() * i;
@@ -399,7 +399,7 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
   int ii = 0, target = 0;
   switch (dir) {
   case 1:
-#pragma omp simd
+    #pragma omp simd
     for (int i = 0; i < uSize; i++) {
       // get correct indices in u and rotation space
       target = dPD * i;
@@ -413,7 +413,7 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
     }
     break;
   case 2:
-#pragma omp simd
+    #pragma omp simd
     for (int i = 0; i < uSize; i++) {
       target = dPD * i;
       ii = dPD * (uToy[i] - gLW);
@@ -426,7 +426,7 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
     }
     break;
   case 3:
-#pragma omp simd
+    #pragma omp simd
     for (int i = 0; i < uSize; i++) {
       target = dPD * i;
       ii = dPD * (uToz[i] - gLW);
