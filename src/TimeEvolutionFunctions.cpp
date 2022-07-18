@@ -106,7 +106,7 @@ void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   const int totalNP = data->discreteSize(); // number of points in the patch
   for (int pp = 0; pp < totalNP * 6;
-       pp += 6) { // loop oll all 6dim points in the patch
+       pp += 6) { // loop over all 6dim points in the patch
     // em field Lorentz invariants F and G
     f = 0.5 * ((Quad[0] = udata[pp] * udata[pp]) +
                (Quad[1] = udata[pp + 1] * udata[pp + 1]) +

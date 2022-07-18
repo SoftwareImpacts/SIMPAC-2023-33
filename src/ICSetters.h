@@ -1,7 +1,8 @@
-/////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 /// @file ICSetters.h
-/// @brief Declaration of the plane wave and Gaussian wave packets in 1D, 2D, 3D
-/////////////////////////////////////////////////////////////////////////////////////
+/// @brief Declaration of the plane wave and Gaussian wave packets in 1D, 2D,
+/// 3D
+///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -167,7 +168,8 @@ public:
   /// construction with default parameters
   Gauss2D(vector<sunrealtype> dis_ = {0, 0, 0},
           vector<sunrealtype> axis_ = {1, 0, 0}, sunrealtype Amp_ = 1.0l,
-          sunrealtype phip_ = 0, sunrealtype w0_ = 1e-5, sunrealtype zr_ = 4e-5,
+          sunrealtype phip_ = 0, sunrealtype w0_ = 1e-5,
+          sunrealtype zr_ = 4e-5,
           sunrealtype Ph0_ = 2e-5, sunrealtype PhA_ = 0.45e-5);
   /// function for the actual implementation in space
   void addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
@@ -254,7 +256,8 @@ public:
             sunrealtype *pTo6Space);
   /// function to fill the lattice space with initial field values
   // of all field vector containers
-  void add(sunrealtype x, sunrealtype y, sunrealtype z, sunrealtype *pTo6Space);
+  void add(sunrealtype x, sunrealtype y, sunrealtype z,
+          sunrealtype *pTo6Space);
   /// function to add plane waves in 1D to their container vector
   void addPlaneWave1D(vector<sunrealtype> k = {1, 0, 0},
                       vector<sunrealtype> p = {0, 0, 1},

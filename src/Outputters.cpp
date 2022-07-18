@@ -110,21 +110,24 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   MPI_File_open(lattice.comm,&filename[0],MPI_MODE_WRONLY|MPI_MODE_CREATE,
           MPI_INFO_NULL,&fh);
   // number of datapoints in the patch with process offset
-  const int count = latticePatch.discreteSize()*lattice.get_dataPointDimension();
+  const int count = latticePatch.discreteSize()*
+      lattice.get_dataPointDimension();
   MPI_Offset offset = lattice.my_prc*count*sizeof(MPI_SUNREALTYPE);
   // Go to offset in file and write data to it; maximal precision in
   // "native" representation
   MPI_File_set_view(fh,offset,MPI_SUNREALTYPE,MPI_SUNREALTYPE,"native",
           MPI_INFO_NULL);
   MPI_Request write_request;
-  MPI_File_iwrite_all(fh,latticePatch.uData,count,MPI_SUNREALTYPE,&write_request);
+  MPI_File_iwrite_all(fh,latticePatch.uData,count,MPI_SUNREALTYPE,
+          &write_request);
   MPI_Wait(&write_request,MPI_STATUS_IGNORE);
   MPI_File_close(&fh);
   break;
                 }
       default: {
   errorKill("No valid output style defined."
-          " Choose between (c): one csv file per process, (b) one binary file");
+          " Choose between (c): one csv file per process,"
+          " (b) one binary file");
   break;
                }
   return;

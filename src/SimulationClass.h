@@ -58,8 +58,8 @@ public:
   void setDiscreteDimensionsOfLattice(const sunindextype _tot_nx,
           const sunindextype _tot_ny, const sunindextype _tot_nz);
   /// function to set physical dimensions of the lattice
-  void setPhysicalDimensionsOfLattice(const sunrealtype lx, const sunrealtype ly,
-                                      const sunrealtype lz);
+  void setPhysicalDimensionsOfLattice(const sunrealtype lx,
+          const sunrealtype ly, const sunrealtype lz);
   /// function to initialize the Patchwork
   void initializePatchwork(const int nx, const int ny, const int nz);
   /// function to initialize the CVODE object with all requirements
@@ -71,9 +71,9 @@ public:
   void setInitialConditions();
   /// functions to add initial periodic field configurations
   void addInitialConditions(const int xm, const int ym, const int zm = 0);
-  /// function to add a periodic IC Layer in one dimension
+  /// function to add a periodic IC layer in one dimension
   void addPeriodicICLayerInX();
-  /// function to add periodic IC Layers in two dimensions
+  /// function to add periodic IC layers in two dimensions
   void addPeriodicICLayerInXY();
   /// function to advance solution in time with CVODE
   void advanceToTime(const sunrealtype &tEnd);

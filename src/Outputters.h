@@ -40,7 +40,8 @@ public:
   /// set the output style
   void set_outputStyle(const char _outputStyle);
   /// function to write data to disk in specified way
-  void outUState(const int &state, const Lattice &lattice, const LatticePatch &latticePatch);
+  void outUState(const int &state, const Lattice &lattice,
+          const LatticePatch &latticePatch);
   /// simCode getter function
   [[nodiscard]] const string &getSimCode() const { return simCode; }
 };

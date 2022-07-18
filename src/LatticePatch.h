@@ -231,11 +231,9 @@ public:
   void rotateIntoEigen(const int dir);
   /// function to derotate uAux into dudata lattice direction of x
   void derotate(int dir, sunrealtype *buffOut);
-  /// initialize ghost cells for halo exchange
-  void initializeGhostLayer();
   /// initialize buffers to save derivatives
   void initializeBuffers();
-  /// function to exchange ghost cells in uAux for the derivative
+  /// function to exchange ghost cells
   void exchangeGhostCells(const int dir);
   /// function to derive the centered values in uAux and save them noncentered
   void derive(const int dir);

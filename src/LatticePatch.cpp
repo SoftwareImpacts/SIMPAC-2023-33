@@ -1,7 +1,7 @@
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 /// @file LatticePatch.cpp
 /// @brief Costruction of the overall envelope lattice and the lattice patches
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 #include "LatticePatch.h"
 
@@ -106,8 +106,9 @@ LatticePatch::~LatticePatch() {
 }
 
 /// Set up the patchwork
-int generatePatchwork(const Lattice &envelopeLattice, LatticePatch &patchToMold,
-                      const int DLx, const int DLy, const int DLz) {
+int generatePatchwork(const Lattice &envelopeLattice,
+        LatticePatch &patchToMold,
+        const int DLx, const int DLy, const int DLz) {
   // Retrieve the ghost layer depth
   const int gLW = envelopeLattice.get_ghostLayerWidth();
   // Retrieve the data point dimension
@@ -115,7 +116,7 @@ int generatePatchwork(const Lattice &envelopeLattice, LatticePatch &patchToMold,
   // MPI process/patch
   const int my_prc = envelopeLattice.my_prc;
   // Determine thicknes of the slice
-  const sunindextype tot_NOXP = envelopeLattice.get_tot_nx(); // total points of lattice
+  const sunindextype tot_NOXP = envelopeLattice.get_tot_nx();
   const sunindextype tot_NOYP = envelopeLattice.get_tot_ny();
   const sunindextype tot_NOZP = envelopeLattice.get_tot_nz();
   // position of the patch in the lattice of patches -> process associated to
@@ -249,7 +250,7 @@ void LatticePatch::generateTranslocationLookup() {
   zTou.resize(nx * ny * mz);
   // variables for cartesian position in the 3D discrete lattice
   int px = 0, py = 0, pz = 0;
-  for (unsigned int i = 0; i < uToy.size(); i++) { // loop over all points in the patch
+  for (unsigned int i = 0; i < uToy.size(); i++) { // loop over the patch
     // calulate cartesian coordinates
     px = i % nx;
     py = (i / nx) % ny;
@@ -588,7 +589,7 @@ void LatticePatch::checkFlag(unsigned int flag) const {
       break;
     case GhostLayersInitialized:
       errorMessage = "The space for the ghost layers has not been allocated, "
-                     "please be sure to run initializeGhostLayer()";
+                     "please be sure that the ghost cells are initialized ";
       break;
     case BuffersInitialized:
       errorMessage = "The space for the buffers has not been allocated, please "
@@ -633,11 +634,10 @@ void LatticePatch::derive(const int dir) {
     errorKill("Tried to derive in the wrong direction");
     break;
   }
-  // Derive according to chosen stencil accuracy order (which determines also
-  // gLW)
+  // Derive according to chosen stencil accuracy order
   const int order = envelopeLattice->get_stencilOrder();
   switch (order) {
-  case 1:
+  case 1:  // gLW=1
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -650,7 +650,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 2:
+  case 2:  // gLW=2
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -663,7 +663,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 3:
+  case 3:  // gLW=2
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -676,7 +676,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 4:
+  case 4:  // gLW=3
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -689,7 +689,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 5:
+  case 5:  // gLW=3
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -702,7 +702,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 6:
+  case 6:  // gLW=4
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -715,7 +715,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 7:
+  case 7:  // gLW=4
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -728,7 +728,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 8:
+  case 8:  // gLW=5
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -741,7 +741,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 9:
+  case 9:  // gLW=5
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -754,7 +754,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 10:
+  case 10:  // gLW=6
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -767,7 +767,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 11:
+  case 11:  // gLW=6
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -780,7 +780,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 12:
+  case 12:  // gLW=7
     for (int i = 0; i < perpPlainSize; i++) {
       for (int j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
@@ -793,7 +793,7 @@ void LatticePatch::derive(const int dir) {
       }
     }
     break;
-  case 13:
+  case 13:  // gLW=7
     // Iterate through all points in the plane perpendicular to the given
     // direction
     for (int i = 0; i < perpPlainSize; i++) {
@@ -869,7 +869,8 @@ int check_retval(void *returnvalue, const char *funcname, int opt, int id) {
     retval = (int *)returnvalue;
     char *flagname = CVodeGetReturnFlagName(*retval);
     if (*retval < 0) {
-      fprintf(stderr, "\nSUNDIALS_ERROR(%d): %s() failed with retval = %d: %s\n\n",
+      fprintf(stderr, "\nSUNDIALS_ERROR(%d): %s() failed with retval = %d: "
+              "%s\n\n",
               id, funcname, *retval, flagname);
       return (1);
     }

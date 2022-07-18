@@ -98,10 +98,12 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
 
 /** Conduct the complete 2D simulation process */
 void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
-        const array<sunrealtype,2> phys_dims, const array<sunindextype,2> disc_dims,
+        const array<sunrealtype,2> phys_dims,
+        const array<sunindextype,2> disc_dims,
         const array<int,2> patches, const bool periodic, int *interactions,
         const sunrealtype endTime, const int numberOfSteps,
-        const string outputDirectory, const int outputStep, const char outputStyle,
+        const string outputDirectory, const int outputStep,
+        const char outputStyle,
         const vector<planewave> &planes, const vector<gaussian2D> &gaussians) {
 
   // MPI data
