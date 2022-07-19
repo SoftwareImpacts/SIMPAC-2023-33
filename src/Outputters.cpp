@@ -92,7 +92,8 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   ofs << setprecision(numeric_limits<sunrealtype>::digits10);
 
   // Walk through each lattice point
-  for (int i = 0; i < latticePatch.discreteSize() * 6; i += 6) {
+  const int totalNP = latticePatch.discreteSize();
+  for (int i = 0; i < totalNP * 6; i += 6) {
     // Six columns to contain the field data: Ex,Ey,Ez,Bx,By,Bz
     ofs << latticePatch.uData[i + 0] << "," << latticePatch.uData[i + 1] << ","
         << latticePatch.uData[i + 2] << "," << latticePatch.uData[i + 3] << ","

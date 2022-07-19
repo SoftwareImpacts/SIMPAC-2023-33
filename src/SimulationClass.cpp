@@ -143,12 +143,13 @@ void Simulation::setInitialConditions() {
   const sunrealtype dz = latticePatch.getDelta(3);
   const int nx = latticePatch.discreteSize(1);
   const int ny = latticePatch.discreteSize(2);
+  const int totalNP = latticePatch.discreteSize();
   const sunrealtype x0 = latticePatch.origin(1);
   const sunrealtype y0 = latticePatch.origin(2);
   const sunrealtype z0 = latticePatch.origin(3);
   int px = 0, py = 0, pz = 0;
   // space coordinates
-  for (int i = 0; i < latticePatch.discreteSize() * 6; i += 6) {
+  for (int i = 0; i < totalNP * 6; i += 6) {
     px = (i / 6) % nx;
     py = ((i / 6) / nx) % ny;
     pz = ((i / 6) / nx) / ny;
@@ -168,12 +169,13 @@ void Simulation::addInitialConditions(const int xm, const int ym,
   const sunrealtype dz = latticePatch.getDelta(3);
   const int nx = latticePatch.discreteSize(1);
   const int ny = latticePatch.discreteSize(2);
+  const int totalNP = latticePatch.discreteSize();
   // Correct for demanded displacement, rest as for setInitialConditions
   const sunrealtype x0 = latticePatch.origin(1) + xm*lattice.get_tot_lx();
   const sunrealtype y0 = latticePatch.origin(2) + ym*lattice.get_tot_ly();
   const sunrealtype z0 = latticePatch.origin(3) + zm*lattice.get_tot_lz();
   int px = 0, py = 0, pz = 0;
-  for (int i = 0; i < latticePatch.discreteSize() * 6; i += 6) {
+  for (int i = 0; i < totalNP * 6; i += 6) {
     px = (i / 6) % nx;
     py = ((i / 6) / nx) % ny;
     pz = ((i / 6) / nx) / ny;

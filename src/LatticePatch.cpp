@@ -240,17 +240,21 @@ void LatticePatch::generateTranslocationLookup() {
   const int my = ny + 2 * gLW;
   const int mz = nz + 2 * gLW;
   // sizes for lookup vectors
+  const int totalNP = nx * ny * nz;
+  const int haloXSize = mx * ny * nz;
+  const int haloYSize = nx * my * nz;
+  const int haloZSize = nx * ny * mz;
   // generate u->uAux
-  uTox.resize(nx * ny * nz);
-  uToy.resize(nx * ny * nz);
-  uToz.resize(nx * ny * nz);
+  uTox.resize(totalNP);
+  uToy.resize(totalNP);
+  uToz.resize(totalNP);
   // generate uAux->u with length including halo
-  xTou.resize(mx * ny * nz);
-  yTou.resize(nx * my * nz);
-  zTou.resize(nx * ny * mz);
+  xTou.resize(haloXSize);
+  yTou.resize(haloYSize);
+  zTou.resize(haloZSize);
   // variables for cartesian position in the 3D discrete lattice
   int px = 0, py = 0, pz = 0;
-  for (unsigned int i = 0; i < uToy.size(); i++) { // loop over the patch
+  for (int i = 0; i < totalNP; i++) { // loop over the patch
     // calulate cartesian coordinates
     px = i % nx;
     py = (i / nx) % ny;
@@ -266,27 +270,30 @@ void LatticePatch::generateTranslocationLookup() {
     zTou[pz + px * mz + py * mz * nx] = i;
   }
   // same for ghost layer lookup tables
-  lgcTox.resize(gLW * ny * nz);
-  rgcTox.resize(gLW * ny * nz);
-  for (unsigned int i = 0; i < lgcTox.size(); i++) {
+  const int ghostXSize = gLW * ny * nz;
+  const int ghostYSize = gLW * nx * nz;
+  const int ghostZSize = gLW * nx * ny;
+  lgcTox.resize(ghostXSize);
+  rgcTox.resize(ghostXSize);
+  for (int i = 0; i < ghostXSize; i++) {
     px = i % gLW;
     py = (i / gLW) % ny;
     pz = (i / gLW) / ny;
     lgcTox[i] = px + py * mx + pz * mx * ny;
     rgcTox[i] = px + nx + gLW + py * mx + pz * mx * ny;
   }
-  lgcToy.resize(gLW * nx * nz);
-  rgcToy.resize(gLW * nx * nz);
-  for (unsigned int i = 0; i < lgcToy.size(); i++) {
+  lgcToy.resize(ghostYSize);
+  rgcToy.resize(ghostYSize);
+  for (int i = 0; i < ghostYSize; i++) {
     px = i % nx;
     py = (i / nx) % gLW;
     pz = (i / nx) / gLW;
     lgcToy[i] = py + pz * my + px * my * nz;
     rgcToy[i] = py + ny + gLW + pz * my + px * my * nz;
   }
-  lgcToz.resize(gLW * nx * ny);
-  rgcToz.resize(gLW * nx * ny);
-  for (unsigned int i = 0; i < lgcToz.size(); i++) {
+  lgcToz.resize(ghostZSize);
+  rgcToz.resize(ghostZSize);
+  for (int i = 0; i < ghostZSize; i++) {
     px = i % nx;
     py = (i / nx) % ny;
     pz = (i / nx) / ny;
