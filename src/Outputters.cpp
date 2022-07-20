@@ -5,6 +5,9 @@
 
 #include "Outputters.h"
 
+namespace fs = std::filesystem;
+namespace chrono = std::chrono;
+
 /// Directly generate the simCode at construction
 OutputManager::OutputManager() {
   simCode = SimCodeGenerator();
@@ -13,20 +16,24 @@ OutputManager::OutputManager() {
 
 /// Generate the identifier number reverse from year to minute in the format
 /// yy-mm-dd_hh-MM-ss
-string OutputManager::SimCodeGenerator() {
+std::string OutputManager::SimCodeGenerator() {
   const chrono::time_point<chrono::system_clock> now{
       chrono::system_clock::now()};
   const chrono::year_month_day ymd{chrono::floor<chrono::days>(now)};
   const auto tod = now - chrono::floor<chrono::days>(now);
   const chrono::hh_mm_ss hms{tod};
 
-  stringstream temp;
-  temp << setfill('0') << setw(2)
+  std::stringstream temp;
+  temp << std::setfill('0') << std::setw(2)
        << static_cast<int>(ymd.year() - chrono::years(2000)) << "-"
-       << setfill('0') << setw(2) << static_cast<unsigned>(ymd.month()) << "-"
-       << setfill('0') << setw(2) << static_cast<unsigned>(ymd.day()) << "_"
-       << setfill('0') << setw(2) << hms.hours().count() << "-" << setfill('0')
-       << setw(2) << hms.minutes().count() << "-" << setfill('0') << setw(2)
+       << std::setfill('0') << std::setw(2)
+       << static_cast<unsigned>(ymd.month()) << "-"
+       << std::setfill('0') << std::setw(2)
+       << static_cast<unsigned>(ymd.day()) << "_"
+       << std::setfill('0') << std::setw(2) << hms.hours().count()
+       << "-" << std::setfill('0')
+       << std::setw(2) << hms.minutes().count() << "-"
+       << std::setfill('0') << std::setw(2)
        << hms.seconds().count();
        //<< "_" << hms.subseconds().count(); // subseconds render the filename
        // too large
@@ -37,7 +44,7 @@ string OutputManager::SimCodeGenerator() {
  * In the given directory it creates a direcory "SimResults" and a directory
  * with the simCode. The relevant part of the main file is written to a
  * "config.txt" file in that directory to log the settings. */
-void OutputManager::generateOutputFolder(const string &dir) {
+void OutputManager::generateOutputFolder(const std::string &dir) {
   // Do this only once for the first process
   int myPrc;
   MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
@@ -53,9 +60,9 @@ void OutputManager::generateOutputFolder(const string &dir) {
   Path = dir + "/SimResults/" + simCode + "/";
 
   // Logging configurations from main.cpp
-  ifstream fin("main.cpp");
-  ofstream fout(Path + "config.txt");
-  string line;
+  std::ifstream fin("main.cpp");
+  std::ofstream fout(Path + "config.txt");
+  std::string line;
   int begin=1000;
   for (int i = 1; !fin.eof(); i++) {
     getline(fin, line);
@@ -65,7 +72,7 @@ void OutputManager::generateOutputFolder(const string &dir) {
     if (i < begin) {
       continue;
     }
-    fout << line << endl;
+    fout << line << std::endl;
     if (line.starts_with("    //------------- E")) {
         break;
     }
@@ -86,10 +93,11 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
         const LatticePatch &latticePatch) {
   switch(outputStyle){
       case 'c': { // one csv file per process
-  ofstream ofs;
-  ofs.open(Path + to_string(state) + "_" + to_string(lattice.my_prc) + ".csv");
+                    std::ofstream ofs;
+  ofs.open(Path + std::to_string(state) + "_"
+          + std::to_string(lattice.my_prc) + ".csv");
   // Precision of sunrealtype in significant decimal digits; 15 for IEEE double
-  ofs << setprecision(numeric_limits<sunrealtype>::digits10);
+  ofs << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
 
   // Walk through each lattice point
   const int totalNP = latticePatch.discreteSize();
@@ -98,7 +106,7 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
     ofs << latticePatch.uData[i + 0] << "," << latticePatch.uData[i + 1] << ","
         << latticePatch.uData[i + 2] << "," << latticePatch.uData[i + 3] << ","
         << latticePatch.uData[i + 4] << "," << latticePatch.uData[i + 5]
-        << endl;
+        << std::endl;
   }
   ofs.close();
   break;
@@ -107,7 +115,7 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
       case 'b': { // a single binary file
   // Open the output file
   MPI_File fh;
-  const string filename = Path+to_string(state);
+  const std::string filename = Path+std::to_string(state);
   MPI_File_open(lattice.comm,&filename[0],MPI_MODE_WRONLY|MPI_MODE_CREATE,
           MPI_INFO_NULL,&fh);
   // number of datapoints in the patch with process offset

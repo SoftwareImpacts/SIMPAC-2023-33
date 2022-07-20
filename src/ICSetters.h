@@ -15,8 +15,6 @@
 
 #include <sundials/sundials_types.h> /* definition of type sunrealtype */
 
-using namespace std;
-
 /** @brief super-class for plane waves
  *
  * They are given in the form \f$ \vec{E} = \vec{E}_0 \ \cos \left( \vec{k}
@@ -47,9 +45,9 @@ protected:
 class PlaneWave1D : public PlaneWave {
 public:
   /// construction with default parameters
-  PlaneWave1D(vector<sunrealtype> k = {1, 0, 0},
-              vector<sunrealtype> p = {0, 0, 1},
-              vector<sunrealtype> phi = {0, 0, 0});
+  PlaneWave1D(std::vector<sunrealtype> k = {1, 0, 0},
+              std::vector<sunrealtype> p = {0, 0, 1},
+              std::vector<sunrealtype> phi = {0, 0, 0});
   /// function for the actual implementation in the lattice
   void addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
                   sunrealtype *pTo6Space) const;
@@ -59,9 +57,9 @@ public:
 class PlaneWave2D : public PlaneWave {
 public:
   /// construction with default parameters
-  PlaneWave2D(vector<sunrealtype> k = {1, 0, 0},
-              vector<sunrealtype> p = {0, 0, 1},
-              vector<sunrealtype> phi = {0, 0, 0});
+  PlaneWave2D(std::vector<sunrealtype> k = {1, 0, 0},
+              std::vector<sunrealtype> p = {0, 0, 1},
+              std::vector<sunrealtype> phi = {0, 0, 0});
   /// function for the actual implementation in the lattice
   void addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
                   sunrealtype *pTo6Space) const;
@@ -71,9 +69,9 @@ public:
 class PlaneWave3D : public PlaneWave {
 public:
   /// construction with default parameters
-  PlaneWave3D(vector<sunrealtype> k = {1, 0, 0},
-              vector<sunrealtype> p = {0, 0, 1},
-              vector<sunrealtype> phi = {0, 0, 0});
+  PlaneWave3D(std::vector<sunrealtype> k = {1, 0, 0},
+              std::vector<sunrealtype> p = {0, 0, 1},
+              std::vector<sunrealtype> phi = {0, 0, 0});
   /// function for the actual implementation in space
   void addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
                   sunrealtype *pTo6Space) const;
@@ -115,9 +113,10 @@ private:
 
 public:
   /// construction with default parameters
-  Gauss1D(vector<sunrealtype> k = {1, 0, 0}, vector<sunrealtype> p = {0, 0, 1},
-          vector<sunrealtype> xo = {0, 0, 0}, sunrealtype phig_ = 1.0l,
-          vector<sunrealtype> phi = {0, 0, 0});
+  Gauss1D(std::vector<sunrealtype> k = {1, 0, 0},
+          std::vector<sunrealtype> p = {0, 0, 1},
+          std::vector<sunrealtype> xo = {0, 0, 0}, sunrealtype phig_ = 1.0l,
+          std::vector<sunrealtype> phi = {0, 0, 0});
   /// function for the actual implementation in space
   void addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
                   sunrealtype *pTo6Space) const;
@@ -141,9 +140,9 @@ public:
 class Gauss2D {
 private:
   /// distance maximum to origin
-  vector<sunrealtype> dis;
+  std::vector<sunrealtype> dis;
   /// normalized propagation axis
-  vector<sunrealtype> axis;
+  std::vector<sunrealtype> axis;
   /// amplitude \f$ A\f$
   sunrealtype Amp;
   /// polarization rotation from TE-mode around propagation direction
@@ -166,8 +165,8 @@ private:
 
 public:
   /// construction with default parameters
-  Gauss2D(vector<sunrealtype> dis_ = {0, 0, 0},
-          vector<sunrealtype> axis_ = {1, 0, 0}, sunrealtype Amp_ = 1.0l,
+  Gauss2D(std::vector<sunrealtype> dis_ = {0, 0, 0},
+          std::vector<sunrealtype> axis_ = {1, 0, 0}, sunrealtype Amp_ = 1.0l,
           sunrealtype phip_ = 0, sunrealtype w0_ = 1e-5,
           sunrealtype zr_ = 4e-5,
           sunrealtype Ph0_ = 2e-5, sunrealtype PhA_ = 0.45e-5);
@@ -194,16 +193,16 @@ public:
 class Gauss3D {
 private:
   /// distance maximum to origin
-  vector<sunrealtype> dis;
+  std::vector<sunrealtype> dis;
   /// normalized propagation axis
-  vector<sunrealtype> axis;
+  std::vector<sunrealtype> axis;
   /// amplitude \f$ A\f$
   sunrealtype Amp;
   /// polarization rotation from TE-mode around propagation direction
   // that determines \f$ \vec{\epsilon}\f$ above
   sunrealtype phip;
   // polarization
-  // vector<sunrealtype> pol;
+  // std::vector<sunrealtype> pol;
   /// taille \f$ \omega_0 \f$
   sunrealtype w0;
   /// Rayleigh length \f$ z_R = \pi \omega_0^2 / \lambda \f$
@@ -221,8 +220,8 @@ private:
 
 public:
   /// construction with default parameters
-  Gauss3D(vector<sunrealtype> dis_ = {0, 0, 0},
-          vector<sunrealtype> axis_ = {1, 0, 0}, sunrealtype Amp_ = 1.0l,
+  Gauss3D(std::vector<sunrealtype> dis_ = {0, 0, 0},
+          std::vector<sunrealtype> axis_ = {1, 0, 0}, sunrealtype Amp_ = 1.0l,
           sunrealtype phip_ = 0,
           // sunrealtype pol_={0,0,1},
           sunrealtype w0_ = 1e-5, sunrealtype zr_ = 4e-5,
@@ -238,17 +237,17 @@ public:
 class ICSetter {
 private:
   /// container vector for plane waves in 1D
-  vector<PlaneWave1D> planeWaves1D;
+  std::vector<PlaneWave1D> planeWaves1D;
   /// container vector for plane waves in 2D
-  vector<PlaneWave2D> planeWaves2D;
+  std::vector<PlaneWave2D> planeWaves2D;
   /// container vector for plane waves in 3D
-  vector<PlaneWave3D> planeWaves3D;
+  std::vector<PlaneWave3D> planeWaves3D;
   /// container vector for Gaussian waves in 1D
-  vector<Gauss1D> gauss1Ds;
+  std::vector<Gauss1D> gauss1Ds;
   /// container vector for Gaussian waves in 2D
-  vector<Gauss2D> gauss2Ds;
+  std::vector<Gauss2D> gauss2Ds;
   /// container vector for Gaussian waves in 3D
-  vector<Gauss3D> gauss3Ds;
+  std::vector<Gauss3D> gauss3Ds;
 
 public:
   /// function to set all coordinates to zero and then `add` the field values
@@ -259,31 +258,32 @@ public:
   void add(sunrealtype x, sunrealtype y, sunrealtype z,
           sunrealtype *pTo6Space);
   /// function to add plane waves in 1D to their container vector
-  void addPlaneWave1D(vector<sunrealtype> k = {1, 0, 0},
-                      vector<sunrealtype> p = {0, 0, 1},
-                      vector<sunrealtype> phi = {0, 0, 0});
+  void addPlaneWave1D(std::vector<sunrealtype> k = {1, 0, 0},
+                      std::vector<sunrealtype> p = {0, 0, 1},
+                      std::vector<sunrealtype> phi = {0, 0, 0});
   /// function to add plane waves in 2D to their container vector
-  void addPlaneWave2D(vector<sunrealtype> k = {1, 0, 0},
-                      vector<sunrealtype> p = {0, 0, 1},
-                      vector<sunrealtype> phi = {0, 0, 0});
+  void addPlaneWave2D(std::vector<sunrealtype> k = {1, 0, 0},
+                      std::vector<sunrealtype> p = {0, 0, 1},
+                      std::vector<sunrealtype> phi = {0, 0, 0});
   /// function to add plane waves in 3D to their container vector
-  void addPlaneWave3D(vector<sunrealtype> k = {1, 0, 0},
-                      vector<sunrealtype> p = {0, 0, 1},
-                      vector<sunrealtype> phi = {0, 0, 0});
+  void addPlaneWave3D(std::vector<sunrealtype> k = {1, 0, 0},
+                      std::vector<sunrealtype> p = {0, 0, 1},
+                      std::vector<sunrealtype> phi = {0, 0, 0});
   /// function to add Gaussian waves in 1D to their container vector
-  void addGauss1D(vector<sunrealtype> k = {1, 0, 0},
-                  vector<sunrealtype> p = {0, 0, 1},
-                  vector<sunrealtype> xo = {0, 0, 0}, sunrealtype phig_ = 1.0l,
-                  vector<sunrealtype> phi = {0, 0, 0});
+  void addGauss1D(std::vector<sunrealtype> k = {1, 0, 0},
+                  std::vector<sunrealtype> p = {0, 0, 1},
+                  std::vector<sunrealtype> xo = {0, 0, 0},
+                  sunrealtype phig_ = 1.0l,
+                  std::vector<sunrealtype> phi = {0, 0, 0});
   /// function to add Gaussian waves in 2D to their container vector
-  void addGauss2D(vector<sunrealtype> dis_ = {0, 0, 0},
-                  vector<sunrealtype> axis_ = {1, 0, 0},
+  void addGauss2D(std::vector<sunrealtype> dis_ = {0, 0, 0},
+                  std::vector<sunrealtype> axis_ = {1, 0, 0},
                   sunrealtype Amp_ = 1.0l, sunrealtype phip_ = 0,
                   sunrealtype w0_ = 1e-5, sunrealtype zr_ = 4e-5,
                   sunrealtype Ph0_ = 2e-5, sunrealtype PhA_ = 0.45e-5);
   /// function to add Gaussian waves in 3D to their container vector
-  void addGauss3D(vector<sunrealtype> dis_ = {0, 0, 0},
-                  vector<sunrealtype> axis_ = {1, 0, 0},
+  void addGauss3D(std::vector<sunrealtype> dis_ = {0, 0, 0},
+                  std::vector<sunrealtype> axis_ = {1, 0, 0},
                   sunrealtype Amp_ = 1.0l, sunrealtype phip_ = 0,
                   sunrealtype w0_ = 1e-5, sunrealtype zr_ = 4e-5,
                   sunrealtype Ph0_ = 2e-5, sunrealtype PhA_ = 0.45e-5);

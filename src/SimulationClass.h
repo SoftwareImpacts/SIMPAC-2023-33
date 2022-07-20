@@ -16,8 +16,6 @@
 #include "Outputters.h"
 #include "TimeEvolutionFunctions.h"
 
-using namespace std;
-
 /// simulation checking flags
 constexpr unsigned int LatticeDiscreteSetUp = 0x01;
 constexpr unsigned int LatticePhysicalSetUp = 0x02;

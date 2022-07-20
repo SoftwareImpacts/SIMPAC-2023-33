@@ -9,8 +9,9 @@
 #include <math.h>
 
 /** PlaneWave1D construction with */
-PlaneWave1D::PlaneWave1D(vector<sunrealtype> k, vector<sunrealtype> p,
-                         vector<sunrealtype> phi) {
+PlaneWave1D::PlaneWave1D(std::vector<sunrealtype> k,
+        std::vector<sunrealtype> p,
+        std::vector<sunrealtype> phi) {
   kx = k[0]; /** - wavevectors \f$ k_x \f$ */
   ky = k[1]; /** - \f$ k_y \f$ */
   kz = k[2]; /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$ */
@@ -30,9 +31,9 @@ void PlaneWave1D::addToSpace(const sunrealtype x, const sunrealtype y,
   const sunrealtype wavelength =
       sqrt(kx * kx + ky * ky + kz * kz); /* \f$ 1/\lambda \f$ */
   const sunrealtype kScalarX = (kx * x + ky * y + kz * z) * 2 *
-      numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
+      std::numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
   // Plane wave definition
-  const array<sunrealtype, 3> E{{                       /* E-field vector */
+  const std::array<sunrealtype, 3> E{{                  /* E-field vector */
                            px * cos(kScalarX - phix),   /* \f$ E_x \f$ */
                            py * cos(kScalarX - phiy),   /* \f$ E_y \f$ */
                            pz * cos(kScalarX - phiz)}}; /* \f$ E_z \f$ */
@@ -47,8 +48,9 @@ void PlaneWave1D::addToSpace(const sunrealtype x, const sunrealtype y,
 }
 
 /** PlaneWave2D construction with */
-PlaneWave2D::PlaneWave2D(vector<sunrealtype> k, vector<sunrealtype> p,
-                         vector<sunrealtype> phi) {
+PlaneWave2D::PlaneWave2D(std::vector<sunrealtype> k,
+        std::vector<sunrealtype> p,
+        std::vector<sunrealtype> phi) {
   kx = k[0]; /** - wavevectors \f$ k_x \f$ */
   ky = k[1]; /** - \f$ k_y \f$ */
   kz = k[2]; /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$*/
@@ -67,9 +69,9 @@ void PlaneWave2D::addToSpace(const sunrealtype x, const sunrealtype y,
   const sunrealtype wavelength =
       sqrt(kx * kx + ky * ky + kz * kz); /* \f$ 1/\lambda \f$ */
   const sunrealtype kScalarX = (kx * x + ky * y + kz * z) * 2 *
-      numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
+      std::numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
   // Plane wave definition
-  const array<sunrealtype, 3> E{{                       /* E-field vector */
+  const std::array<sunrealtype, 3> E{{                  /* E-field vector */
                            px * cos(kScalarX - phix),   /* \f$ E_x \f$ */
                            py * cos(kScalarX - phiy),   /* \f$ E_y \f$ */
                            pz * cos(kScalarX - phiz)}}; /* \f$ E_z \f$ */
@@ -84,8 +86,9 @@ void PlaneWave2D::addToSpace(const sunrealtype x, const sunrealtype y,
 }
 
 /** PlaneWave3D construction with */
-PlaneWave3D::PlaneWave3D(vector<sunrealtype> k, vector<sunrealtype> p,
-                         vector<sunrealtype> phi) {
+PlaneWave3D::PlaneWave3D(std::vector<sunrealtype> k,
+        std::vector<sunrealtype> p,
+        std::vector<sunrealtype> phi) {
   kx = k[0];     /** - wavevectors \f$ k_x \f$ */
   ky = k[1];     /** - \f$ k_y \f$ */
   kz = k[2];     /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$ */
@@ -103,9 +106,9 @@ void PlaneWave3D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   const sunrealtype wavelength =
       sqrt(kx * kx + ky * ky + kz * kz); /* \f$ 1/\lambda \f$ */
   const sunrealtype kScalarX = (kx * x + ky * y + kz * z) * 2 *
-      numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
+      std::numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
   // Plane wave definition
-  const array<sunrealtype, 3> E{{/* E-field vector \f$ \vec{E}\f$*/
+  const std::array<sunrealtype, 3> E{{/* E-field vector \f$ \vec{E}\f$*/
                            px * cos(kScalarX - phix),   /* \f$ E_x \f$ */
                            py * cos(kScalarX - phiy),   /* \f$ E_y \f$ */
                            pz * cos(kScalarX - phiz)}}; /* \f$ E_z \f$ */
@@ -120,9 +123,9 @@ void PlaneWave3D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Gauss1D construction with */
-Gauss1D::Gauss1D(vector<sunrealtype> k, vector<sunrealtype> p,
-                 vector<sunrealtype> xo, sunrealtype phig_,
-                 vector<sunrealtype> phi) {
+Gauss1D::Gauss1D(std::vector<sunrealtype> k, std::vector<sunrealtype> p,
+                 std::vector<sunrealtype> xo, sunrealtype phig_,
+                 std::vector<sunrealtype> phi) {
   kx = k[0];     /** - wavevectors \f$ k_x \f$ */
   ky = k[1];     /** - \f$ k_y \f$ */
   kz = k[2];     /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$*/
@@ -147,11 +150,11 @@ void Gauss1D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   y = y - x0y; /* y-coordinate minus shift from origin */
   z = z - x0z; /* z-coordinate minus shift from origin */
   const sunrealtype kScalarX = (kx * x + ky * y + kz * z) * 2 *
-      numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
+      std::numbers::pi; /* \f$ 2\pi \ \vec{k} \cdot \vec{x} \f$ */
   const sunrealtype envelopeAmp =
       exp(-(x * x + y * y + z * z) / phig / phig); /* enveloping Gauss shape */
   // Gaussian wave definition
-  const array<sunrealtype, 3> E{
+  const std::array<sunrealtype, 3> E{
       {                                           /* E-field vector */
        px * cos(kScalarX - phix) * envelopeAmp,   /* \f$ E_x \f$ */
        py * cos(kScalarX - phiy) * envelopeAmp,   /* \f$ E_y \f$ */
@@ -167,7 +170,7 @@ void Gauss1D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Gauss2D construction with */
-Gauss2D::Gauss2D(vector<sunrealtype> dis_, vector<sunrealtype> axis_,
+Gauss2D::Gauss2D(std::vector<sunrealtype> dis_, std::vector<sunrealtype> axis_,
                  sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
                  sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_) {
   dis = dis_;           /** - center it approaches */
@@ -180,7 +183,7 @@ Gauss2D::Gauss2D(vector<sunrealtype> dis_, vector<sunrealtype> axis_,
   PhA = PhA_;           /** - beam length */
   A1 = Amp * cos(phip); // amplitude in z-direction
   A2 = Amp * sin(phip); // amplitude on xy-plane
-  lambda = numbers::pi * w0 * w0 / zr; // formula for wavelength
+  lambda = std::numbers::pi * w0 * w0 / zr; // formula for wavelength
 }
 
 void Gauss2D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
@@ -211,7 +214,7 @@ void Gauss2D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   else
     Rz = 1e308;
   // wavenumber \f$ k = 2\pi/\lambda \f$
-  const sunrealtype k = 2 * numbers::pi / lambda;
+  const sunrealtype k = 2 * std::numbers::pi / lambda;
   // \f$ \Phi_F = kr^2/(2*R(z))+g(z)-kz_g \f$
   const sunrealtype PhF =
       -k * r * r / (2 * Rz) + gz - k * zg; // to be inserted into cosine
@@ -241,9 +244,9 @@ void Gauss2D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Gauss3D construction with */
-Gauss3D::Gauss3D(vector<sunrealtype> dis_, vector<sunrealtype> axis_,
+Gauss3D::Gauss3D(std::vector<sunrealtype> dis_, std::vector<sunrealtype> axis_,
                  sunrealtype Amp_,
-                 // vector<sunrealtype> pol_,
+                 // std::vector<sunrealtype> pol_,
                  sunrealtype phip_, sunrealtype w0_, sunrealtype zr_,
                  sunrealtype Ph0_, sunrealtype PhA_) {
   dis = dis_;   /** - center it approaches */
@@ -255,7 +258,7 @@ Gauss3D::Gauss3D(vector<sunrealtype> dis_, vector<sunrealtype> axis_,
   zr = zr_;     /** - Rayleigh length */
   Ph0 = Ph0_;   /** - beam center */
   PhA = PhA_;   /** - beam length */
-  lambda = numbers::pi * w0 * w0 / zr;
+  lambda = std::numbers::pi * w0 * w0 / zr;
   A1 = Amp * cos(phip);
   A2 = Amp * sin(phip);
 }
@@ -275,7 +278,7 @@ void Gauss3D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
     Rz = zg * (1 + (zr * zr / zg / zg));
   else
     Rz = 1e308;
-  const sunrealtype k = 2 * numbers::pi / lambda;
+  const sunrealtype k = 2 * std::numbers::pi / lambda;
   const sunrealtype PhF = -k * r * r / (2 * Rz) + gz - k * zg;
   const sunrealtype G3D = (w0 / wz) * exp(-r * r / wz / wz) *
                     exp(-(zg - Ph0) * (zg - Ph0) / PhA / PhA) * cos(PhF);
@@ -319,43 +322,49 @@ void ICSetter::add(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Add plane waves in 1D to their container vector */
-void ICSetter::addPlaneWave1D(vector<sunrealtype> k, vector<sunrealtype> p,
-                              vector<sunrealtype> phi) {
+void ICSetter::addPlaneWave1D(std::vector<sunrealtype> k,
+        std::vector<sunrealtype> p,
+        std::vector<sunrealtype> phi) {
   planeWaves1D.emplace_back(PlaneWave1D(k, p, phi));
 }
 
 /** Add plane waves in 2D to their container vector */
-void ICSetter::addPlaneWave2D(vector<sunrealtype> k, vector<sunrealtype> p,
-                              vector<sunrealtype> phi) {
+void ICSetter::addPlaneWave2D(std::vector<sunrealtype> k,
+        std::vector<sunrealtype> p,
+        std::vector<sunrealtype> phi) {
   planeWaves2D.emplace_back(PlaneWave2D(k, p, phi));
 }
 
 /** Add plane waves in 3D to their container vector */
-void ICSetter::addPlaneWave3D(vector<sunrealtype> k, vector<sunrealtype> p,
-                              vector<sunrealtype> phi) {
+void ICSetter::addPlaneWave3D(std::vector<sunrealtype> k,
+        std::vector<sunrealtype> p,
+        std::vector<sunrealtype> phi) {
   planeWaves3D.emplace_back(PlaneWave3D(k, p, phi));
 }
 
 /** Add Gaussian waves in 1D to their container vector */
-void ICSetter::addGauss1D(vector<sunrealtype> k, vector<sunrealtype> p,
-                          vector<sunrealtype> xo, sunrealtype phig_,
-                          vector<sunrealtype> phi) {
+void ICSetter::addGauss1D(std::vector<sunrealtype> k,
+        std::vector<sunrealtype> p,
+        std::vector<sunrealtype> xo, sunrealtype phig_,
+        std::vector<sunrealtype> phi) {
   gauss1Ds.emplace_back(Gauss1D(k, p, xo, phig_, phi));
 }
 
 /** Add Gaussian waves in 2D to their container vector */
-void ICSetter::addGauss2D(vector<sunrealtype> dis_, vector<sunrealtype> axis_,
-                          sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
-                          sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_)
+void ICSetter::addGauss2D(std::vector<sunrealtype> dis_,
+        std::vector<sunrealtype> axis_,
+        sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
+        sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_)
 {
   gauss2Ds.emplace_back(
       Gauss2D(dis_, axis_, Amp_, phip_, w0_, zr_, Ph0_, PhA_));
 }
 
 /** Add Gaussian waves in 3D to their container vector */
-void ICSetter::addGauss3D(vector<sunrealtype> dis_, vector<sunrealtype> axis_,
-                          sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
-                          sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_)
+void ICSetter::addGauss3D(std::vector<sunrealtype> dis_,
+        std::vector<sunrealtype> axis_,
+        sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
+        sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_)
 {
   gauss3Ds.emplace_back(
       Gauss3D(dis_, axis_, Amp_, phip_, w0_, zr_, Ph0_, PhA_));

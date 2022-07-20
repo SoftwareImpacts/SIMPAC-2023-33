@@ -93,11 +93,11 @@ void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   // derivatives of HE Lagrangian w.r.t. field invariants
   static sunrealtype lf, lff, lfg, lg, lgg;
   // matrix to hold derivatives of polarization and magnetization
-  static array<sunrealtype, 21> JMM;
+  static std::array<sunrealtype, 21> JMM;
   // array to hold E^2 and B^2 components
-  static array<sunrealtype, 6> Quad;
+  static std::array<sunrealtype, 6> Quad;
   // array to hold intermediate temp. derivatives of E and B
-  static array<sunrealtype, 6> h;
+  static std::array<sunrealtype, 6> h;
   // determinant needed for explicit matrix inversion
   static sunrealtype detC = NAN;
   // pointers to field values and their temp. derivatives
@@ -324,9 +324,9 @@ void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   static sunrealtype f, g;
   static sunrealtype lf, lff, lfg, lg, lgg;
-  static array<sunrealtype, 21> JMM;
-  static array<sunrealtype, 6> Quad;
-  static array<sunrealtype, 6> h;
+  static std::array<sunrealtype, 21> JMM;
+  static std::array<sunrealtype, 6> Quad;
+  static std::array<sunrealtype, 6> h;
   static sunrealtype detC;
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
@@ -538,9 +538,9 @@ void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   static sunrealtype f, g;
   static sunrealtype lf, lff, lfg, lg, lgg;
-  static array<sunrealtype, 21> JMM;
-  static array<sunrealtype, 6> Quad;
-  static array<sunrealtype, 6> h;
+  static std::array<sunrealtype, 21> JMM;
+  static std::array<sunrealtype, 6> Quad;
+  static std::array<sunrealtype, 6> h;
   static sunrealtype detC = NAN;
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);

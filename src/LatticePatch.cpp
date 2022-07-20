@@ -31,7 +31,7 @@ void Lattice::initializeCommunicator(const int nx, const int ny,
   /*
   int myPrc;
   MPI_Comm_rank(MPI_COMM_WORLD,&myPrc);
-  cout<<"\r"<<my_prc<<"\t"<<myPrc<<endl;
+  cout<<"\r"<<my_prc<<"\t"<<myPrc<<std::endl;
   */
 }
 
@@ -167,7 +167,7 @@ int generatePatchwork(const Lattice &envelopeLattice,
   // Allocate space for auxiliary uAux so that the lattice and all possible
   // directions of ghost Layers fit
   const int s1 = patchToMold.nx, s2 = patchToMold.ny, s3 = patchToMold.nz;
-  const int s_min = min(s1, min(s2, s3));
+  const int s_min = std::min(s1, std::min(s2, s3));
   patchToMold.uAux.resize(s1 * s2 * s3 / s_min * (s_min + 2 * gLW) * dPD);
   patchToMold.uAuxData = &patchToMold.uAux[0];
   patchToMold.envelopeLattice = &envelopeLattice;
@@ -339,7 +339,7 @@ void LatticePatch::rotateIntoEigen(const int dir) {
 /// eigenspace of Z matrix and write to auxiliary vector
 inline void LatticePatch::rotateToX(sunrealtype *outArray,
                                     const sunrealtype *inArray,
-                                    const vector<int> &lookup) {
+                                    const std::vector<int> &lookup) {
   int ii = 0, target = 0;
   #pragma omp simd // safelen(6)
   for (unsigned int i = 0; i < lookup.size(); i++) {
@@ -360,7 +360,7 @@ inline void LatticePatch::rotateToX(sunrealtype *outArray,
 /// eigenspace of Z matrix and write to auxiliary vector
 inline void LatticePatch::rotateToY(sunrealtype *outArray,
                                     const sunrealtype *inArray,
-                                    const vector<int> &lookup) {
+                                    const std::vector<int> &lookup) {
   int ii = 0, target = 0;
   #pragma omp simd
   for (unsigned int i = 0; i < lookup.size(); i++) {
@@ -379,7 +379,7 @@ inline void LatticePatch::rotateToY(sunrealtype *outArray,
 /// eigenspace of Z matrix and write to auxiliary vector
 inline void LatticePatch::rotateToZ(sunrealtype *outArray,
                                     const sunrealtype *inArray,
-                                    const vector<int> &lookup) {
+                                    const std::vector<int> &lookup) {
   int ii = 0, target = 0;
   #pragma omp simd
   for (unsigned int i = 0; i < lookup.size(); i++) {
@@ -534,9 +534,9 @@ void LatticePatch::exchangeGhostCells(const int dir) {
       */
       // perhaps more safe but slower copy operation (contained in algorithm
       // header) performance highly system dependent
-      copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellLeftToSend[li]);
+      std::copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellLeftToSend[li]);
       ui += distToRight * dPD;
-      copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellRightToSend[li]);
+      std::copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellRightToSend[li]);
 
       // increase halo index by transferred items per y-iteration step
       // (x-length)
@@ -584,7 +584,7 @@ void LatticePatch::exchangeGhostCells(const int dir) {
 /// Check if all flags are set
 void LatticePatch::checkFlag(unsigned int flag) const {
   if (!(statusFlags & flag)) {
-    string errorMessage;
+    std::string errorMessage;
     switch (flag) {
     case FLatticePatchSetUp:
       errorMessage = "The Lattice patch was not set up please make sure to "
@@ -829,11 +829,12 @@ void LatticePatch::derive(const int dir) {
 ///////// Helper functions /////////
 
 /// Print a specific error message to stderr
-void errorKill(const string & errorMessage) {
+void errorKill(const std::string & errorMessage) {
   int my_prc=0;
   MPI_Comm_rank(MPI_COMM_WORLD,&my_prc);
   if (my_prc==0) {
-    cerr << endl << "Error: " << errorMessage << "\nAborting..." << endl;
+    std::cerr << std::endl << "Error: " << errorMessage
+        << "\nAborting..." << std::endl;
     MPI_Abort(MPI_COMM_WORLD, 1);
     return;
   }
@@ -846,8 +847,8 @@ int check_error(int error, const char *funcname, int id) {
     if( error != MPI_SUCCESS ) {
         MPI_Error_class(error,&eclass);
         MPI_Error_string(error,errorstring,&len);
-        cerr << "MPI Error(process " << id << ") in " << funcname << " : "
-            << errorstring << ", from class " << eclass << endl;
+        std::cerr << "MPI Error(process " << id << ") in " << funcname << " : "
+            << errorstring << ", from class " << eclass << std::endl;
         return 1;
     }
     return 0;

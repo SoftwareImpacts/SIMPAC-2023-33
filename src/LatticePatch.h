@@ -31,8 +31,6 @@
 // stencils
 #include "DerivationStencils.h"
 
-using namespace std;
-
 // lattice construction checking flag
 constexpr unsigned int FLatticeDimensionSet = 0x01;
 
@@ -159,22 +157,22 @@ private:
   const Lattice *envelopeLattice;
   ///@{
   /** translocation lookup table */
-  vector<int> uTox, uToy, uToz, xTou, yTou, zTou;
+  std::vector<int> uTox, uToy, uToz, xTou, yTou, zTou;
   ///@}
   /// aid (auxilliarly) vector including ghost cells to compute the derivatives
-  vector<sunrealtype> uAux;
+  std::vector<sunrealtype> uAux;
   ///@{
   /** buffer to save spatial derivative values */
-  vector<sunrealtype> buffX, buffY, buffZ;
+  std::vector<sunrealtype> buffX, buffY, buffZ;
   ///@}
   ///@{
   /** buffer for passing ghost cell data */
-  vector<sunrealtype> ghostCellLeft, ghostCellRight, ghostCellLeftToSend,
+  std::vector<sunrealtype> ghostCellLeft, ghostCellRight, ghostCellLeftToSend,
       ghostCellRightToSend, ghostCellsToSend, ghostCells;
   ///@}
   ///@{
   /** ghost cell translocation lookup table */
-  vector<int> lgcTox, rgcTox, lgcToy, rgcToy, lgcToz, rgcToz;
+  std::vector<int> lgcTox, rgcTox, lgcToy, rgcToy, lgcToz, rgcToz;
   ///@}
   /** lattice patch status flags */
   unsigned int statusFlags;
@@ -182,11 +180,11 @@ private:
   /** rotate and translocate an input array according to a lookup into an output
    * array */
   inline void rotateToX(sunrealtype *outArray, const sunrealtype *inArray,
-                        const vector<int> &lookup);
+                        const std::vector<int> &lookup);
   inline void rotateToY(sunrealtype *outArray, const sunrealtype *inArray,
-                        const vector<int> &lookup);
+                        const std::vector<int> &lookup);
   inline void rotateToZ(sunrealtype *outArray, const sunrealtype *inArray,
-                        const vector<int> &lookup);
+                        const std::vector<int> &lookup);
   ///@}
 public:
   /// ID of the LatticePatch, corresponds to process number
@@ -207,7 +205,7 @@ public:
   sunrealtype *gCLData, *gCRData;
   ///@}
   /// pointer to spatial derivative data buffers
-  array<sunrealtype *, 3> buffData;
+  std::array<sunrealtype *, 3> buffData;
   /// constructor setting up a default first lattice patch
   LatticePatch();
   /// destructor freeing parallel vectors
@@ -242,7 +240,7 @@ public:
 };
 
 /// helper function for error messages
-void errorKill(const string & errorMessage);
+void errorKill(const std::string & errorMessage);
 
 /// helper function to check MPI errors
 int check_error(int error, const char *funcname, int id);

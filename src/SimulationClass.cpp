@@ -227,7 +227,7 @@ void Simulation::outAllFieldData(const int & state) {
 /// Check the presence configuration flags
 void Simulation::checkFlag(unsigned int flag) const {
   if (!(statusFlags & flag)) {
-    string errorMessage;
+    std::string errorMessage;
     switch (flag) {
     case LatticeDiscreteSetUp:
       errorMessage = "The discrete size of the Simulation has not been set up";
@@ -257,7 +257,7 @@ void Simulation::checkFlag(unsigned int flag) const {
 /// Check the absence of configuration flags
 void Simulation::checkNoFlag(unsigned int flag) const {
   if ((statusFlags & flag)) {
-    string errorMessage;
+    std::string errorMessage;
     switch (flag) {
     case LatticeDiscreteSetUp:
       errorMessage =

@@ -4,6 +4,7 @@
 
 #include "SimulationFunctions.h"   /* complete simulation functions and all headers */
 
+using namespace std;
 
 int main(int argc, char *argv[])
 {

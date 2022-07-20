@@ -6,8 +6,6 @@
 
 #include "SimulationFunctions.h"
 
-using namespace std;
-
 /** Calculate and print the total simulation time */
 inline void timer(double &t1, double &t2) {
   printf("Elapsed time:  %fs\n", (t2 - t1));
@@ -20,14 +18,14 @@ void (*TimeEvolution::TimeEvolver)(LatticePatch *, N_Vector, N_Vector,
                                    int *) = nonlinear1DProp;
 
 /** Conduct the complete 1D simulation process */
-void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
+void Sim1D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
         const sunrealtype phys_dim, const sunindextype disc_dim,
         const bool periodic, int *interactions,
         const sunrealtype endTime, const int numberOfSteps,
-        const string outputDirectory, const int outputStep,
+        const std::string outputDirectory, const int outputStep,
         const char outputStyle,
-        const vector<planewave> &planes,
-        const vector<gaussian1D> &gaussians) {
+        const std::vector<planewave> &planes,
+        const std::vector<gaussian1D> &gaussians) {
 
   // MPI data
   double ts = MPI_Wtime();
@@ -44,7 +42,7 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   }
 
   // Initialize the simulation, set up the cartesian communicator
-  array<int, 3> patches = {nPrc, 1, 1};
+  std::array<int, 3> patches = {nPrc, 1, 1};
   Simulation sim(patches[0], patches[1], patches[2], StencilOrder, periodic);
 
   // Configure the patchwork
@@ -73,7 +71,8 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   // Configure the output
   sim.outputManager.generateOutputFolder(outputDirectory);
   if (!myPrc) {
-    cout << "Simulation code: " << sim.outputManager.getSimCode() << endl;
+    std::cout << "Simulation code: " << sim.outputManager.getSimCode()
+        << std::endl;
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
@@ -88,7 +87,7 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
     }
     double tn = MPI_Wtime();
     if (!myPrc) {
-      cout << "\rStep " << step << "\t\t" << flush;
+      std::cout << "\rStep " << step << "\t\t" << std::flush;
       timer(ts, tn);
     }
   }
@@ -97,14 +96,15 @@ void Sim1D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
 }
 
 /** Conduct the complete 2D simulation process */
-void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
-        const array<sunrealtype,2> phys_dims,
-        const array<sunindextype,2> disc_dims,
-        const array<int,2> patches, const bool periodic, int *interactions,
+void Sim2D(const std::array<sunrealtype,2> CVodeTol, int const StencilOrder,
+        const std::array<sunrealtype,2> phys_dims,
+        const std::array<sunindextype,2> disc_dims,
+        const std::array<int,2> patches, const bool periodic, int *interactions,
         const sunrealtype endTime, const int numberOfSteps,
-        const string outputDirectory, const int outputStep,
+        const std::string outputDirectory, const int outputStep,
         const char outputStyle,
-        const vector<planewave> &planes, const vector<gaussian2D> &gaussians) {
+        const std::vector<planewave> &planes,
+        const std::vector<gaussian2D> &gaussians) {
 
   // MPI data
   double ts = MPI_Wtime();
@@ -155,7 +155,8 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
   // Configure the output
   sim.outputManager.generateOutputFolder(outputDirectory);
   if (!myPrc) {
-    cout << "Simulation code: " << sim.outputManager.getSimCode() << endl;
+    std::cout << "Simulation code: " << sim.outputManager.getSimCode()
+        << std::endl;
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
@@ -170,7 +171,7 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
     }
     double tn = MPI_Wtime();
     if (!myPrc) {
-      cout << "\rStep " << step << "\t\t" << flush;
+      std::cout << "\rStep " << step << "\t\t" << std::flush;
       timer(ts, tn);
     }
   }
@@ -179,13 +180,15 @@ void Sim2D(const array<sunrealtype,2> CVodeTol, int const StencilOrder,
 }
 
 /** Conduct the complete 3D simulation process */
-void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
-        const array<sunrealtype,3> phys_dims,
-        const array<sunindextype,3> disc_dims, const array<int,3> patches,
+void Sim3D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
+        const std::array<sunrealtype,3> phys_dims,
+        const std::array<sunindextype,3> disc_dims,
+        const std::array<int,3> patches,
         const bool periodic, int *interactions, const sunrealtype endTime,
-        const int numberOfSteps, const string outputDirectory,
+        const int numberOfSteps, const std::string outputDirectory,
         const int outputStep, const char outputStyle,
-        const vector<planewave> &planes, const vector<gaussian3D> &gaussians) {
+        const std::vector<planewave> &planes,
+        const std::vector<gaussian3D> &gaussians) {
 
   // MPI data
   double ts = MPI_Wtime();
@@ -203,7 +206,7 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
     }
     if ( ( disc_dims[0] / patches[0] != disc_dims[1] / patches[1] ) |
          ( disc_dims[0] / patches[0] != disc_dims[2] / patches[2] ) ) {
-      clog
+        std::clog
           << "\nWarning: Patches should be cubic in terms of the lattice "
              "points for the computational efficiency of larger simulations.\n";
     }
@@ -241,7 +244,8 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
   // Configure the output
   sim.outputManager.generateOutputFolder(outputDirectory);
   if (!myPrc) {
-    cout << "Simulation code: " << sim.outputManager.getSimCode() << endl;
+    std::cout << "Simulation code: " << sim.outputManager.getSimCode()
+        << std::endl;
   }
   sim.outputManager.set_outputStyle(outputStyle);
 
@@ -256,7 +260,7 @@ void Sim3D(const array<sunrealtype,2> CVodeTol, const int StencilOrder,
     }
     double tn = MPI_Wtime();
     if (!myPrc) {
-      cout << "\rStep " << step << "\t\t" << flush;
+      std::cout << "\rStep " << step << "\t\t" << std::flush;
       timer(ts, tn);
     }
   }
