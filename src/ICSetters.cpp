@@ -289,7 +289,7 @@ void Gauss3D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   pTo6Space[5] += G3D * A2;
 }
 
-/** Evaluate lattice point values to zero and add field values */
+/** Evaluate lattice point values to zero and then add initial field values */
 void ICSetter::eval(sunrealtype x, sunrealtype y, sunrealtype z,
                     sunrealtype *pTo6Space) {
   pTo6Space[0] = 0;
