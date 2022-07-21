@@ -33,7 +33,8 @@ While some useful Intel(R) processor specific optimizations and compiler options
 Version 6 is required.
 The code is presumably compliant with the upcoming version 7.  
 For the installation of `SUNDIALS`, [`CMake`](https://cmake.org/) is required.
-Follow the installation guide and do not forget to enable MPI and specify the directory of the `mpicxx` wrapper for use of the MPI-based `NVECTOR_PARALLEL` module.
+Enable MPI and specify the directory of the `mpicxx` wrapper for use of the MPI-based `NVECTOR_PARALLEL` module.
+32-bit integer size is sufficient.
 Make sure to edit the `SUNDIALS` include and library directories in the provided Makefile.
 
 

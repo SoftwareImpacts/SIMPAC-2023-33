@@ -193,7 +193,7 @@ void Gauss2D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   x -= dis[0];
   y -= dis[1];
   // z-=dis[2];
-  z = NAN;
+  z = nan("0x12345");  // unused parameter
   //  \f$ z_g = \vec{x}\cdot\vec{e}_g \f$ projection on propagation axis
   const sunrealtype zg =
       x * axis[0] + y * axis[1]; //+z*axis[2];  // =z-z0 -> propagation
@@ -208,8 +208,8 @@ void Gauss2D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   // \f$ g(z) = atan(z_g/z_r) \f$
   const sunrealtype gz = atan(zg / zr); // Gouy phase
   // \f$ R(z) = z_g*(1+(z_r/z_g)^2) \f$
-  sunrealtype Rz = NAN; // beam curvature
-  if (zg != 0)
+  sunrealtype Rz = nan("0x12345"); // beam curvature
+  if (abs(zg) > 1e-15)
     Rz = zg * (1 + (zr * zr / zg / zg));
   else
     Rz = 1e308;
@@ -273,8 +273,8 @@ void Gauss3D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
   const sunrealtype r = sqrt((x * x + y * y + z * z) - zg * zg);
   const sunrealtype wz = w0 * sqrt(1 + (zg * zg / zr / zr));
   const sunrealtype gz = atan(zg / zr);
-  sunrealtype Rz = NAN;
-  if (zg != 0)
+  sunrealtype Rz = nan("0x12345");
+  if (abs(zg) > 1e-15)
     Rz = zg * (1 + (zr * zr / zg / zg));
   else
     Rz = 1e308;

@@ -53,9 +53,9 @@ void linear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   data->derotate(
       1, dxData); // -> derotate derivative data to x-space for further use
 
-  const int totalNP = data->discreteSize();
-  int pp = 0;
-  for (int i = 0; i < totalNP; i++) {
+  const sunindextype totalNP = data->discreteSize();
+  sunindextype pp = 0;
+  for (sunindextype i = 0; i < totalNP; i++) {
     pp = i * 6;
     /*
      simple vacuum Maxwell equations for spatial deriative only in x-direction;
@@ -99,13 +99,14 @@ void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   // array to hold intermediate temp. derivatives of E and B
   static std::array<sunrealtype, 6> h;
   // determinant needed for explicit matrix inversion
-  static sunrealtype detC = NAN;
+  static sunrealtype detC = nan("0x12345");
   // pointers to field values and their temp. derivatives
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
 
-  const int totalNP = data->discreteSize(); // number of points in the patch
-  for (int pp = 0; pp < totalNP * 6;
+  // number of points in the patch
+  const sunindextype totalNP = data->discreteSize();
+  for (sunindextype pp = 0; pp < totalNP * 6;
        pp += 6) { // loop over all 6dim points in the patch
     // em field Lorentz invariants F and G
     f = 0.5 * ((Quad[0] = udata[pp] * udata[pp]) +
@@ -294,9 +295,9 @@ void linear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   data->derive(2);
   data->derotate(2, dyData);
 
-  const int totalNP = data->discreteSize();
-  int pp = 0;
-  for (int i = 0; i < totalNP; i++) {
+  const sunindextype totalNP = data->discreteSize();
+  sunindextype pp = 0;
+  for (sunindextype i = 0; i < totalNP; i++) {
     pp = i * 6;
     duData[pp + 0] = dyData[pp + 5];
     duData[pp + 1] = -dxData[pp + 5];
@@ -331,8 +332,8 @@ void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
 
-  const int totalNP = data->discreteSize();
-  for (int pp = 0; pp < totalNP * 6; pp += 6) {
+  const sunindextype totalNP = data->discreteSize();
+  for (sunindextype pp = 0; pp < totalNP * 6; pp += 6) {
     f = 0.5 * ((Quad[0] = udata[pp] * udata[pp]) +
                (Quad[1] = udata[pp + 1] * udata[pp + 1]) +
                (Quad[2] = udata[pp + 2] * udata[pp + 2]) -
@@ -503,9 +504,9 @@ void linear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   data->derive(3);
   data->derotate(3, dzData);
 
-  const int totalNP = data->discreteSize();
-  int pp = 0;
-  for (int i = 0; i < totalNP; i++) {
+  const sunindextype totalNP = data->discreteSize();
+  sunindextype pp = 0;
+  for (sunindextype i = 0; i < totalNP; i++) {
     pp = i * 6;
     duData[pp + 0] = dyData[pp + 5] - dzData[pp + 4];
     duData[pp + 1] = dzData[pp + 3] - dxData[pp + 5];
@@ -541,12 +542,12 @@ void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   static std::array<sunrealtype, 21> JMM;
   static std::array<sunrealtype, 6> Quad;
   static std::array<sunrealtype, 6> h;
-  static sunrealtype detC = NAN;
+  static sunrealtype detC = nan("0x12345");
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
 
-  const int totalNP = data->discreteSize();
-  for (int pp = 0; pp < totalNP * 6; pp += 6) {
+  const sunindextype totalNP = data->discreteSize();
+  for (sunindextype pp = 0; pp < totalNP * 6; pp += 6) {
     f = 0.5 * ((Quad[0] = udata[pp] * udata[pp]) +
                (Quad[1] = udata[pp + 1] * udata[pp + 1]) +
                (Quad[2] = udata[pp + 2] * udata[pp + 2]) -

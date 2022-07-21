@@ -157,7 +157,7 @@ private:
   const Lattice *envelopeLattice;
   ///@{
   /** translocation lookup table */
-  std::vector<int> uTox, uToy, uToz, xTou, yTou, zTou;
+  std::vector<sunindextype> uTox, uToy, uToz, xTou, yTou, zTou;
   ///@}
   /// aid (auxilliarly) vector including ghost cells to compute the derivatives
   std::vector<sunrealtype> uAux;
@@ -172,7 +172,7 @@ private:
   ///@}
   ///@{
   /** ghost cell translocation lookup table */
-  std::vector<int> lgcTox, rgcTox, lgcToy, rgcToy, lgcToz, rgcToz;
+  std::vector<sunindextype> lgcTox, rgcTox, lgcToy, rgcToy, lgcToz, rgcToz;
   ///@}
   /** lattice patch status flags */
   unsigned int statusFlags;
@@ -180,11 +180,11 @@ private:
   /** rotate and translocate an input array according to a lookup into an output
    * array */
   inline void rotateToX(sunrealtype *outArray, const sunrealtype *inArray,
-                        const std::vector<int> &lookup);
+                        const std::vector<sunindextype> &lookup);
   inline void rotateToY(sunrealtype *outArray, const sunrealtype *inArray,
-                        const std::vector<int> &lookup);
+                        const std::vector<sunindextype> &lookup);
   inline void rotateToZ(sunrealtype *outArray, const sunrealtype *inArray,
-                        const std::vector<int> &lookup);
+                        const std::vector<sunindextype> &lookup);
   ///@}
 public:
   /// ID of the LatticePatch, corresponds to process number
@@ -216,7 +216,7 @@ public:
                                const int DLy, const int DLz);
   /// function to get the discrete size of the LatticePatch
   // (0 direction corresponds to total)
-  int discreteSize(int dir=0) const;
+  sunindextype discreteSize(int dir=0) const;
   /// function to get the origin of the patch
   sunrealtype origin(const int dir) const;
   /// function to get distance between points

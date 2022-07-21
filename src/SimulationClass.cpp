@@ -141,15 +141,15 @@ void Simulation::setInitialConditions() {
   const sunrealtype dx = latticePatch.getDelta(1);
   const sunrealtype dy = latticePatch.getDelta(2);
   const sunrealtype dz = latticePatch.getDelta(3);
-  const int nx = latticePatch.discreteSize(1);
-  const int ny = latticePatch.discreteSize(2);
-  const int totalNP = latticePatch.discreteSize();
+  const sunindextype nx = latticePatch.discreteSize(1);
+  const sunindextype ny = latticePatch.discreteSize(2);
+  const sunindextype totalNP = latticePatch.discreteSize();
   const sunrealtype x0 = latticePatch.origin(1);
   const sunrealtype y0 = latticePatch.origin(2);
   const sunrealtype z0 = latticePatch.origin(3);
-  int px = 0, py = 0, pz = 0;
+  sunindextype px = 0, py = 0, pz = 0;
   // space coordinates
-  for (int i = 0; i < totalNP * 6; i += 6) {
+  for (sunindextype i = 0; i < totalNP * 6; i += 6) {
     px = (i / 6) % nx;
     py = ((i / 6) / nx) % ny;
     pz = ((i / 6) / nx) / ny;
@@ -162,20 +162,21 @@ void Simulation::setInitialConditions() {
 }
 
 /// Use parameters to add periodic IC layers
-void Simulation::addInitialConditions(const int xm, const int ym,
-        const int zm /* zm=0 always */ ) {
+void Simulation::addInitialConditions(const sunindextype xm,
+        const sunindextype ym,
+        const sunindextype zm /* zm=0 always */ ) {
   const sunrealtype dx = latticePatch.getDelta(1);
   const sunrealtype dy = latticePatch.getDelta(2);
   const sunrealtype dz = latticePatch.getDelta(3);
-  const int nx = latticePatch.discreteSize(1);
-  const int ny = latticePatch.discreteSize(2);
-  const int totalNP = latticePatch.discreteSize();
+  const sunindextype nx = latticePatch.discreteSize(1);
+  const sunindextype ny = latticePatch.discreteSize(2);
+  const sunindextype totalNP = latticePatch.discreteSize();
   // Correct for demanded displacement, rest as for setInitialConditions
   const sunrealtype x0 = latticePatch.origin(1) + xm*lattice.get_tot_lx();
   const sunrealtype y0 = latticePatch.origin(2) + ym*lattice.get_tot_ly();
   const sunrealtype z0 = latticePatch.origin(3) + zm*lattice.get_tot_lz();
-  int px = 0, py = 0, pz = 0;
-  for (int i = 0; i < totalNP * 6; i += 6) {
+  sunindextype px = 0, py = 0, pz = 0;
+  for (sunindextype i = 0; i < totalNP * 6; i += 6) {
     px = (i / 6) % nx;
     py = ((i / 6) / nx) % ny;
     pz = ((i / 6) / nx) / ny;

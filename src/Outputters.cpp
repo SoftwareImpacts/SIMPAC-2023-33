@@ -100,8 +100,8 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   ofs << std::setprecision(std::numeric_limits<sunrealtype>::digits10);
 
   // Walk through each lattice point
-  const int totalNP = latticePatch.discreteSize();
-  for (int i = 0; i < totalNP * 6; i += 6) {
+  const sunindextype totalNP = latticePatch.discreteSize();
+  for (sunindextype i = 0; i < totalNP * 6; i += 6) {
     // Six columns to contain the field data: Ex,Ey,Ez,Bx,By,Bz
     ofs << latticePatch.uData[i + 0] << "," << latticePatch.uData[i + 1] << ","
         << latticePatch.uData[i + 2] << "," << latticePatch.uData[i + 3] << ","
@@ -119,7 +119,7 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   MPI_File_open(lattice.comm,&filename[0],MPI_MODE_WRONLY|MPI_MODE_CREATE,
           MPI_INFO_NULL,&fh);
   // number of datapoints in the patch with process offset
-  const int count = latticePatch.discreteSize()*
+  const sunindextype count = latticePatch.discreteSize()*
       lattice.get_dataPointDimension();
   MPI_Offset offset = lattice.my_prc*count*sizeof(MPI_SUNREALTYPE);
   // Go to offset in file and write data to it; maximal precision in
@@ -139,7 +139,6 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
           " (b) one binary file");
   break;
                }
-  return;
   }
 }
 

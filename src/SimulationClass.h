@@ -51,7 +51,7 @@ public:
   /// destructor function freeing CVode memory and Sundials context
   ~Simulation();
   /// reference to the cartesian communicator of the lattice -> for debugging
-  MPI_Comm *get_cart_comm() { return &lattice.comm; };
+  MPI_Comm *get_cart_comm() { return &lattice.comm; }
   /// function to set discrete dimensions of the lattice
   void setDiscreteDimensionsOfLattice(const sunindextype _tot_nx,
           const sunindextype _tot_ny, const sunindextype _tot_nz);
@@ -68,7 +68,8 @@ public:
   /// functions to set the initial field configuration onto the lattice
   void setInitialConditions();
   /// functions to add initial periodic field configurations
-  void addInitialConditions(const int xm, const int ym, const int zm = 0);
+  void addInitialConditions(const sunindextype xm, const sunindextype ym,
+          const sunindextype zm = 0);
   /// function to add a periodic IC layer in one dimension
   void addPeriodicICLayerInX();
   /// function to add periodic IC layers in two dimensions

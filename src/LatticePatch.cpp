@@ -166,8 +166,9 @@ int generatePatchwork(const Lattice &envelopeLattice,
   patchToMold.duData = NV_DATA_P(patchToMold.du);
   // Allocate space for auxiliary uAux so that the lattice and all possible
   // directions of ghost Layers fit
-  const int s1 = patchToMold.nx, s2 = patchToMold.ny, s3 = patchToMold.nz;
-  const int s_min = std::min(s1, std::min(s2, s3));
+  const sunindextype s1 = patchToMold.nx, s2 = patchToMold.ny,
+        s3 = patchToMold.nz;
+  const sunindextype s_min = std::min(s1, std::min(s2, s3));
   patchToMold.uAux.resize(s1 * s2 * s3 / s_min * (s_min + 2 * gLW) * dPD);
   patchToMold.uAuxData = &patchToMold.uAux[0];
   patchToMold.envelopeLattice = &envelopeLattice;
@@ -181,7 +182,7 @@ int generatePatchwork(const Lattice &envelopeLattice,
 
 /// Return the discrete size of the patch: number of lattice patch points in
 /// specified dimension
-int LatticePatch::discreteSize(int dir) const {
+sunindextype LatticePatch::discreteSize(int dir) const {
   switch (dir) {
   case 0:
     return nx * ny * nz;
@@ -236,14 +237,14 @@ void LatticePatch::generateTranslocationLookup() {
   checkFlag(FLatticeDimensionSet);
   // lenghts for auxilliary layers, including ghost layers
   const int gLW = envelopeLattice->get_ghostLayerWidth();
-  const int mx = nx + 2 * gLW;
-  const int my = ny + 2 * gLW;
-  const int mz = nz + 2 * gLW;
+  const sunindextype mx = nx + 2 * gLW;
+  const sunindextype my = ny + 2 * gLW;
+  const sunindextype mz = nz + 2 * gLW;
   // sizes for lookup vectors
-  const int totalNP = nx * ny * nz;
-  const int haloXSize = mx * ny * nz;
-  const int haloYSize = nx * my * nz;
-  const int haloZSize = nx * ny * mz;
+  const sunindextype totalNP = nx * ny * nz;
+  const sunindextype haloXSize = mx * ny * nz;
+  const sunindextype haloYSize = nx * my * nz;
+  const sunindextype haloZSize = nx * ny * mz;
   // generate u->uAux
   uTox.resize(totalNP);
   uToy.resize(totalNP);
@@ -253,8 +254,8 @@ void LatticePatch::generateTranslocationLookup() {
   yTou.resize(haloYSize);
   zTou.resize(haloZSize);
   // variables for cartesian position in the 3D discrete lattice
-  int px = 0, py = 0, pz = 0;
-  for (int i = 0; i < totalNP; i++) { // loop over the patch
+  sunindextype px = 0, py = 0, pz = 0;
+  for (sunindextype i = 0; i < totalNP; i++) { // loop over the patch
     // calulate cartesian coordinates
     px = i % nx;
     py = (i / nx) % ny;
@@ -270,12 +271,12 @@ void LatticePatch::generateTranslocationLookup() {
     zTou[pz + px * mz + py * mz * nx] = i;
   }
   // same for ghost layer lookup tables
-  const int ghostXSize = gLW * ny * nz;
-  const int ghostYSize = gLW * nx * nz;
-  const int ghostZSize = gLW * nx * ny;
+  const sunindextype ghostXSize = gLW * ny * nz;
+  const sunindextype ghostYSize = gLW * nx * nz;
+  const sunindextype ghostZSize = gLW * nx * ny;
   lgcTox.resize(ghostXSize);
   rgcTox.resize(ghostXSize);
-  for (int i = 0; i < ghostXSize; i++) {
+  for (sunindextype i = 0; i < ghostXSize; i++) {
     px = i % gLW;
     py = (i / gLW) % ny;
     pz = (i / gLW) / ny;
@@ -284,7 +285,7 @@ void LatticePatch::generateTranslocationLookup() {
   }
   lgcToy.resize(ghostYSize);
   rgcToy.resize(ghostYSize);
-  for (int i = 0; i < ghostYSize; i++) {
+  for (sunindextype i = 0; i < ghostYSize; i++) {
     px = i % nx;
     py = (i / nx) % gLW;
     pz = (i / nx) / gLW;
@@ -293,7 +294,7 @@ void LatticePatch::generateTranslocationLookup() {
   }
   lgcToz.resize(ghostZSize);
   rgcToz.resize(ghostZSize);
-  for (int i = 0; i < ghostZSize; i++) {
+  for (sunindextype i = 0; i < ghostZSize; i++) {
     px = i % nx;
     py = (i / nx) % ny;
     pz = (i / nx) / ny;
@@ -339,10 +340,11 @@ void LatticePatch::rotateIntoEigen(const int dir) {
 /// eigenspace of Z matrix and write to auxiliary vector
 inline void LatticePatch::rotateToX(sunrealtype *outArray,
                                     const sunrealtype *inArray,
-                                    const std::vector<int> &lookup) {
-  int ii = 0, target = 0;
+                                    const std::vector<sunindextype> &lookup) {
+  sunindextype ii = 0, target = 0;
+  const sunindextype size = lookup.size();
   #pragma omp simd // safelen(6)
-  for (unsigned int i = 0; i < lookup.size(); i++) {
+  for (sunindextype i = 0; i < size; i++) {
     // get correct u-vector and spatial indices along previously defined lookup
     // tables
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
@@ -360,10 +362,11 @@ inline void LatticePatch::rotateToX(sunrealtype *outArray,
 /// eigenspace of Z matrix and write to auxiliary vector
 inline void LatticePatch::rotateToY(sunrealtype *outArray,
                                     const sunrealtype *inArray,
-                                    const std::vector<int> &lookup) {
-  int ii = 0, target = 0;
+                                    const std::vector<sunindextype> &lookup) {
+  sunindextype ii = 0, target = 0;
+  const sunindextype size = lookup.size();
   #pragma omp simd
-  for (unsigned int i = 0; i < lookup.size(); i++) {
+  for (sunindextype i = 0; i < size; i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
     ii = envelopeLattice->get_dataPointDimension() * i;
     outArray[target + 0] = inArray[ii] + inArray[5 + ii];
@@ -379,10 +382,11 @@ inline void LatticePatch::rotateToY(sunrealtype *outArray,
 /// eigenspace of Z matrix and write to auxiliary vector
 inline void LatticePatch::rotateToZ(sunrealtype *outArray,
                                     const sunrealtype *inArray,
-                                    const std::vector<int> &lookup) {
-  int ii = 0, target = 0;
+                                    const std::vector<sunindextype> &lookup) {
+  sunindextype ii = 0, target = 0;
+  const sunindextype size = lookup.size();
   #pragma omp simd
-  for (unsigned int i = 0; i < lookup.size(); i++) {
+  for (sunindextype i = 0; i < size; i++) {
     target = envelopeLattice->get_dataPointDimension() * lookup[i];
     ii = envelopeLattice->get_dataPointDimension() * i;
     outArray[target + 0] = -inArray[ii] + inArray[4 + ii];
@@ -403,12 +407,12 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
   checkFlag(TranslocationLookupSetUp);
   const int dPD = envelopeLattice->get_dataPointDimension();
   const int gLW = envelopeLattice->get_ghostLayerWidth();
-  const int uSize = discreteSize();
-  int ii = 0, target = 0;
+  const sunindextype totalNP = discreteSize();
+  sunindextype ii = 0, target = 0;
   switch (dir) {
   case 1:
     #pragma omp simd
-    for (int i = 0; i < uSize; i++) {
+    for (sunindextype i = 0; i < totalNP; i++) {
       // get correct indices in u and rotation space
       target = dPD * i;
       ii = dPD * (uTox[i] - gLW);
@@ -422,7 +426,7 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
     break;
   case 2:
     #pragma omp simd
-    for (int i = 0; i < uSize; i++) {
+    for (sunindextype i = 0; i < totalNP; i++) {
       target = dPD * i;
       ii = dPD * (uToy[i] - gLW);
       buffOut[target + 0] = (uAux[ii] - uAux[2 + ii]) / 2.;
@@ -435,7 +439,7 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
     break;
   case 3:
     #pragma omp simd
-    for (int i = 0; i < uSize; i++) {
+    for (sunindextype i = 0; i < totalNP; i++) {
       target = dPD * i;
       ii = dPD * (uToz[i] - gLW);
       buffOut[target + 0] = (-uAux[ii] + uAux[2 + ii]) / 2.;
@@ -500,7 +504,7 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   }
   // total number of exchanged points
   const int dPD = envelopeLattice->get_dataPointDimension();
-  const int exchangeSize = mx * my * mz * dPD;
+  const sunindextype exchangeSize = mx * my * mz * dPD;
   // provide size of the halos for ghost cells
   ghostCellLeft.resize(exchangeSize);
   ghostCellRight.resize(ghostCellLeft.size());
@@ -512,10 +516,10 @@ void LatticePatch::exchangeGhostCells(const int dir) {
 
   // Initialize running index li for the halo buffers, and index ui of uData for
   // data transfer
-  int li = 0, ui = 0;
+  sunindextype li = 0, ui = 0;
 
-  for (int iz = 0; iz < mz; iz++) {
-    for (int iy = 0; iy < my; iy++) {
+  for (sunindextype iz = 0; iz < mz; iz++) {
+    for (sunindextype iy = 0; iy < my; iy++) {
       // uData vector start index of halo data to be transferred
       // with each z-step add the whole xy-plane and with y-step the x-range ->
       // iterate all x-ranges
@@ -619,13 +623,13 @@ void LatticePatch::derive(const int dir) {
   // dimensionality of data points -> 6
   const int dPD = envelopeLattice->get_dataPointDimension();
   // total width of patch in given direction including ghost layers at ends
-  const int dirWidth = discreteSize(dir) + 2 * gLW;
+  const sunindextype dirWidth = discreteSize(dir) + 2 * gLW;
   // width of patch only in given direction
-  const int dirWidthO = discreteSize(dir);
+  const sunindextype dirWidthO = discreteSize(dir);
   // size of plane perpendicular to given dimension
-  const int perpPlainSize = discreteSize() / discreteSize(dir);
+  const sunindextype perpPlainSize = discreteSize() / discreteSize(dir);
   // physical distance between points in that direction
-  sunrealtype dxi = NAN;
+  sunrealtype dxi = nan("0x12345");
   switch (dir) {
   case 1:
     dxi = dx;
@@ -645,8 +649,8 @@ void LatticePatch::derive(const int dir) {
   const int order = envelopeLattice->get_stencilOrder();
   switch (order) {
   case 1:  // gLW=1
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s1b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s1b(&uAux[j + 1]) / dxi;
@@ -658,8 +662,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 2:  // gLW=2
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s2b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s2b(&uAux[j + 1]) / dxi;
@@ -671,8 +675,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 3:  // gLW=2
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s3b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s3b(&uAux[j + 1]) / dxi;
@@ -684,8 +688,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 4:  // gLW=3
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s4b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s4b(&uAux[j + 1]) / dxi;
@@ -697,8 +701,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 5:  // gLW=3
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s5b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s5b(&uAux[j + 1]) / dxi;
@@ -710,8 +714,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 6:  // gLW=4
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s6b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s6b(&uAux[j + 1]) / dxi;
@@ -723,8 +727,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 7:  // gLW=4
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s7b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s7b(&uAux[j + 1]) / dxi;
@@ -736,8 +740,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 8:  // gLW=5
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s8b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s8b(&uAux[j + 1]) / dxi;
@@ -749,8 +753,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 9:  // gLW=5
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s9b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s9b(&uAux[j + 1]) / dxi;
@@ -762,8 +766,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 10:  // gLW=6
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s10b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s10b(&uAux[j + 1]) / dxi;
@@ -775,8 +779,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 11:  // gLW=6
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s11b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s11b(&uAux[j + 1]) / dxi;
@@ -788,8 +792,8 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 12:  // gLW=7
-    for (int i = 0; i < perpPlainSize; i++) {
-      for (int j = (i * dirWidth + gLW) * dPD;
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
+      for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s12b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s12b(&uAux[j + 1]) / dxi;
@@ -803,9 +807,9 @@ void LatticePatch::derive(const int dir) {
   case 13:  // gLW=7
     // Iterate through all points in the plane perpendicular to the given
     // direction
-    for (int i = 0; i < perpPlainSize; i++) {
+    for (sunindextype i = 0; i < perpPlainSize; i++) {
       // Iterate through the direction for each perpendicular plane point
-      for (int j = (i * dirWidth + gLW /*to shift left by gLW below */) * dPD;
+      for (sunindextype j = (i * dirWidth + gLW /*to shift left by gLW below */) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         /* Compute the stencil derivative for any of the six field components
          * with a ghostlayer width adjusted to the order of the finite
