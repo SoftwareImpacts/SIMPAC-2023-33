@@ -46,7 +46,7 @@ public:
   /// nonlinear solver object
   SUNNonlinearSolver NLS;
   /// constructor function for the creation of the cartesian communicator
-  Simulation(const int nx, const int ny, const int nz, const int StencilOrder,
+  Simulation(const int Nx, const int Ny, const int Nz, const int StencilOrder,
           const bool periodicity);
   /// destructor function freeing CVode memory and Sundials context
   ~Simulation();

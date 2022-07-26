@@ -12,9 +12,9 @@
 ///////////////////////////////////////////////////////
 
 /// Initialize the cartesian communicator
-void Lattice::initializeCommunicator(const int nx, const int ny,
-        const int nz, const bool per) {
-  const int dims[3] = {nz, ny, nx};
+void Lattice::initializeCommunicator(const int Nx, const int Ny,
+        const int Nz, const bool per) {
+  const int dims[3] = {Nz, Ny, Nx};
   const int periods[3] = {static_cast<int>(per), static_cast<int>(per),
                     static_cast<int>(per)};
   // Create the cartesian communicator for MPI_COMM_WORLD
@@ -618,7 +618,7 @@ void LatticePatch::checkFlag(unsigned int flag) const {
 
 /// Calculate derivatives in the patch (uAux) in the specified direction
 void LatticePatch::derive(const int dir) {
-  // ghost layer width
+  // ghost layer width adjusted to the chosen stencil order
   const int gLW = envelopeLattice->get_ghostLayerWidth();
   // dimensionality of data points -> 6
   const int dPD = envelopeLattice->get_dataPointDimension();
@@ -805,15 +805,14 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 13:  // gLW=7
-    // Iterate through all points in the plane perpendicular to the given
-    // direction
+    // For all points in the plane perpendicular to the given direction
     for (sunindextype i = 0; i < perpPlainSize; i++) {
-      // Iterate through the direction for each perpendicular plane point
-      for (sunindextype j = (i * dirWidth + gLW /*to shift left by gLW below */) * dPD;
+      // iterate through the derivation direction
+      for (sunindextype j = (i * dirWidth
+                  + gLW /*to shift left by gLW below */) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
-        /* Compute the stencil derivative for any of the six field components
-         * with a ghostlayer width adjusted to the order of the finite
-         * difference scheme */
+        // Compute the stencil derivative for any of the six field components
+        // and update position by ghost width shift
         uAux[j + 0 - gLW * dPD] = s13b(&uAux[j + 0]) / dxi;
         uAux[j + 1 - gLW * dPD] = s13b(&uAux[j + 1]) / dxi;
         uAux[j + 2 - gLW * dPD] = s13f(&uAux[j + 2]) / dxi;

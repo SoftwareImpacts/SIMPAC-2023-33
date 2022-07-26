@@ -14,7 +14,7 @@ int TimeEvolution::f(sunrealtype t, N_Vector u, N_Vector udot, void *data_loc) {
   LatticePatch *data = static_cast<LatticePatch *>(data_loc);
 
   // update circle
-  // Access data with pointers
+  // Access provided field values and temp. derivatieves with NVector pointers
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
 
@@ -37,30 +37,31 @@ int TimeEvolution::f(sunrealtype t, N_Vector u, N_Vector udot, void *data_loc) {
 }
 
 /// only under-the-hood-callable Maxwell propagation in 1D;
-// unused parameters 2-4 for compliance with CVRhsFn;
-// same as the respective nonlinear function without nonlinear terms
+// unused parameters 2-4 for compliance with CVRhsFn - field data is here
+// accessed implicitly via user data (lattice patch);
+// same effect as the respective nonlinear function without nonlinear terms
 void linear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   // pointers to temporal and spatial derivative data
   sunrealtype *duData = data->duData;
   sunrealtype *dxData = data->buffData[1 - 1];
 
-  // sequence along any dimension:
-  data->exchangeGhostCells(1); // exchange halos
+  // sequence along any dimension according to the scheme:
+  data->exchangeGhostCells(1); // -> exchange halos
   data->rotateIntoEigen(
       1);          // -> rotate all data to prepare derivative operation
-  data->derive(1); // -> perform derivative on it
+  data->derive(1); // -> perform derivative approximation operation on it
   data->derotate(
-      1, dxData); // -> derotate derivative data to x-space for further use
+      1, dxData); // -> derotate derived data for ensuing time-evolution
 
   const sunindextype totalNP = data->discreteSize();
   sunindextype pp = 0;
   for (sunindextype i = 0; i < totalNP; i++) {
     pp = i * 6;
     /*
-     simple vacuum Maxwell equations for spatial deriative only in x-direction;
-     temporal derivative is approximated by spatial derivative according to the
-     numerical scheme without polarization or magnetization terms
+     simple vacuum Maxwell equations for the temporal derivatives using the
+     spatial deriative only in x-direction without polarization or
+     magnetization terms
     */
     duData[pp + 0] = 0;
     duData[pp + 1] = -dxData[pp + 5];
@@ -74,8 +75,11 @@ void linear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 /// nonlinear 1D HE propagation
 void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
-  // pointer to spatial derivative data sufficient; temporal derivative data
-  // provided with udot
+  // NVector pointers to provided field values and their temp. derivatives
+  sunrealtype *udata = NV_DATA_P(u),
+              *dudata = NV_DATA_P(udot);
+
+  // pointer to spatial derivatives via pach data
   sunrealtype *dxData = data->buffData[1 - 1];
 
   // same sequence as in the linear case
@@ -100,9 +104,6 @@ void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   static std::array<sunrealtype, 6> h;
   // determinant needed for explicit matrix inversion
   static sunrealtype detC = nan("0x12345");
-  // pointers to field values and their temp. derivatives
-  sunrealtype *udata = NV_DATA_P(u),
-              *dudata = NV_DATA_P(udot);
 
   // number of points in the patch
   const sunindextype totalNP = data->discreteSize();
@@ -277,9 +278,7 @@ void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   return;
 }
 
-/// only under-the-hood-callable Maxwell propagation in 2D;
-// unused parameters 2-4 for compliance with CVRhsFn;
-// same as the respective nonlinear function without nonlinear terms
+/// only under-the-hood-callable Maxwell propagation in 2D
 void linear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   sunrealtype *duData = data->duData;
@@ -311,6 +310,9 @@ void linear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 /// nonlinear 2D HE propagation
 void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
+  sunrealtype *udata = NV_DATA_P(u),
+              *dudata = NV_DATA_P(udot);
+
   sunrealtype *dxData = data->buffData[1 - 1];
   sunrealtype *dyData = data->buffData[2 - 1];
 
@@ -329,8 +331,6 @@ void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   static std::array<sunrealtype, 6> Quad;
   static std::array<sunrealtype, 6> h;
   static sunrealtype detC;
-  sunrealtype *udata = NV_DATA_P(u),
-              *dudata = NV_DATA_P(udot);
 
   const sunindextype totalNP = data->discreteSize();
   for (sunindextype pp = 0; pp < totalNP * 6; pp += 6) {
@@ -481,9 +481,7 @@ void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   return;
 }
 
-/// only under-the-hood-callable Maxwell propagation in 3D;
-// unused parameters 2-4 for compliance with CVRhsFn;
-// same as the respective nonlinear function without nonlinear terms
+/// only under-the-hood-callable Maxwell propagation in 3D
 void linear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   sunrealtype *duData = data->duData;
@@ -520,6 +518,9 @@ void linear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 /// nonlinear 3D HE propagation
 void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
+  sunrealtype *udata = NV_DATA_P(u),
+              *dudata = NV_DATA_P(udot);
+
   sunrealtype *dxData = data->buffData[1 - 1];
   sunrealtype *dyData = data->buffData[2 - 1];
   sunrealtype *dzData = data->buffData[3 - 1];
@@ -543,8 +544,6 @@ void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   static std::array<sunrealtype, 6> Quad;
   static std::array<sunrealtype, 6> h;
   static sunrealtype detC = nan("0x12345");
-  sunrealtype *udata = NV_DATA_P(u),
-              *dudata = NV_DATA_P(udot);
 
   const sunindextype totalNP = data->discreteSize();
   for (sunindextype pp = 0; pp < totalNP * 6; pp += 6) {

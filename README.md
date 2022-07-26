@@ -29,7 +29,7 @@ Additionally required software:
 While `Intel(R) MPI` has mostly been used for scientific work on high-performance computing systems, the provided Makefile here is by default created for use with the _open_ implementations [`OpenMPI`](https://www.open-mpi.org/) or [`MPICH`](https://www.mpich.org).
 While some useful Intel(R) processor specific optimizations and compiler options are not available with the latter, they are easier to get and set up on a personal device simply via the corresponding package manager. 
 
-- The [`SUNDIALS`](https://computing.llnl.gov/projects/sundials) package with the [`CVode`](https://computing.llnl.gov/projects/sundials/cvode) solver.  
+- The [`SUNDIALS`](https://computing.llnl.gov/projects/sundials) package with the [`CVODE`](https://computing.llnl.gov/projects/sundials/cvode) solver.  
 Version 6 is required.
 The code is presumably compliant with the upcoming version 7.  
 For the installation of `SUNDIALS`, [`CMake`](https://cmake.org/) is required.
@@ -49,7 +49,7 @@ You have full control over all high-level simulation settings via the [`main.cpp
 
 - Second, decide if you want to simulate in 1D, 2D, or 3D and uncomment only that full section.  
 You can then specify
-    - the relative and absolute integration tolerances of the CVode solver.  
+    - the relative and absolute integration tolerances of the `CVODE` solver.  
     Recommended values are between 1e-12 and 1e-18.
     - the order of accuracy of the numerical scheme via the stencil order.  
     You can choose an integer in the range 1-13.
@@ -61,7 +61,7 @@ You can then specify
     - whether to have periodic or vanishing boundary values (currently has to be chosen periodic).
     - whether you want to simulate on top of the linear vacuum only 4-photon processes (1), 6-photon processes (2), both (3), or none (0) – the linear Maxwell case.
     - the total time of the simulation in units c=1, i.e., the distance propagated by the light waves in meters.
-    - the number of time steps that will be solved stepwise by CVode.   
+    - the number of time steps that will be solved stepwise by `CVODE`.   
     In order to keep interpolation errors small do not choose this number too small.
     - the multiple of steps at which you want the data to be written to disk.  
     - the output format. It can be 'c' for comma separated values (csv), or 'b' for binary.
@@ -91,10 +91,10 @@ mpirun -np 4 ./Simulation
 - Monitor stdout and stderr.
 The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
 Errors are printed on stderr.  
-**Note**: Convergence of the employed CVode solver can not be guaranteed and issues of this kind can hardly be predicted.
+**Note**: Convergence of the employed `CVODE` solver can not be guaranteed and issues of this kind can hardly be predicted.
 On top, they are even system dependent.
 Piece of advice: Only pass decimal numbers for the grid settings and initial conditions.  
-CVode warnings and errors are reported on stdout and stderr.  
+`CVODE` warnings and errors are reported on stdout and stderr.  
 A `config.txt`file containing the relevant part of `main.cpp` is written to the output directory in order to save the simulation settings of each particular run.
 
 You can remove the object files and the executable via `make clean`.
@@ -119,7 +119,7 @@ Example scenarios of colliding Gaussians are preconfigured for any dimension.
 
 ### Note on Resource Occupation
 The computational load depends mostly on the grid size and resolution.
-The order of accuracy of the numerical scheme and CVode are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
+The order of accuracy of the numerical scheme and `CVODE` are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
 Simulations in 1D are relatively cheap and can easily be run on a modern laptop within minutes.
 The output size per step is less than a megabyte.  
 Simulations in 2D with about one million grid points are still feasible for a personal machine but might take about an hour of time to finish.

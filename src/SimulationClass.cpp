@@ -11,13 +11,13 @@
 
 /// Along with the simulation object, create the cartesian communicator and
 /// SUNContext object
-Simulation::Simulation(const int nx, const int ny, const int nz,
+Simulation::Simulation(const int Nx, const int Ny, const int Nz,
         const int StencilOrder, const bool periodicity) :
     lattice(StencilOrder){
   statusFlags = 0;
   t = 0;
   // Initialize the cartesian communicator
-  lattice.initializeCommunicator(nx, ny, nz, periodicity);
+  lattice.initializeCommunicator(Nx, Ny, Nz, periodicity);
 
   // Create the SUNContext object associated with the thread of execution
   int retval = 0;

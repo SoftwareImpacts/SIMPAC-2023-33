@@ -84,8 +84,8 @@ public:
   /// personal communicator of the lattice
   MPI_Comm comm;
   /// function to create and deploy the cartesian communicator
-  void initializeCommunicator(const int nx, const int ny,
-          const int nz, const bool per);
+  void initializeCommunicator(const int Nx, const int Ny,
+          const int Nz, const bool per);
   /// default construction
   Lattice(const int StO);
   /// SUNContext object
