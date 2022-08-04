@@ -107,6 +107,10 @@ void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   // number of points in the patch
   const sunindextype totalNP = data->discreteSize();
+  #pragma omp parallel for default(none) \
+  private(JMM, Quad, h, detC) \
+  shared(totalNP, c, f, g, lf, lff, lfg, lg, lgg, udata, dudata, dxData) \
+  schedule(static)
   for (sunindextype pp = 0; pp < totalNP * 6;
        pp += 6) { // loop over all 6dim points in the patch
     // em field Lorentz invariants F and G
@@ -333,6 +337,11 @@ void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   static sunrealtype detC;
 
   const sunindextype totalNP = data->discreteSize();
+  #pragma omp parallel for default(none) \
+  private(JMM, Quad, h, detC) \
+  shared(totalNP, c, f, g, lf, lff, lfg, lg, lgg, udata, dudata,\
+          dxData, dyData) \
+  schedule(static)
   for (sunindextype pp = 0; pp < totalNP * 6; pp += 6) {
     f = 0.5 * ((Quad[0] = udata[pp] * udata[pp]) +
                (Quad[1] = udata[pp + 1] * udata[pp + 1]) +
@@ -546,6 +555,11 @@ void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
   static sunrealtype detC = nan("0x12345");
 
   const sunindextype totalNP = data->discreteSize();
+  #pragma omp parallel for default(none) \
+  private(JMM, Quad, h, detC) \
+  shared(totalNP, c, f, g, lf, lff, lfg, lg, lgg, udata, dudata,\
+          dxData, dyData, dzData) \
+  schedule(static)
   for (sunindextype pp = 0; pp < totalNP * 6; pp += 6) {
     f = 0.5 * ((Quad[0] = udata[pp] * udata[pp]) +
                (Quad[1] = udata[pp + 1] * udata[pp + 1]) +

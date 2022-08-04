@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
     }
 
     // Initialize MPI environment
-    MPI_Init (&argc, &argv);
+    int provided;
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_SINGLE, &provided);
 
     
     //------------ BEGIN OF CONFIGURATION ------------//

@@ -7,7 +7,6 @@
 
 // math
 #include <cmath>
-//#include <mathimf.h>
 
 // project subfile headers
 #include "LatticePatch.h"

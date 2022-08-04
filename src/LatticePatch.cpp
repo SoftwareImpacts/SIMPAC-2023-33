@@ -253,8 +253,27 @@ void LatticePatch::generateTranslocationLookup() {
   xTou.resize(haloXSize);
   yTou.resize(haloYSize);
   zTou.resize(haloZSize);
+  // same for ghost layer lookup tables
+  const sunindextype ghostXSize = gLW * ny * nz;
+  const sunindextype ghostYSize = gLW * nx * nz;
+  const sunindextype ghostZSize = gLW * nx * ny;
+  lgcTox.resize(ghostXSize);
+  rgcTox.resize(ghostXSize);
+  lgcToy.resize(ghostYSize);
+  rgcToy.resize(ghostYSize);
+  lgcToz.resize(ghostZSize);
+  rgcToz.resize(ghostZSize);
   // variables for cartesian position in the 3D discrete lattice
   sunindextype px = 0, py = 0, pz = 0;
+  // Fill the lookup tables
+  #pragma omp parallel default(none) \
+  private(px, py, pz) \
+  shared(uTox, uToy, uToz, xTou, yTou, zTou, \
+          nx, ny, mx, my, mz, gLW, totalNP, \
+          lgcTox, rgcTox, lgcToy, rgcToy, lgcToz, rgcToz, \
+          ghostXSize, ghostYSize, ghostZSize)
+  {
+  #pragma omp for simd schedule(static)
   for (sunindextype i = 0; i < totalNP; i++) { // loop over the patch
     // calulate cartesian coordinates
     px = i % nx;
@@ -270,12 +289,7 @@ void LatticePatch::generateTranslocationLookup() {
     uToz[i] = (pz + gLW) + px * mz + py * mz * nx;
     zTou[pz + px * mz + py * mz * nx] = i;
   }
-  // same for ghost layer lookup tables
-  const sunindextype ghostXSize = gLW * ny * nz;
-  const sunindextype ghostYSize = gLW * nx * nz;
-  const sunindextype ghostZSize = gLW * nx * ny;
-  lgcTox.resize(ghostXSize);
-  rgcTox.resize(ghostXSize);
+  #pragma omp for simd schedule(static)
   for (sunindextype i = 0; i < ghostXSize; i++) {
     px = i % gLW;
     py = (i / gLW) % ny;
@@ -283,8 +297,7 @@ void LatticePatch::generateTranslocationLookup() {
     lgcTox[i] = px + py * mx + pz * mx * ny;
     rgcTox[i] = px + nx + gLW + py * mx + pz * mx * ny;
   }
-  lgcToy.resize(ghostYSize);
-  rgcToy.resize(ghostYSize);
+  #pragma omp for simd schedule(static)
   for (sunindextype i = 0; i < ghostYSize; i++) {
     px = i % nx;
     py = (i / nx) % gLW;
@@ -292,14 +305,14 @@ void LatticePatch::generateTranslocationLookup() {
     lgcToy[i] = py + pz * my + px * my * nz;
     rgcToy[i] = py + ny + gLW + pz * my + px * my * nz;
   }
-  lgcToz.resize(ghostZSize);
-  rgcToz.resize(ghostZSize);
+  #pragma omp for simd schedule(static)
   for (sunindextype i = 0; i < ghostZSize; i++) {
     px = i % nx;
     py = (i / nx) % ny;
     pz = (i / nx) / ny;
     lgcToz[i] = pz + px * mz + py * mz * nx;
     rgcToz[i] = pz + nz + gLW + px * mz + py * mz * nx;
+  }
   }
   statusFlags |= TranslocationLookupSetUp;
 }
@@ -343,12 +356,16 @@ inline void LatticePatch::rotateToX(sunrealtype *outArray,
                                     const std::vector<sunindextype> &lookup) {
   sunindextype ii = 0, target = 0;
   const sunindextype size = lookup.size();
-  #pragma omp simd // safelen(6)
+  const int dPD = envelopeLattice->get_dataPointDimension();
+  #pragma omp parallel for simd \
+  private(target, ii) \
+  shared(lookup, outArray, inArray, size, dPD) \
+  schedule(static) 
   for (sunindextype i = 0; i < size; i++) {
     // get correct u-vector and spatial indices along previously defined lookup
     // tables
-    target = envelopeLattice->get_dataPointDimension() * lookup[i];
-    ii = envelopeLattice->get_dataPointDimension() * i;
+    target = dPD * lookup[i];
+    ii = dPD * i;
     outArray[target + 0] = -inArray[1 + ii] + inArray[5 + ii];
     outArray[target + 1] = inArray[2 + ii] + inArray[4 + ii];
     outArray[target + 2] = inArray[1 + ii] + inArray[5 + ii];
@@ -364,11 +381,15 @@ inline void LatticePatch::rotateToY(sunrealtype *outArray,
                                     const sunrealtype *inArray,
                                     const std::vector<sunindextype> &lookup) {
   sunindextype ii = 0, target = 0;
+  const int dPD = envelopeLattice->get_dataPointDimension();
   const sunindextype size = lookup.size();
-  #pragma omp simd
+  #pragma omp parallel for simd \
+  private(target, ii) \
+  shared(lookup, outArray, inArray, size, dPD) \
+  schedule(static) 
   for (sunindextype i = 0; i < size; i++) {
-    target = envelopeLattice->get_dataPointDimension() * lookup[i];
-    ii = envelopeLattice->get_dataPointDimension() * i;
+    target = dPD * lookup[i];
+    ii = dPD * i;
     outArray[target + 0] = inArray[ii] + inArray[5 + ii];
     outArray[target + 1] = -inArray[2 + ii] + inArray[3 + ii];
     outArray[target + 2] = -inArray[ii] + inArray[5 + ii];
@@ -385,10 +406,14 @@ inline void LatticePatch::rotateToZ(sunrealtype *outArray,
                                     const std::vector<sunindextype> &lookup) {
   sunindextype ii = 0, target = 0;
   const sunindextype size = lookup.size();
-  #pragma omp simd
+  const int dPD = envelopeLattice->get_dataPointDimension();
+  #pragma omp parallel for simd \
+  private(target, ii) \
+  shared(lookup, outArray, inArray, size, dPD) \
+  schedule(static) 
   for (sunindextype i = 0; i < size; i++) {
-    target = envelopeLattice->get_dataPointDimension() * lookup[i];
-    ii = envelopeLattice->get_dataPointDimension() * i;
+    target = dPD * lookup[i];
+    ii = dPD * i;
     outArray[target + 0] = -inArray[ii] + inArray[4 + ii];
     outArray[target + 1] = inArray[1 + ii] + inArray[3 + ii];
     outArray[target + 2] = inArray[ii] + inArray[4 + ii];
@@ -411,7 +436,10 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
   sunindextype ii = 0, target = 0;
   switch (dir) {
   case 1:
-    #pragma omp simd
+    #pragma omp parallel for simd \
+    private(ii, target) \
+    shared(dPD, gLW, totalNP, uTox, uAux, buffOut) \
+    schedule(static)
     for (sunindextype i = 0; i < totalNP; i++) {
       // get correct indices in u and rotation space
       target = dPD * i;
@@ -425,7 +453,10 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
     }
     break;
   case 2:
-    #pragma omp simd
+    #pragma omp parallel for simd \
+    private(ii, target) \
+    shared(dPD, gLW, totalNP, uTox, uAux, buffOut) \
+    schedule(static)
     for (sunindextype i = 0; i < totalNP; i++) {
       target = dPD * i;
       ii = dPD * (uToy[i] - gLW);
@@ -438,7 +469,10 @@ void LatticePatch::derotate(int dir, sunrealtype *buffOut) {
     }
     break;
   case 3:
-    #pragma omp simd
+    #pragma omp parallel for simd \
+    private(ii, target) \
+    shared(dPD, gLW, totalNP, uTox, uAux, buffOut) \
+    schedule(static)
     for (sunindextype i = 0; i < totalNP; i++) {
       target = dPD * i;
       ii = dPD * (uToz[i] - gLW);
@@ -517,7 +551,11 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   // Initialize running index li for the halo buffers, and index ui of uData for
   // data transfer
   sunindextype li = 0, ui = 0;
-
+  // Fill the halo buffers
+  #pragma omp parallel for default(none) \
+  private(ui) firstprivate(li) \
+  shared(nx, ny, mx, my, mz, dPD, distToRight, uData, \
+          ghostCellLeftToSend, ghostCellRightToSend)
   for (sunindextype iz = 0; iz < mz; iz++) {
     for (sunindextype iy = 0; iy < my; iy++) {
       // uData vector start index of halo data to be transferred
@@ -525,19 +563,7 @@ void LatticePatch::exchangeGhostCells(const int dir) {
       // iterate all x-ranges
       ui = (iz * nx * ny + iy * nx) * dPD;
       // copy left halo data from uData to buffer, transfer size is given by
-      // x-length (not x-range) perhaps faster but more fragile C lib copy
-      // operation (contained in cstring header)
-      /*
-      memcpy(&ghostCellLeftToSend[li],
-             &uData[ui],
-             sizeof(sunrealtype)*mx*dPD);
-      // increase ui by the distance to vis-a-vis boundary and copy right halo
-      data to buffer ui+=distToRight*dPD; memcpy(&ghostCellRightToSend[li],
-             &uData[ui],
-             sizeof(sunrealtype)*mx*dPD);
-      */
-      // perhaps more safe but slower copy operation (contained in algorithm
-      // header) performance highly system dependent
+      // x-length (not x-range)
       std::copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellLeftToSend[li]);
       ui += distToRight * dPD;
       std::copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellRightToSend[li]);
@@ -649,7 +675,10 @@ void LatticePatch::derive(const int dir) {
   const int order = envelopeLattice->get_stencilOrder();
   switch (order) {
   case 1:  // gLW=1
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s1b(&uAux[j + 0]) / dxi;
@@ -662,7 +691,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 2:  // gLW=2
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s2b(&uAux[j + 0]) / dxi;
@@ -675,7 +707,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 3:  // gLW=2
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s3b(&uAux[j + 0]) / dxi;
@@ -688,7 +723,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 4:  // gLW=3
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s4b(&uAux[j + 0]) / dxi;
@@ -701,7 +739,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 5:  // gLW=3
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s5b(&uAux[j + 0]) / dxi;
@@ -714,7 +755,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 6:  // gLW=4
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s6b(&uAux[j + 0]) / dxi;
@@ -727,7 +771,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 7:  // gLW=4
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s7b(&uAux[j + 0]) / dxi;
@@ -740,7 +787,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 8:  // gLW=5
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s8b(&uAux[j + 0]) / dxi;
@@ -753,7 +803,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 9:  // gLW=5
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s9b(&uAux[j + 0]) / dxi;
@@ -766,7 +819,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 10:  // gLW=6
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s10b(&uAux[j + 0]) / dxi;
@@ -779,7 +835,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 11:  // gLW=6
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s11b(&uAux[j + 0]) / dxi;
@@ -792,7 +851,10 @@ void LatticePatch::derive(const int dir) {
     }
     break;
   case 12:  // gLW=7
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth + gLW) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {
         uAux[j + 0 - gLW * dPD] = s12b(&uAux[j + 0]) / dxi;
@@ -806,8 +868,11 @@ void LatticePatch::derive(const int dir) {
     break;
   case 13:  // gLW=7
     // For all points in the plane perpendicular to the given direction
+    #pragma omp parallel for default(none) \
+    shared(perpPlainSize, dxi, dirWidth, dirWidthO, gLW, dPD, uAux)
     for (sunindextype i = 0; i < perpPlainSize; i++) {
       // iterate through the derivation direction
+      #pragma omp simd
       for (sunindextype j = (i * dirWidth
                   + gLW /*to shift left by gLW below */) * dPD;
            j < (i * dirWidth + gLW + dirWidthO) * dPD; j += dPD) {

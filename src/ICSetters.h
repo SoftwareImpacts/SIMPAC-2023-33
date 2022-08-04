@@ -8,7 +8,6 @@
 
 // math, constants, vector, and array
 #include <cmath>
-//#include <mathimf.h>
 #include <numbers>
 #include <array>
 #include <vector>

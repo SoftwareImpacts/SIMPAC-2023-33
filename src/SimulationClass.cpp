@@ -148,7 +148,9 @@ void Simulation::setInitialConditions() {
   const sunrealtype y0 = latticePatch.origin(2);
   const sunrealtype z0 = latticePatch.origin(3);
   sunindextype px = 0, py = 0, pz = 0;
-  // space coordinates
+  #pragma omp parallel for default(none) \
+  shared(nx, ny, totalNP, dx, dy, dz, x0, y0, z0) \
+  firstprivate(px, py, pz) schedule(static)
   for (sunindextype i = 0; i < totalNP * 6; i += 6) {
     px = (i / 6) % nx;
     py = ((i / 6) / nx) % ny;
@@ -219,13 +221,13 @@ void Simulation::advanceToTime(const sunrealtype &tEnd) {
     printf("CVode failed, flag=%d.\n", flag);
 }
 
-/// Write specified simulations steps to disk
+/// Write specified simulation steps to disk
 void Simulation::outAllFieldData(const int & state) {
   checkFlag(SimulationStarted);
   outputManager.outUState(state, lattice, latticePatch);
 }
 
-/// Check the presence configuration flags
+/// Check presence of configuration flags
 void Simulation::checkFlag(unsigned int flag) const {
   if (!(statusFlags & flag)) {
     std::string errorMessage;
@@ -255,7 +257,7 @@ void Simulation::checkFlag(unsigned int flag) const {
   return;
 }
 
-/// Check the absence of configuration flags
+/// Check absence of configuration flags
 void Simulation::checkNoFlag(unsigned int flag) const {
   if ((statusFlags & flag)) {
     std::string errorMessage;
