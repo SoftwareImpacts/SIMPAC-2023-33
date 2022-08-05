@@ -17,24 +17,24 @@
 
 /// plane wave structure
 struct planewave {
-  std::vector<sunrealtype> k;   /**< wavevector (normalized to \f$ 1/\lambda \f$) */
-  std::vector<sunrealtype> p;   /**< amplitde & polarization vector */
-  std::vector<sunrealtype> phi; /**< phase shift */
+  std::array<sunrealtype, 3> k;   /**< wavevector (normalized to \f$ 1/\lambda \f$) */
+  std::array<sunrealtype, 3> p;   /**< amplitde & polarization vector */
+  std::array<sunrealtype, 3> phi; /**< phase shift */
 };
 
 /// 1D Gaussian wave structure
 struct gaussian1D {
-  std::vector<sunrealtype> k;   /**< wavevector (normalized to \f$ 1/\lambda \f$) */
-  std::vector<sunrealtype> p;   /**< amplitude & polarization vector */
-  std::vector<sunrealtype> x0;  /**< shift from origin */
+  std::array<sunrealtype, 3> k;   /**< wavevector (normalized to \f$ 1/\lambda \f$) */
+  std::array<sunrealtype, 3> p;   /**< amplitude & polarization vector */
+  std::array<sunrealtype, 3> x0;  /**< shift from origin */
   sunrealtype phig;        /**< width */
-  std::vector<sunrealtype> phi; /**< phase shift */
+  std::array<sunrealtype, 3> phi; /**< phase shift */
 };
 
 /// 2D Gaussian wave structure
 struct gaussian2D {
-  std::vector<sunrealtype> x0;   /**< center */
-  std::vector<sunrealtype> axis; /**< direction to center */
+  std::array<sunrealtype, 3> x0;   /**< center */
+  std::array<sunrealtype, 3> axis; /**< direction to center */
   sunrealtype amp;          /**< amplitude */
   sunrealtype phip;         /**< polarization rotation */
   sunrealtype w0;           /**< taille */
@@ -45,8 +45,8 @@ struct gaussian2D {
 
 /// 3D Gaussian wave structure
 struct gaussian3D {
-  std::vector<sunrealtype> x0;   /**< center */
-  std::vector<sunrealtype> axis; /**< direction to center */
+  std::array<sunrealtype, 3> x0;   /**< center */
+  std::array<sunrealtype, 3> axis; /**< direction to center */
   sunrealtype amp;          /**< amplitude */
   sunrealtype phip;         /**< polarization rotation */
   sunrealtype w0;           /**< taille */

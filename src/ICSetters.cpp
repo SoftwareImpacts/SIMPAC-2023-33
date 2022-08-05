@@ -9,9 +9,9 @@
 #include <math.h>
 
 /** PlaneWave1D construction with */
-PlaneWave1D::PlaneWave1D(std::vector<sunrealtype> k,
-        std::vector<sunrealtype> p,
-        std::vector<sunrealtype> phi) {
+PlaneWave1D::PlaneWave1D(std::array<sunrealtype, 3> k,
+        std::array<sunrealtype, 3> p,
+        std::array<sunrealtype, 3> phi) {
   kx = k[0]; /** - wavevectors \f$ k_x \f$ */
   ky = k[1]; /** - \f$ k_y \f$ */
   kz = k[2]; /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$ */
@@ -48,9 +48,9 @@ void PlaneWave1D::addToSpace(const sunrealtype x, const sunrealtype y,
 }
 
 /** PlaneWave2D construction with */
-PlaneWave2D::PlaneWave2D(std::vector<sunrealtype> k,
-        std::vector<sunrealtype> p,
-        std::vector<sunrealtype> phi) {
+PlaneWave2D::PlaneWave2D(std::array<sunrealtype, 3> k,
+        std::array<sunrealtype, 3> p,
+        std::array<sunrealtype, 3> phi) {
   kx = k[0]; /** - wavevectors \f$ k_x \f$ */
   ky = k[1]; /** - \f$ k_y \f$ */
   kz = k[2]; /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$*/
@@ -86,9 +86,9 @@ void PlaneWave2D::addToSpace(const sunrealtype x, const sunrealtype y,
 }
 
 /** PlaneWave3D construction with */
-PlaneWave3D::PlaneWave3D(std::vector<sunrealtype> k,
-        std::vector<sunrealtype> p,
-        std::vector<sunrealtype> phi) {
+PlaneWave3D::PlaneWave3D(std::array<sunrealtype, 3> k,
+        std::array<sunrealtype, 3> p,
+        std::array<sunrealtype, 3> phi) {
   kx = k[0];     /** - wavevectors \f$ k_x \f$ */
   ky = k[1];     /** - \f$ k_y \f$ */
   kz = k[2];     /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$ */
@@ -123,9 +123,9 @@ void PlaneWave3D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Gauss1D construction with */
-Gauss1D::Gauss1D(std::vector<sunrealtype> k, std::vector<sunrealtype> p,
-                 std::vector<sunrealtype> xo, sunrealtype phig_,
-                 std::vector<sunrealtype> phi) {
+Gauss1D::Gauss1D(std::array<sunrealtype, 3> k, std::array<sunrealtype, 3> p,
+                 std::array<sunrealtype, 3> xo, sunrealtype phig_,
+                 std::array<sunrealtype, 3> phi) {
   kx = k[0];     /** - wavevectors \f$ k_x \f$ */
   ky = k[1];     /** - \f$ k_y \f$ */
   kz = k[2];     /** - \f$ k_z \f$ normalized to \f$ 1/\lambda \f$*/
@@ -143,7 +143,7 @@ Gauss1D::Gauss1D(std::vector<sunrealtype> k, std::vector<sunrealtype> p,
 
 /** Gauss1D implementation in space */
 void Gauss1D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
-                         sunrealtype *pTo6Space) const {
+        sunrealtype *pTo6Space) const {
   const sunrealtype wavelength =
       sqrt(kx * kx + ky * ky + kz * kz); /* \f$ 1/\lambda \f$ */
   x = x - x0x; /* x-coordinate minus shift from origin */
@@ -170,9 +170,10 @@ void Gauss1D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Gauss2D construction with */
-Gauss2D::Gauss2D(std::vector<sunrealtype> dis_, std::vector<sunrealtype> axis_,
-                 sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
-                 sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_) {
+Gauss2D::Gauss2D(std::array<sunrealtype, 3> dis_,
+        std::array<sunrealtype, 3> axis_,
+        sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
+        sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_) {
   dis = dis_;           /** - center it approaches */
   axis = axis_;         /** - direction form where it comes */
   Amp = Amp_;           /** - amplitude */
@@ -244,11 +245,12 @@ void Gauss2D::addToSpace(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Gauss3D construction with */
-Gauss3D::Gauss3D(std::vector<sunrealtype> dis_, std::vector<sunrealtype> axis_,
-                 sunrealtype Amp_,
-                 // std::vector<sunrealtype> pol_,
-                 sunrealtype phip_, sunrealtype w0_, sunrealtype zr_,
-                 sunrealtype Ph0_, sunrealtype PhA_) {
+Gauss3D::Gauss3D(std::array<sunrealtype, 3> dis_,
+        std::array<sunrealtype, 3> axis_,
+        sunrealtype Amp_,
+        // std::array<sunrealtype, 3> pol_,
+        sunrealtype phip_, sunrealtype w0_, sunrealtype zr_,
+        sunrealtype Ph0_, sunrealtype PhA_) {
   dis = dis_;   /** - center it approaches */
   axis = axis_; /** - direction from where it comes */
   Amp = Amp_;   /** - amplitude */
@@ -322,37 +324,37 @@ void ICSetter::add(sunrealtype x, sunrealtype y, sunrealtype z,
 }
 
 /** Add plane waves in 1D to their container vector */
-void ICSetter::addPlaneWave1D(std::vector<sunrealtype> k,
-        std::vector<sunrealtype> p,
-        std::vector<sunrealtype> phi) {
+void ICSetter::addPlaneWave1D(std::array<sunrealtype, 3> k,
+        std::array<sunrealtype, 3> p,
+        std::array<sunrealtype, 3> phi) {
   planeWaves1D.emplace_back(PlaneWave1D(k, p, phi));
 }
 
 /** Add plane waves in 2D to their container vector */
-void ICSetter::addPlaneWave2D(std::vector<sunrealtype> k,
-        std::vector<sunrealtype> p,
-        std::vector<sunrealtype> phi) {
+void ICSetter::addPlaneWave2D(std::array<sunrealtype, 3> k,
+        std::array<sunrealtype, 3> p,
+        std::array<sunrealtype, 3> phi) {
   planeWaves2D.emplace_back(PlaneWave2D(k, p, phi));
 }
 
 /** Add plane waves in 3D to their container vector */
-void ICSetter::addPlaneWave3D(std::vector<sunrealtype> k,
-        std::vector<sunrealtype> p,
-        std::vector<sunrealtype> phi) {
+void ICSetter::addPlaneWave3D(std::array<sunrealtype, 3> k,
+        std::array<sunrealtype, 3> p,
+        std::array<sunrealtype, 3> phi) {
   planeWaves3D.emplace_back(PlaneWave3D(k, p, phi));
 }
 
 /** Add Gaussian waves in 1D to their container vector */
-void ICSetter::addGauss1D(std::vector<sunrealtype> k,
-        std::vector<sunrealtype> p,
-        std::vector<sunrealtype> xo, sunrealtype phig_,
-        std::vector<sunrealtype> phi) {
+void ICSetter::addGauss1D(std::array<sunrealtype, 3> k,
+        std::array<sunrealtype, 3> p,
+        std::array<sunrealtype, 3> xo, sunrealtype phig_,
+        std::array<sunrealtype, 3> phi) {
   gauss1Ds.emplace_back(Gauss1D(k, p, xo, phig_, phi));
 }
 
 /** Add Gaussian waves in 2D to their container vector */
-void ICSetter::addGauss2D(std::vector<sunrealtype> dis_,
-        std::vector<sunrealtype> axis_,
+void ICSetter::addGauss2D(std::array<sunrealtype, 3> dis_,
+        std::array<sunrealtype, 3> axis_,
         sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
         sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_)
 {
@@ -361,8 +363,8 @@ void ICSetter::addGauss2D(std::vector<sunrealtype> dis_,
 }
 
 /** Add Gaussian waves in 3D to their container vector */
-void ICSetter::addGauss3D(std::vector<sunrealtype> dis_,
-        std::vector<sunrealtype> axis_,
+void ICSetter::addGauss3D(std::array<sunrealtype, 3> dis_,
+        std::array<sunrealtype, 3> axis_,
         sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
         sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_)
 {
