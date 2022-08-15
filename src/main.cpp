@@ -210,6 +210,12 @@ int main(int argc, char *argv[])
             latticepoints_per_dim[2]%patches_per_dim[2]==0,
             "The number of lattice points in each dimension must be "
             "divisible by the number of patches in that direction.");
+    static_assert(latticepoints_per_dim[0]/patches_per_dim[0] ==
+            latticepoints_per_dim[1]/patches_per_dim[1] &&
+            latticepoints_per_dim[0]/patches_per_dim[0] ==
+            latticepoints_per_dim[2]/patches_per_dim[2],
+            "At 3D simulations you are forced to make patches cubic in terms of "
+            "lattice points as this is decisive for computational efficiency.");
     int *interactions = &processOrder;
     Sim3D(CVodeTolerances,StencilOrder,physical_sidelengths,
             latticepoints_per_dim,patches_per_dim,periodic,interactions,

@@ -20,26 +20,25 @@ Check that out before the code if you are interested in this project!
 
 ## Preparing the Makefile
 The following descriptions assume you are using a Unix-like system.  
-The `make` utility is used for building and a recent compiler version supporting OpenMP is required.
+The _make_ utility is used for building and a recent compiler version.
 Features up to the C++20 standard are used.
+_OpenMP_ is optional to enforce more vectorization and enable multi-threading.
+The latter is useful for performance only when a very large number of nodes is
+used.
+
 
 Additionally required software:
 
-- An MPI implementation.  
-While `Intel(R) MPI` has mostly been used for scientific work on high-performance computing systems, the provided Makefile here is by default created for use with the _open_ implementations [`OpenMPI`](https://www.open-mpi.org/) or [`MPICH`](https://www.mpich.org).
-While some useful Intel(R) processor specific optimizations and compiler options are not available with the latter, they are easier to get and set up on a personal device simply via the corresponding package manager. 
+- An MPI implementation such as [_OpenMPI_](https://www.open-mpi.org/) or [_MPICH_](https://www.mpich.org).
 
-- The [`SUNDIALS`](https://computing.llnl.gov/projects/sundials) package with the [`CVODE`](https://computing.llnl.gov/projects/sundials/cvode) solver.  
+
+- The [_SUNDIALS_](https://computing.llnl.gov/projects/sundials) package with the [_CVODE_](https://computing.llnl.gov/projects/sundials/cvode) solver.  
 Version 6 is required.
 The code is presumably compliant with the upcoming version 7.  
-For the installation of `SUNDIALS`, [`CMake`](https://cmake.org/) is required.
+For the installation of _SUNDIALS_, [_CMake_](https://cmake.org/) is required.
 Enable MPI and specify the directory of the `mpicxx` wrapper for use of the MPI-based `NVECTOR_PARALLEL` module.
 32-bit integer size is sufficient.
-Make sure to edit the `SUNDIALS` include and library directories in the provided Makefile.
-
-
-A minimal [Makefile](src/Makefile) template is provided.
-Further compiler options might be beneficial, depending on the used system and software; e.g., higher vectorization and register usage instructions.
+Make sure to edit the _SUNDIALS_ include and library directories in the provided minimal [`Makefile`](src/Makefile).
 
 
 ## Short User Manual
@@ -49,7 +48,7 @@ You have full control over all high-level simulation settings via the [`main.cpp
 
 - Second, decide if you want to simulate in 1D, 2D, or 3D and uncomment only that full section.  
 You can then specify
-    - the relative and absolute integration tolerances of the `CVODE` solver.  
+    - the relative and absolute integration tolerances of the _CVODE_ solver.  
     Recommended values are between 1e-12 and 1e-18.
     - the order of accuracy of the numerical scheme via the stencil order.  
     You can choose an integer in the range 1-13.
@@ -57,11 +56,12 @@ You can then specify
     - the number of lattice points per dimension.
     - the slicing of the lattice into patches (only for 2D and 3D simulations, automatic in 1D) – this determines the number of patches and therefore the required distinct processing units for MPI.  
     The total number of processes is given by the product of patches in any dimension.  
-    Note: In the 3D case you better insure that every patch is cubic in terms of lattice points. This is decisive for computational efficiency.
+    Note: In the 3D case patches are required to be cubic in terms of lattice points.
+    This is decisive for computational efficiency and checked at compile-time.
     - whether to have periodic or vanishing boundary values (currently has to be chosen periodic).
     - whether you want to simulate on top of the linear vacuum only 4-photon processes (1), 6-photon processes (2), both (3), or none (0) – the linear Maxwell case.
     - the total time of the simulation in units c=1, i.e., the distance propagated by the light waves in meters.
-    - the number of time steps that will be solved stepwise by `CVODE`.   
+    - the number of time steps that will be solved stepwise by _CVODE_.   
     In order to keep interpolation errors small do not choose this number too small.
     - the multiple of steps at which you want the data to be written to disk.  
     - the output format. It can be 'c' for comma separated values (csv), or 'b' for binary.
@@ -71,13 +71,13 @@ You can then specify
     - which electromagnetic waveform(s) you want to propagate.  
     You can choose between a plane wave (not much physical content, but useful for checks) and implementations of Gaussians in 1D, 2D, and 3D.
     Their parameters can be tuned.  
-    A description of the wave implementations is given in [ref.pdf](docs/ref.pdf).
+    A description of the wave implementations is given in [`ref.pdf`](docs/ref.pdf).
     Note that the 3D Gaussians, as they are implemented up to now, should be propagated in the xy-plane.
     More waveform implementations will follow in subsequent versions of the code.
 
-A doxygen-generated complete code reference is provided with [ref.pdf](docs/ref.pdf).
+A doxygen-generated complete code reference is provided with [`ref.pdf`](docs/ref.pdf).
 
-- Third, in the `src` directory, build the executable `Simulation` via the `make` command.
+- Third, in the [`src`](src) directory, build the executable `Simulation` via the `make` command.
 
 - Forth, run the simulation.  
 Make sure to use `src` as working directory as the code uses a relative path to log the configuration in `main.cpp`.  
@@ -91,11 +91,11 @@ mpirun -np 4 ./Simulation
 - Monitor stdout and stderr.
 The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
 Errors are printed on stderr.  
-**Note**: Convergence of the employed `CVODE` solver can not be guaranteed and issues of this kind can hardly be predicted.
+**Note**: Convergence of the employed _CVODE_ solver can not be guaranteed and issues of this kind can hardly be predicted.
 On top, they are even system dependent.
 Piece of advice: Only pass decimal numbers for the grid settings and initial conditions.  
-`CVODE` warnings and errors are reported on stdout and stderr.  
-A `config.txt`file containing the relevant part of `main.cpp` is written to the output directory in order to save the simulation settings of each particular run.
+_CVODE_ warnings and errors are reported on stdout and stderr.  
+A `config.txt` file containing the configuration part of `main.cpp` is written to the output directory in order to save the simulation settings of each particular run.
 
 You can remove the object files and the executable via `make clean`.
 
@@ -119,7 +119,7 @@ Example scenarios of colliding Gaussians are preconfigured for any dimension.
 
 ### Note on Resource Occupation
 The computational load depends mostly on the grid size and resolution.
-The order of accuracy of the numerical scheme and `CVODE` are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
+The order of accuracy of the numerical scheme and _CVODE_ are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
 Simulations in 1D are relatively cheap and can easily be run on a modern laptop within minutes.
 The output size per step is less than a megabyte.  
 Simulations in 2D with about one million grid points are still feasible for a personal machine but might take about an hour of time to finish.
@@ -143,8 +143,8 @@ A `SimResults` folder is created in the chosen output directory if it does not e
 There are six columns in the csv files, corresponding to the six components of the electromagnetic field: $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
 Each row corresponds to one lattice point.  
 Postprocessing is required to read-in the files in order.
-A Python [module](examples/get_field_data.py) taking care of this is provided.  
-Likewise, a Python [module](examples/get_binary_field_data.py) is provided to read the binary
+[A Python module](examples/get_field_data.py) taking care of this is provided.  
+Likewise, [another Python module](examples/get_binary_field_data.py) is provided to read the binary
 data of a selected field component into a numpy array – its portability, however, cannot be guaranteed.  
 The process numbers first align along dimension 1 until the number of patches is that direction is reached, then continue on dimension two and finally fill dimension 3.
 For example, for a 3D simulation on 4x4x4=64 cores, the field data is divided over the patches as follows:
@@ -165,7 +165,7 @@ The numbers inside the 4x4 squares indicate the process number, which is the num
 The ordering of the array within a patch follows the standard C convention and can be reshaped in 2D and 3D to the actual size of the path.
 
 
-More information describing settings and analysis procedures used for actual scientific results are given in the open-access [paper](https://arxiv.org/abs/2109.08121).  
+More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121).  
 Some example Python analysis scripts can be found in the [examples](examples).
 The [first steps](examples/first_steps) demonstrate how the simulated data is accurately read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.

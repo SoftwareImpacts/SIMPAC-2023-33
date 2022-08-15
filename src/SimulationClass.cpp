@@ -212,13 +212,13 @@ void Simulation::addPeriodicICLayerInXY() {
 /// Advance the solution in time -> integrate the ODE over an interval t
 void Simulation::advanceToTime(const sunrealtype &tEnd) {
   checkFlag(SimulationStarted);
-  int flag = 0;
-  flag = CVode(cvode_mem, tEnd, latticePatch.u, &t,
+  int retval = 0;
+  retval = CVode(cvode_mem, tEnd, latticePatch.u, &t,
                CV_NORMAL); // CV_NORMAL: internal steps to reach tEnd, then
                            // interpolate to return latticePatch.u, return time
                            // reached by the solver as t
-  if (flag != CV_SUCCESS)
-    printf("CVode failed, flag=%d.\n", flag);
+  if (check_retval(&retval, "CVode", 1, lattice.my_prc))
+    MPI_Abort(lattice.comm, 1);
 }
 
 /// Write specified simulation steps to disk
