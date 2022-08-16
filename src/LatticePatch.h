@@ -1,7 +1,7 @@
-//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 /// @file LatticePatch.h
 /// @brief Declaration of the lattice and lattice patches
-//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -31,15 +31,16 @@
 // stencils
 #include "DerivationStencils.h"
 
-// lattice construction checking flag
+/// lattice construction checking flag
 constexpr unsigned int FLatticeDimensionSet = 0x01;
 
-/// lattice patch construction checking flags
+///@{
+/** lattice patch construction checking flag */
 constexpr unsigned int FLatticePatchSetUp = 0x01;
 constexpr unsigned int TranslocationLookupSetUp = 0x02;
 constexpr unsigned int GhostLayersInitialized = 0x04;
 constexpr unsigned int BuffersInitialized = 0x08;
-
+///@}
 
 /** @brief Lattice class for the construction of the enveloping discrete
  * simulation space */
@@ -59,7 +60,7 @@ private:
   sunindextype tot_nz;
   /// total number of lattice points
   sunindextype tot_noP;
-  /// dimension of each data point -> set once and for all
+  /// dimension of each data point set once and for all
   static constexpr int dataPointDimension = 6;
   /// number of lattice points times data dimension of each point
   sunindextype tot_noDP;
@@ -153,14 +154,16 @@ private:
   sunrealtype dy;
   /// physical distance between lattice points in z-direction
   sunrealtype dz;
+  /// lattice patch status flags
+  unsigned int statusFlags;
   /// pointer to the enveloping lattice
   const Lattice *envelopeLattice;
+  /// aid (auxilliarly) vector including ghost cells to compute the derivatives
+  std::vector<sunrealtype> uAux;
   ///@{
   /** translocation lookup table */
   std::vector<sunindextype> uTox, uToy, uToz, xTou, yTou, zTou;
   ///@}
-  /// aid (auxilliarly) vector including ghost cells to compute the derivatives
-  std::vector<sunrealtype> uAux;
   ///@{
   /** buffer to save spatial derivative values */
   std::vector<sunrealtype> buffX, buffY, buffZ;
@@ -174,10 +177,8 @@ private:
   /** ghost cell translocation lookup table */
   std::vector<sunindextype> lgcTox, rgcTox, lgcToy, rgcToy, lgcToz, rgcToz;
   ///@}
-  /** lattice patch status flags */
-  unsigned int statusFlags;
   ///@{
-  /** rotate and translocate an input array according to a lookup into an output
+  /** Rotate and translocate an input array according to a lookup into an output
    * array */
   inline void rotateToX(sunrealtype *outArray, const sunrealtype *inArray,
                         const std::vector<sunindextype> &lookup);
@@ -187,8 +188,7 @@ private:
                         const std::vector<sunindextype> &lookup);
   ///@}
 public:
-  /// ID of the LatticePatch, corresponds to process number
-  // (required solely for debugging)
+  /// ID of the LatticePatch, corresponds to process number (for debugging)
   int ID;
   /// N_Vector for saving field components u=(E,B) in lattice points
   N_Vector u;
@@ -215,17 +215,14 @@ public:
                                LatticePatch &patchToMold, const int DLx,
                                const int DLy, const int DLz);
   /// function to get the discrete size of the LatticePatch
-  // (0 direction corresponds to total)
   sunindextype discreteSize(int dir=0) const;
   /// function to get the origin of the patch
   sunrealtype origin(const int dir) const;
   /// function to get distance between points
   sunrealtype getDelta(const int dir) const;
-  /// function to fill out the lookup tables
-  // for translocation and de-translocation of data point
+  /// function to fill out the lookup tables for cache efficiency
   void generateTranslocationLookup();
   /// function to rotate u into Z-matrix eigenraum
-  // and make it the primary lattice direction of dir
   void rotateIntoEigen(const int dir);
   /// function to derotate uAux into dudata lattice direction of x
   void derotate(int dir, sunrealtype *buffOut);

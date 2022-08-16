@@ -10,7 +10,7 @@
 #include "LatticePatch.h"
 #include "SimulationClass.h"
 
-/** @brief monostate TimeEvolution Class to propagate the field data in time in
+/** @brief monostate TimeEvolution class to propagate the field data in time in
  * a given order of the HE weak-field expansion */
 class TimeEvolution {
 public:

@@ -1,8 +1,7 @@
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 /// @file ICSetters.h
-/// @brief Declaration of the plane wave and Gaussian wave packets in 1D, 2D,
-/// 3D
-///////////////////////////////////////////////////////////////////////////////
+/// @brief Declaration of the plane wave and Gaussian wave packets
+////////////////////////////////////////////////////////////////////
 
 #pragma once
 
@@ -76,7 +75,7 @@ public:
                   sunrealtype *pTo6Space) const;
 };
 
-/** @brief class for Gaussian waves in 1D
+/** @brief class for Gaussian pulses in 1D
  *
  * They are given in the form \f$ \vec{E}=\vec{p} \, \exp \left(
  * -(\vec{x}-\vec{x}_0)^2 / \Phi_g^2 \right) \, \cos(\vec{k} \cdot \vec{x}) \f$
@@ -124,7 +123,7 @@ public:
 public:
 };
 
-/** @brief class for Gaussian waves in 2D
+/** @brief class for Gaussian pulses in 2D
  *
  * They are given in the form
  * \f$ \vec{E}= A \, \vec{\epsilon} \ \sqrt{\frac{\omega_0}{\omega(z)}} \, \exp
@@ -178,7 +177,7 @@ public:
 public:
 };
 
-/** @brief class for Gaussian waves in 3D
+/** @brief class for Gaussian pulses in 3D
  *
  * They are given in the form
  * \f$ \vec{E}= A \, \vec{\epsilon} \ \frac{\omega_0}{\omega(z)} \, \exp
@@ -244,11 +243,11 @@ private:
   std::vector<PlaneWave2D> planeWaves2D;
   /// container vector for plane waves in 3D
   std::vector<PlaneWave3D> planeWaves3D;
-  /// container vector for Gaussian waves in 1D
+  /// container vector for Gaussian wave packets in 1D
   std::vector<Gauss1D> gauss1Ds;
-  /// container vector for Gaussian waves in 2D
+  /// container vector for Gaussian wave packets in 2D
   std::vector<Gauss2D> gauss2Ds;
-  /// container vector for Gaussian waves in 3D
+  /// container vector for Gaussian wave packets in 3D
   std::vector<Gauss3D> gauss3Ds;
 
 public:
@@ -271,19 +270,19 @@ public:
   void addPlaneWave3D(std::array<sunrealtype, 3> k = {1, 0, 0},
                       std::array<sunrealtype, 3> p = {0, 0, 1},
                       std::array<sunrealtype, 3> phi = {0, 0, 0});
-  /// function to add Gaussian waves in 1D to their container vector
+  /// function to add Gaussian wave packets in 1D to their container vector
   void addGauss1D(std::array<sunrealtype, 3> k = {1, 0, 0},
                   std::array<sunrealtype, 3> p = {0, 0, 1},
                   std::array<sunrealtype, 3> xo = {0, 0, 0},
                   sunrealtype phig_ = 1.0,
                   std::array<sunrealtype, 3> phi = {0, 0, 0});
-  /// function to add Gaussian waves in 2D to their container vector
+  /// function to add Gaussian wave packets in 2D to their container vector
   void addGauss2D(std::array<sunrealtype, 3> dis_ = {0, 0, 0},
                   std::array<sunrealtype, 3> axis_ = {1, 0, 0},
                   sunrealtype Amp_ = 1.0, sunrealtype phip_ = 0,
                   sunrealtype w0_ = 1e-5, sunrealtype zr_ = 4e-5,
                   sunrealtype Ph0_ = 2e-5, sunrealtype PhA_ = 0.45e-5);
-  /// function to add Gaussian waves in 3D to their container vector
+  /// function to add Gaussian wave packets in 3D to their container vector
   void addGauss3D(std::array<sunrealtype, 3> dis_ = {0, 0, 0},
                   std::array<sunrealtype, 3> axis_ = {1, 0, 0},
                   sunrealtype Amp_ = 1.0, sunrealtype phip_ = 0,

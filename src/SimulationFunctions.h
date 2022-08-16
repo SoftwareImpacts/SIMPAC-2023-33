@@ -34,7 +34,7 @@ struct gaussian1D {
 /// 2D Gaussian wave structure
 struct gaussian2D {
   std::array<sunrealtype, 3> x0;   /**< center */
-  std::array<sunrealtype, 3> axis; /**< direction to center */
+  std::array<sunrealtype, 3> axis; /**< direction from where it comes */
   sunrealtype amp;          /**< amplitude */
   sunrealtype phip;         /**< polarization rotation */
   sunrealtype w0;           /**< taille */
@@ -46,7 +46,7 @@ struct gaussian2D {
 /// 3D Gaussian wave structure
 struct gaussian3D {
   std::array<sunrealtype, 3> x0;   /**< center */
-  std::array<sunrealtype, 3> axis; /**< direction to center */
+  std::array<sunrealtype, 3> axis; /**< direction from where it comes */
   sunrealtype amp;          /**< amplitude */
   sunrealtype phip;         /**< polarization rotation */
   sunrealtype w0;           /**< taille */
@@ -80,5 +80,5 @@ void Sim3D(const std::array<sunrealtype,2>, const int,
         const int, const char,
         const std::vector<planewave> &, const std::vector<gaussian3D> &);
 
-/** MPI timer function */
+/// MPI timer function
 void timer(double &, double &);

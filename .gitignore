@@ -7,6 +7,5 @@ examples/*/.ipynb_checkpoints
 examples/__pycache__
 
 doxygen/*
-!doxygen/Doxyfile
 
 *.DS_Store

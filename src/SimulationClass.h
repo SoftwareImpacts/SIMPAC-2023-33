@@ -16,12 +16,14 @@
 #include "Outputters.h"
 #include "TimeEvolutionFunctions.h"
 
-/// simulation checking flags
+///@{
+/** simulation checking flag */
 constexpr unsigned int LatticeDiscreteSetUp = 0x01;
 constexpr unsigned int LatticePhysicalSetUp = 0x02;
 constexpr unsigned int LatticePatchworkSetUp = 0x04; // not used anymore
 constexpr unsigned int CvodeObjectSetUp = 0x08;
 constexpr unsigned int SimulationStarted = 0x10;
+///@}
 
 /** @brief Simulation class to instantiate the whole walkthrough of a Simulation
  */
@@ -50,7 +52,7 @@ public:
           const bool periodicity);
   /// destructor function freeing CVode memory and Sundials context
   ~Simulation();
-  /// reference to the cartesian communicator of the lattice -> for debugging
+  /// reference to the cartesian communicator of the lattice (for debugging)
   MPI_Comm *get_cart_comm() { return &lattice.comm; }
   /// function to set discrete dimensions of the lattice
   void setDiscreteDimensionsOfLattice(const sunindextype _tot_nx,
@@ -76,12 +78,11 @@ public:
   void addPeriodicICLayerInXY();
   /// function to advance solution in time with CVODE
   void advanceToTime(const sunrealtype &tEnd);
-  /// function to generate Output of the whole field at a given time
+  /// function to write field data to disk
   void outAllFieldData(const int & state);
-  /// function to check that a flag has been set and if not print an error
-  // message and cause an abort on all ranks
+  /// function to check if flag has been set
   void checkFlag(unsigned int flag) const;
-  /// function to check that if flag has not been set and if print an error
+  /// function to check if flag has not been set
   // message and cause an abort on all ranks
   void checkNoFlag(unsigned int flag) const;
 };

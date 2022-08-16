@@ -229,7 +229,7 @@ sunrealtype LatticePatch::getDelta(const int dir) const {
   }
 }
 
-/** To avoid cache misses:
+/** In order to avoid cache misses:
  * create vectors to translate u vector into space coordinates and vice versa
  * and same for left and right ghost layers to space */
 void LatticePatch::generateTranslocationLookup() {
@@ -317,9 +317,9 @@ void LatticePatch::generateTranslocationLookup() {
   statusFlags |= TranslocationLookupSetUp;
 }
 
-/** Rotate into eigenraum along R matrices of paper using below rotation
- * functions
- * -> uAuxData gets the rotated left-halo-, inner-patch-, right-halo-data */
+/** Rotate into eigenraum along R matrices of paper using the rotation
+ * methods;
+ * uAuxData gets the rotated left-halo-, inner-patch-, right-halo-data */
 void LatticePatch::rotateIntoEigen(const int dir) {
   // Check that the lattice, ghost layers as well as the translocation lookups
   // have been set up;
