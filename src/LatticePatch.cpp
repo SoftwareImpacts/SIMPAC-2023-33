@@ -544,7 +544,7 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   sunindextype li = 0, ui = 0;
   // Fill the halo buffers
   #pragma omp parallel for default(none) \
-  private(ui) reduction(+:li) \
+  private(ui, li) \
   shared(nx, ny, mx, my, mz, dPD, distToRight, uData, \
           ghostCellLeftToSend, ghostCellRightToSend)
   for (sunindextype iz = 0; iz < mz; iz++) {
@@ -553,15 +553,13 @@ void LatticePatch::exchangeGhostCells(const int dir) {
       // with each z-step add the whole xy-plane and with y-step the x-range ->
       // iterate all x-ranges
       ui = (iz * nx * ny + iy * nx) * dPD;
+      // increase halo index by transferred items of previous iteration steps
+      li = (iz * my * mx + iy * mx) * dPD;
       // copy left halo data from uData to buffer, transfer size is given by
       // x-length (not x-range)
       std::copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellLeftToSend[li]);
       ui += distToRight * dPD;
       std::copy(&uData[ui], &uData[ui + mx * dPD], &ghostCellRightToSend[li]);
-
-      // increase halo index by transferred items per y-iteration step
-      // (x-length)
-      li += mx * dPD;
     }
   }
 
