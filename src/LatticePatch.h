@@ -190,16 +190,16 @@ private:
 public:
   /// ID of the LatticePatch, corresponds to process number (for debugging)
   int ID;
-  /// N_Vector for saving field components u=(E,B) in lattice points
+  /// NVector for saving field components u=(E,B) in lattice points
   N_Vector u;
-  /// N_Vector for saving temporal derivatives of the field data
+  /// NVector for saving temporal derivatives of the field data
   N_Vector du;
   /// pointer to field data
   sunrealtype *uData;
-  /// pointer to auxiliary data vector
-  sunrealtype *uAuxData;
   /// pointer to time-derivative data
   sunrealtype *duData;
+  /// pointer to auxiliary data vector
+  sunrealtype *uAuxData;
   ///@{
   /** pointer to halo data */
   sunrealtype *gCLData, *gCRData;

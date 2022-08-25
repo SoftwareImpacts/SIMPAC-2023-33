@@ -41,8 +41,8 @@ HEADER = Masterheader.h \
 		 $(CLASS_HEADER)
 
 # Used libraries
-LIBS = 	-lsundials_cvode \
-		-lsundials_nvecparallel
+LIBS = -lsundials_cvode \
+	   -lsundials_nvecparallel
 
 
 ##########################################################

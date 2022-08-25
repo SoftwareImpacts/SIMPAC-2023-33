@@ -26,13 +26,6 @@ void Lattice::initializeCommunicator(const int Nx, const int Ny,
   // nicer error messages
   constexpr char lattice_comm_name[] = "Lattice";
   MPI_Comm_set_name(comm, lattice_comm_name);
-
-  // Test if process naming is the same for both communicators
-  /*
-  int myPrc;
-  MPI_Comm_rank(MPI_COMM_WORLD,&myPrc);
-  cout<<"\r"<<my_prc<<"\t"<<myPrc<<std::endl;
-  */
 }
 
 /// Construct the lattice and set the stencil order
@@ -80,7 +73,7 @@ LatticePatch::LatticePatch() {
   x0 = y0 = z0 = 0;
   // set default position in Lattice-Patchwork to (0,0,0)
   LIx = LIy = LIz = 0;
-  // set default physical lentgth for lattice patch to (0,0,0)
+  // set default physical length for lattice patch to (0,0,0)
   lx = ly = lz = 0;
   // set default discrete length for lattice patch to (0,1,1)
   /* This is done in this manner as even in 1D simulations require a 1 point
@@ -152,17 +145,15 @@ int generatePatchwork(const Lattice &envelopeLattice,
   patchToMold.lx = patchToMold.nx * patchToMold.dx;
   patchToMold.ly = patchToMold.ny * patchToMold.dy;
   patchToMold.lz = patchToMold.nz * patchToMold.dz;
-  /* Create and allocate memory for parallel vectors with defined local and
-   * global lenghts *
-   * (-> CVode problem sizes Nlocal and N)
-   * for field data and temporal derivatives and set extra pointers to them */
+
+  // MPI NVectors with local patch and global lattice size
   patchToMold.u =
       N_VNew_Parallel(envelopeLattice.comm, local_NODP,
                       envelopeLattice.get_tot_noDP(), envelopeLattice.sunctx);
-  patchToMold.uData = NV_DATA_P(patchToMold.u);
   patchToMold.du =
       N_VNew_Parallel(envelopeLattice.comm, local_NODP,
                       envelopeLattice.get_tot_noDP(), envelopeLattice.sunctx);
+  patchToMold.uData = NV_DATA_P(patchToMold.u);
   patchToMold.duData = NV_DATA_P(patchToMold.du);
   // Allocate space for auxiliary uAux so that the lattice and all possible
   // directions of ghost Layers fit
@@ -553,7 +544,7 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   sunindextype li = 0, ui = 0;
   // Fill the halo buffers
   #pragma omp parallel for default(none) \
-  private(ui) firstprivate(li) \
+  private(ui) reduction(+:li) \
   shared(nx, ny, mx, my, mz, dPD, distToRight, uData, \
           ghostCellLeftToSend, ghostCellRightToSend)
   for (sunindextype iz = 0; iz < mz; iz++) {
