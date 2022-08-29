@@ -25,7 +25,9 @@
 
 // Sundials
 #include <cvode/cvode.h>              /* prototypes for CVODE fcts. */
-#include <nvector/nvector_parallel.h> /* definition of N_Vector and macros */
+//#include <nvector/nvector_parallel.h> /* definition of MPI N_Vector */
+#include <nvector/nvector_openmp.h>   /* definition of OpenMP N_Vector */
+#include <nvector/nvector_mpiplusx.h> /* definition of MPI+X N_Vector */
 #include <sundials/sundials_types.h>  /* definition of type sunrealtype */
 
 // stencils
@@ -191,9 +193,9 @@ public:
   /// ID of the LatticePatch, corresponds to process number (for debugging)
   int ID;
   /// NVector for saving field components u=(E,B) in lattice points
-  N_Vector u;
+  N_Vector uLocal, u;
   /// NVector for saving temporal derivatives of the field data
-  N_Vector du;
+  N_Vector duLocal, du;
   /// pointer to field data
   sunrealtype *uData;
   /// pointer to time-derivative data

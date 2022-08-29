@@ -42,7 +42,8 @@ HEADER = Masterheader.h \
 
 # Used libraries
 LIBS = -lsundials_cvode \
-	   -lsundials_nvecparallel
+	   -lsundials_nvecmpiplusx \
+	   -lsundials_nvecopenmp
 
 
 ##########################################################

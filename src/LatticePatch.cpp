@@ -93,8 +93,12 @@ LatticePatch::~LatticePatch() {
   // Deallocate memory for solution vector
   if (statusFlags & FLatticePatchSetUp) {
     // Destroy data vectors
-    N_VDestroy_Parallel(u);
-    N_VDestroy_Parallel(du);
+    //N_VDestroy_Parallel(u);
+    //N_VDestroy_Parallel(du);
+    N_VDestroy(u);
+    N_VDestroy(du);
+    N_VDestroy_OpenMP(uLocal);
+    N_VDestroy_OpenMP(duLocal);
   }
 }
 
@@ -147,6 +151,7 @@ int generatePatchwork(const Lattice &envelopeLattice,
   patchToMold.lz = patchToMold.nz * patchToMold.dz;
 
   // MPI NVectors with local patch and global lattice size
+  /*
   patchToMold.u =
       N_VNew_Parallel(envelopeLattice.comm, local_NODP,
                       envelopeLattice.get_tot_noDP(), envelopeLattice.sunctx);
@@ -155,6 +160,27 @@ int generatePatchwork(const Lattice &envelopeLattice,
                       envelopeLattice.get_tot_noDP(), envelopeLattice.sunctx);
   patchToMold.uData = NV_DATA_P(patchToMold.u);
   patchToMold.duData = NV_DATA_P(patchToMold.du);
+  */
+
+  // OpenMP and MPI+X NVector interoperability
+  // OpenMP NVectors with local patch size
+  int num_threads = 1;
+  #ifdef _OPENMP
+  num_threads = omp_get_max_threads();
+  #endif
+  patchToMold.uLocal = N_VNew_OpenMP(local_NODP, num_threads,
+          envelopeLattice.sunctx);
+  patchToMold.duLocal = N_VNew_OpenMP(local_NODP, num_threads,
+          envelopeLattice.sunctx);
+  // MPI+X NVectors containing local OpenMP NVectors
+  patchToMold.u = N_VMake_MPIPlusX(envelopeLattice.comm, patchToMold.uLocal,
+          envelopeLattice.sunctx);
+  patchToMold.du = N_VMake_MPIPlusX(envelopeLattice.comm, patchToMold.duLocal,
+          envelopeLattice.sunctx);
+  // Pointers to local vectors
+  patchToMold.uData = N_VGetArrayPointer_MPIPlusX(patchToMold.u);
+  patchToMold.duData = N_VGetArrayPointer_MPIPlusX(patchToMold.du);
+
   // Allocate space for auxiliary uAux so that the lattice and all possible
   // directions of ghost Layers fit
   const sunindextype s1 = patchToMold.nx, s2 = patchToMold.ny,
