@@ -3,8 +3,8 @@
 The Heisenberg-Euler Weak-Field Expansion Simulator is a solver for the all-optical QED vacuum.
 It solves the equations of motion for electromagnetic waves in the Heisenberg-Euler effective QED theory in the weak-field expansion with up to six-photon processes.
 
-There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable scientific results.  
-Check that out before the code if you are interested in this project!
+There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable scientific results
+and a [Mendeley repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
 
 ![Harmonic Generation 3D](examples/figures/3d_harmonics.png)
 
