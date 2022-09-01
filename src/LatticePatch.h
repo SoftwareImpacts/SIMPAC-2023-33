@@ -25,9 +25,12 @@
 
 // Sundials
 #include <cvode/cvode.h>              /* prototypes for CVODE fcts. */
-//#include <nvector/nvector_parallel.h> /* definition of MPI N_Vector */
+#if defined(_OPENMP)
 #include <nvector/nvector_openmp.h>   /* definition of OpenMP N_Vector */
 #include <nvector/nvector_mpiplusx.h> /* definition of MPI+X N_Vector */
+#else
+#include <nvector/nvector_parallel.h> /* definition of MPI N_Vector */
+#endif
 #include <sundials/sundials_types.h>  /* definition of type sunrealtype */
 
 // stencils

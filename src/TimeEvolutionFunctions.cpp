@@ -15,10 +15,13 @@ int TimeEvolution::f(sunrealtype t, N_Vector u, N_Vector udot, void *data_loc) {
 
   // update circle
   // Access provided field values and temp. derivatieves with NVector pointers
-  //sunrealtype *udata = NV_DATA_P(u),
-  //            *dudata = NV_DATA_P(udot);
+#if defined(_OPENMP)
   sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
               *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#else
+  sunrealtype *udata = NV_DATA_P(u),
+              *dudata = NV_DATA_P(udot);
+#endif
 
   // Store original data location of the patch
   sunrealtype *originaluData = data->uData,
@@ -78,10 +81,13 @@ void linear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   // NVector pointers to provided field values and their temp. derivatives
-  //sunrealtype *udata = NV_DATA_P(u),
-  //            *dudata = NV_DATA_P(udot);
+#if defined(_OPENMP)
   sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
               *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#else
+  sunrealtype *udata = NV_DATA_P(u),
+              *dudata = NV_DATA_P(udot);
+#endif
 
   // pointer to spatial derivatives via pach data
   sunrealtype *dxData = data->buffData[1 - 1];
@@ -318,10 +324,13 @@ void linear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 /// nonlinear 2D HE propagation
 void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
-  //sunrealtype *udata = NV_DATA_P(u),
-  //            *dudata = NV_DATA_P(udot);
+#if defined(_OPENMP)
   sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
               *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#else
+  sunrealtype *udata = NV_DATA_P(u),
+              *dudata = NV_DATA_P(udot);
+#endif
 
   sunrealtype *dxData = data->buffData[1 - 1];
   sunrealtype *dyData = data->buffData[2 - 1];
@@ -533,10 +542,13 @@ void linear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 /// nonlinear 3D HE propagation
 void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
-  //sunrealtype *udata = NV_DATA_P(u),
-  //            *dudata = NV_DATA_P(udot);
+#if defined(_OPENMP)
   sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
               *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#else
+  sunrealtype *udata = NV_DATA_P(u),
+              *dudata = NV_DATA_P(udot);
+#endif
 
   sunrealtype *dxData = data->buffData[1 - 1];
   sunrealtype *dyData = data->buffData[2 - 1];
