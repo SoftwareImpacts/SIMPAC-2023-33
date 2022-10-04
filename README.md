@@ -3,8 +3,8 @@
 The Heisenberg-Euler Weak-Field Expansion Simulator is a solver for the all-optical QED vacuum.
 It solves the equations of motion for electromagnetic waves in the Heisenberg-Euler effective QED theory in the weak-field expansion with up to six-photon processes.
 
-There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable scientific results
-and a [Mendeley repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
+There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable results
+and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
 
 ![Harmonic Generation 3D](examples/figures/3d_harmonics.png)
 
@@ -20,11 +20,11 @@ and a [Mendeley repository](https://data.mendeley.com/datasets/f9wntyw39x) with 
 
 ## Preparing the Makefile
 The following descriptions assume you are using a Unix-like system.  
-The _make_ utility is used for building and a recent compiler version.
+The _make_ utility is used for building and a recent compiler version is
+required.
 Features up to the C++20 standard are used.
 _OpenMP_ is optional to enforce more vectorization and enable multi-threading.
-The latter is useful for performance only when a very large number of nodes is
-used.
+The latter is useful for performance only when a very large number of nodes is used.
 
 
 Additionally required software:
@@ -32,11 +32,12 @@ Additionally required software:
 - An MPI implementation such as [_OpenMPI_](https://www.open-mpi.org/) or [_MPICH_](https://www.mpich.org).
 
 
-- The [_SUNDIALS_](https://computing.llnl.gov/projects/sundials) package with the [_CVODE_](https://computing.llnl.gov/projects/sundials/cvode) solver.  
+- The [_SUNDIALS_](https://computing.llnl.gov/projects/sundials) package or the [_CVODE_](https://computing.llnl.gov/projects/sundials/cvode) solver.  
 Version 6 is required.
 The code is presumably compliant with the upcoming version 7.  
 For the installation of _SUNDIALS_, [_CMake_](https://cmake.org/) is required.
-Enable MPI and specify the directory of the `mpicxx` wrapper for use of the MPI-based `NVECTOR_PARALLEL` module.
+Enable MPI (and OpenMP).
+For optimal performance the `CMAKE_BUILD_TYPE` should be "Release".
 Make sure to edit the _SUNDIALS_ include and library directories in the provided minimal [`Makefile`](src/Makefile).
 
 
@@ -48,7 +49,7 @@ You have full control over all high-level simulation settings via the [`main.cpp
 - Second, decide if you want to simulate in 1D, 2D, or 3D and uncomment only that full section.  
 You can then specify
     - the relative and absolute integration tolerances of the _CVODE_ solver.  
-    Recommended values are between 1e-12 and 1e-18.
+    Recommended values are between 1e-12 and 1e-16.
     - the order of accuracy of the numerical scheme via the stencil order.  
     You can choose an integer in the range 1-13.
     - the physical side lengths of the grid in meters.
@@ -65,7 +66,7 @@ You can then specify
     - the multiple of steps at which you want the data to be written to disk.  
     - the output format. It can be 'c' for comma separated values (csv), or 'b' for binary.
     For csv format the name of the files written to the output directory is of the form `{step_number}_{process_number}.csv`.
-    For binary output all data per step is written into one file and the step number is the name of
+    For binary output all data per step are written into one file and the step number is the name of
     the file.
     - which electromagnetic waveform(s) you want to propagate.  
     You can choose between a plane wave (not much physical content, but useful for checks) and implementations of Gaussians in 1D, 2D, and 3D.
@@ -90,11 +91,11 @@ mpirun -np 4 ./Simulation
 - Monitor stdout and stderr.
 The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
 Errors are printed on stderr.  
-**Note**: Convergence of the employed _CVODE_ solver can not be guaranteed and issues of this kind can hardly be predicted.
+**Note**: Convergence of the employed _CVODE_ solver cannot be guaranteed and issues of this kind can hardly be predicted.
 On top, they are even system dependent.
 Piece of advice: Only pass decimal numbers for the grid settings and initial conditions.  
 _CVODE_ warnings and errors are reported on stdout and stderr.  
-A `config.txt` file containing the configuration part of `main.cpp` is written to the output directory in order to save the simulation settings of each particular run.
+A `config.txt` file containing the configuration part of `main.cpp` is written to the output directory in order to log the simulation settings of each particular run.
 
 You can remove the object files and the executable via `make clean`.
 
@@ -102,7 +103,7 @@ You can remove the object files and the executable via `make clean`.
 ### Note on Simulation Settings
 You may want to start with two Gaussian pulses in 1D colliding head-on in a pump-probe setup.
 For this event, specify a high-frequency probe pulse with a low amplitude and a low-frequency pump pulse with a high frequency.
-Both frequencies should be chosen to be below a forth of the Nyquist frequency to avoid nonphysical dispersion effects.
+Both frequencies should be chosen to be below a forth of the Nyquist frequency to minimize nonphysical dispersion effects on the lattice.
 The wavelengths should neither be chosen too large (bulky wave) on a fine patchwork of narrow patches.
 Their communication might be problematic with too small halo layer depths.
 You would observe a blurring over time.
@@ -119,26 +120,28 @@ Example scenarios of colliding Gaussians are preconfigured for any dimension.
 ### Note on Resource Occupation
 The computational load depends mostly on the grid size and resolution.
 The order of accuracy of the numerical scheme and _CVODE_ are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
-Simulations in 1D are relatively cheap and can easily be run on a modern laptop within minutes.
-The output size per step is less than a megabyte.  
-Simulations in 2D with about one million grid points are still feasible for a personal machine but might take about an hour of time to finish.
+Simulations in 1D are relatively cheap and can easily be run on a modern laptop within seconds.
+The output size per step is usually less than a megabyte.  
+Simulations in 2D with about one million grid points are still feasible for a personal machine but might take a couple of minutes to finish.
 The output size per step is in the range of some dozen megabytes.  
 Sensible simulations in 3D require large memory resources and therefore need to be run on distributed systems.
-Even hundreds of cores can be kept busy for many hours or days.
+Hundreds of cores can be kept busy for many hours or days.
 The output size quickly amounts to dozens of gigabytes for just a single state.
 
 
 ### Note on Output Analysis
 The field data are either written in csv format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
-This is not an elegant solution, but a portable way that also works fast and is
+This is the simplest solution for smaller simulations and a portable way that also works fast and is
 straightforward to analyze.  
-Or, the option recommended for many larger write operations, in binary format with a single file per
+Or, the option strictly recommended for larger write operations, in binary format with a single file per
 output step.
 Raw bytes are written to the files as they are in memory.
 This option is more performant and achieved with MPI IO.
 However, there is no guarantee of portability; postprocessing/conversion is required.
 The step number is the file name.  
-A `SimResults` folder is created in the chosen output directory if it does not exist and a folder named after the starting timestep of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created where the output files are written into.
+A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestep of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.
+This is where the output files are written into.
+
 There are six columns in the csv files, corresponding to the six components of the electromagnetic field: $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
 Each row corresponds to one lattice point.  
 Postprocessing is required to read-in the files in order.
@@ -164,7 +167,8 @@ The numbers inside the 4x4 squares indicate the process number, which is the num
 The ordering of the array within a patch follows the standard C convention and can be reshaped in 2D and 3D to the actual size of the path.
 
 
-More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121).  
+More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
+and a collection of corresponding analysis notebooks are uploaded to a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x).
 Some example Python analysis scripts can be found in the [examples](examples).
 The [first steps](examples/first_steps) demonstrate how the simulated data is accurately read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.
