@@ -8,4 +8,6 @@ examples/__pycache__
 
 doxygen/*
 
+src/build/*
+
 *.DS_Store

@@ -10,39 +10,33 @@ and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) 
 
 
 ## Contents
-- [Preparing the Makefile](#preparing-the-makefile)
-- [Short User Manual](#short-user-manual)
-    - [Hints for Settings](#hints-for-settings)
-    - [Note on Resource Occupation](#note-on-resource-occupation)
-    - [Note on Output Analysis](#note-on-output-analysis)
+- [Required software](#required-software)
+- [Short user manual](#short-user-manual)
+    - [Note on simulation settings](#note-on-simulation-settings)
+    - [Note on resource occupation](#note-on-resource-occupation)
+    - [Note on the output analysis](#note-on-the-output-analysis)
 - [Authors](#authors)
 
 
-## Preparing the Makefile
-The following descriptions assume you are using a Unix-like system.  
-The _make_ utility is used for building and a recent compiler version is
-required.
-Features up to the C++20 standard are used.
+## Required software
+_CMake_ is used for building and a recent C++ compiler version is required
+since features up to the C++20 standard are used.
+An _MPI_ implementation is required.
 _OpenMP_ is optional to enforce more vectorization and enable multi-threading.
-The latter is useful for performance only when a very large number of nodes is used.
+The latter is useful for performance only when a very large number of compute nodes is used.
 
-
-Additionally required software:
-
-- An MPI implementation such as [_OpenMPI_](https://www.open-mpi.org/) or [_MPICH_](https://www.mpich.org).
-
-
-- The [_SUNDIALS_](https://computing.llnl.gov/projects/sundials) package or the [_CVODE_](https://computing.llnl.gov/projects/sundials/cvode) solver.  
-Version 6 is required.
-The code is presumably compliant with the upcoming version 7.  
-For the installation of _SUNDIALS_, [_CMake_](https://cmake.org/) is required.
-Enable MPI (and OpenMP).
+The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is installed on the fly through _CMake_.
+If _CVODE_ (or the whole [_SUNDIALS_](https://computing.llnl.gov/projects/sundials/cvode) package) is installed manually:
+Version 6 is required, the code is presumably compliant with the upcoming version 7.
+Enable _MPI_ (and _OpenMP_).
 For optimal performance the `CMAKE_BUILD_TYPE` should be "Release".
-Make sure to edit the _SUNDIALS_ include and library directories in the provided minimal [`Makefile`](src/Makefile).
+Edit the `SUNDIALS_DIR` in the `CMakeLists.txt`.
 
 
-## Short User Manual
+## Short user manual
 You have full control over all high-level simulation settings via the [`main.cpp`](src/main.cpp) file.
+(In an upcoming version the parameters will be passed via the command line at
+the detriment of missing compile-time checks.)
 
 - First, specify the path you want the output data to go via the variable `outputDirectory`.
 
@@ -77,16 +71,17 @@ You can then specify
 
 A doxygen-generated complete code reference is provided with [`ref.pdf`](docs/ref.pdf).
 
-- Third, in the [`src`](src) directory, build the executable `Simulation` via the `make` command.
+- Third, in the [`src`](src) directory execute `cmake -S. -Bbuild` and then `cmake --build build`.
 
 - Forth, run the simulation.  
 Make sure to use `src` as working directory as the code uses a relative path to log the configuration in `main.cpp`.  
-You determine the number of processes via the MPI execution command.
-Note that in 2D and 3D simulations this number has to coincide with the actual number of patches, as described above.  
+Note that in 2D and 3D simulations the number of _MPI_ processes has to coincide with the actual number of patches, as described above.  
 Here, the simulation would be executed distributed over four processes:
 ```bash
-mpirun -np 4 ./Simulation
+mpirun -np 4 ./build/hewes
 ```
+When the program was built with _OpenMP_, the environment variable `OMP_NUM_THREADS` needs
+to be set.
 
 - Monitor stdout and stderr.
 The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
@@ -97,10 +92,8 @@ Piece of advice: Only pass decimal numbers for the grid settings and initial con
 _CVODE_ warnings and errors are reported on stdout and stderr.  
 A `config.txt` file containing the configuration part of `main.cpp` is written to the output directory in order to log the simulation settings of each particular run.
 
-You can remove the object files and the executable via `make clean`.
 
-
-### Note on Simulation Settings
+### Note on simulation settings
 You may want to start with two Gaussian pulses in 1D colliding head-on in a pump-probe setup.
 For this event, specify a high-frequency probe pulse with a low amplitude and a low-frequency pump pulse with a high frequency.
 Both frequencies should be chosen to be below a forth of the Nyquist frequency to minimize nonphysical dispersion effects on the lattice.
@@ -117,19 +110,19 @@ Decide beforehand which steps you need to be written to disk for your analysis.
 Example scenarios of colliding Gaussians are preconfigured for any dimension.
 
 
-### Note on Resource Occupation
+### Note on resource occupation
 The computational load depends mostly on the grid size and resolution.
 The order of accuracy of the numerical scheme and _CVODE_ are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
 Simulations in 1D are relatively cheap and can easily be run on a modern laptop within seconds.
 The output size per step is usually less than a megabyte.  
-Simulations in 2D with about one million grid points are still feasible for a personal machine but might take a couple of minutes to finish.
+Simulations in 2D with about one million grid points are still feasible for a personal machine but might take a couple of minutes or longer to finish.
 The output size per step is in the range of some dozen megabytes.  
 Sensible simulations in 3D require large memory resources and therefore need to be run on distributed systems.
 Hundreds of cores can be kept busy for many hours or days.
 The output size quickly amounts to dozens of gigabytes for just a single state.
 
 
-### Note on Output Analysis
+### Note on the output analysis
 The field data are either written in csv format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
 This is the simplest solution for smaller simulations and a portable way that also works fast and is
 straightforward to analyze.  
@@ -165,7 +158,6 @@ x                            x
 The axes denote the physical dimensions that are each divided into 4 sectors in this example.
 The numbers inside the 4x4 squares indicate the process number, which is the number of the patch and also the number at the end of the corresponding output csv file.
 The ordering of the array within a patch follows the standard C convention and can be reshaped in 2D and 3D to the actual size of the path.
-
 
 More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
 and a collection of corresponding analysis notebooks are uploaded to a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x).
