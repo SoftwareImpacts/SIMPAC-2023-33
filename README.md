@@ -25,7 +25,7 @@ An _MPI_ implementation is required.
 _OpenMP_ is optional to enforce more vectorization and enable multi-threading.
 The latter is useful for performance only when a very large number of compute nodes is used.
 
-The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is installed on the fly through _CMake_.
+The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is installed on-the-fly through _CMake_.
 If _CVODE_ (or the whole [_SUNDIALS_](https://computing.llnl.gov/projects/sundials/cvode) package) is installed manually:
 Version 6 is required, the code is presumably compliant with the upcoming version 7.
 Enable _MPI_ (and _OpenMP_).
@@ -34,63 +34,63 @@ Edit the `SUNDIALS_DIR` in the `CMakeLists.txt`.
 
 
 ## Short user manual
-You have full control over all high-level simulation settings via the [`main.cpp`](src/main.cpp) file.
-(In an upcoming version the parameters will be passed via the command line at
-the detriment of missing compile-time checks.)
 
-- First, specify the path you want the output data to go via the variable `outputDirectory`.
+In order to build the executable with _CMake_, execute, e.g., in the [`src`](src) directory,
+`cmake -S. -Bbuild` and then `cmake --build build`.
 
-- Second, decide if you want to simulate in 1D, 2D, or 3D and uncomment only that full section.  
-You can then specify
+You have full control over all high-level simulation settings from the command
+line.
+The parameters are given in the following order:
+
+- First, the general settings are specified.
+    - the path to the output directory
+    -  if you want to simulate in 1D, 2D, or 3D
     - the relative and absolute integration tolerances of the _CVODE_ solver.  
     Recommended values are between 1e-12 and 1e-16.
-    - the order of accuracy of the numerical scheme via the stencil order.  
+    - the order of accuracy of the numerical scheme (the stencil order).
     You can choose an integer in the range 1-13.
     - the physical side lengths of the grid in meters.
     - the number of lattice points per dimension.
-    - the slicing of the lattice into patches (only for 2D and 3D simulations, automatic in 1D) – this determines the number of patches and therefore the required distinct processing units for MPI.  
+    - the slicing of the lattice into patches (relevant only for 2D and 3D simulations, automatic in 1D) – this determines the number of patches and therefore the required distinct processing units for _MPI_.  
     The total number of processes is given by the product of patches in any dimension.  
-    Note: In the 3D case patches are required to be cubic in terms of lattice points.
-    This is decisive for computational efficiency and checked at compile-time.
-    - whether to have periodic or vanishing boundary values (currently has to be chosen periodic).
-    - whether you want to simulate on top of the linear vacuum only 4-photon processes (1), 6-photon processes (2), both (3), or none (0) – the linear Maxwell case.
+    Note: In the 3D case patches should be chosen cubic in terms of lattice points.
+    This is decisive for computational efficiency.
+    - whether you want to simulate in the linear vacuum (0), on top of the linear vacuum only 4-photon processes (1), 6-photon processes (2), or 4- and 6-photon processes (3).
     - the total time of the simulation in units c=1, i.e., the distance propagated by the light waves in meters.
     - the number of time steps that will be solved stepwise by _CVODE_.   
     In order to keep interpolation errors small do not choose this number too small.
     - the multiple of steps at which you want the data to be written to disk.  
-    - the output format. It can be 'c' for comma separated values (csv), or 'b' for binary.
+    - the output format. It can be csv (comma-separated-values) or binary.
     For csv format the name of the files written to the output directory is of the form `{step_number}_{process_number}.csv`.
     For binary output all data per step are written into one file and the step number is the name of
     the file.
-    - which electromagnetic waveform(s) you want to propagate.  
-    You can choose between a plane wave (not much physical content, but useful for checks) and implementations of Gaussians in 1D, 2D, and 3D.
-    Their parameters can be tuned.  
-    A description of the wave implementations is given in [`ref.pdf`](docs/ref.pdf).
-    Note that the 3D Gaussians, as they are implemented up to now, should be propagated in the xy-plane.
+- Second, the electromagnetic waves are chosen and their parameters specified.
+    You can choose plane waves (not much physical content, but useful for checks) and implementations of Gaussians in 1D, 2D, and 3D.
+    To see which command line argument is which paramter, see the comments in
+    the short example run scripts which are preconfigured for [1D](src/run_1D_ex.sh),
+    [2D](src/run_2D_ex.sh), and [3D](src/run_3D_ex.sh) runs.
+    Amplitudes are given in units of the critical field strength for pair
+    production (Schwinger limit).
+    Position and propagation parameters on the y- and z-axis are only effective if the grid has an extend in the corresponding dimension.  
+    A description of the wave implementations is given in the doxygen-generated [code reference](docs/ref.pdf).
+    Note that the 3D Gaussians, as they are implemented up to now, are propagated only in the xy-plane.
     More waveform implementations will follow in subsequent versions of the code.
 
-A doxygen-generated complete code reference is provided with [`ref.pdf`](docs/ref.pdf).
 
-- Third, in the [`src`](src) directory execute `cmake -S. -Bbuild` and then `cmake --build build`.
-
-- Forth, run the simulation.  
-Make sure to use `src` as working directory as the code uses a relative path to log the configuration in `main.cpp`.  
 Note that in 2D and 3D simulations the number of _MPI_ processes has to coincide with the actual number of patches, as described above.  
-Here, the simulation would be executed distributed over four processes:
-```bash
-mpirun -np 4 ./build/hewes
-```
-When the program was built with _OpenMP_, the environment variable `OMP_NUM_THREADS` needs
+If the program was built with _OpenMP_, the environment variable `OMP_NUM_THREADS` needs
 to be set.
 
-- Monitor stdout and stderr.
+It can be useful to save the run script along with the output as a log of the
+simulation settings for later reference.
+
+Monitor stdout and stderr during the run (or redirect into files).
 The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
 Errors are printed on stderr.  
 **Note**: Convergence of the employed _CVODE_ solver cannot be guaranteed and issues of this kind can hardly be predicted.
 On top, they are even system dependent.
 Piece of advice: Only pass decimal numbers for the grid settings and initial conditions.  
 _CVODE_ warnings and errors are reported on stdout and stderr.  
-A `config.txt` file containing the configuration part of `main.cpp` is written to the output directory in order to log the simulation settings of each particular run.
 
 
 ### Note on simulation settings
@@ -107,7 +107,8 @@ You will be left with the nonlinear effects.
 Choosing the probe pulse to be polarized with an angle to the polarization of the pump you may observe a fractional polarization flip of the probe due to their nonlinear interaction.  
 Decide beforehand which steps you need to be written to disk for your analysis.
 
-Example scenarios of colliding Gaussians are preconfigured for any dimension.
+Example scenarios of colliding Gaussians are preconfigured for any dimension in
+the example scripts.
 
 
 ### Note on resource occupation
@@ -126,10 +127,9 @@ The output size quickly amounts to dozens of gigabytes for just a single state.
 The field data are either written in csv format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
 This is the simplest solution for smaller simulations and a portable way that also works fast and is
 straightforward to analyze.  
-Or, the option strictly recommended for larger write operations, in binary format with a single file per
-output step.
+Or, the option strictly recommended for larger write operations, in binary format with a single file per output step.
 Raw bytes are written to the files as they are in memory.
-This option is more performant and achieved with MPI IO.
+This option is more performant and achieved with _MPI IO_.
 However, there is no guarantee of portability; postprocessing/conversion is required.
 The step number is the file name.  
 A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestep of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.

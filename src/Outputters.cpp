@@ -59,7 +59,8 @@ void OutputManager::generateOutputFolder(const std::string &dir) {
   // path variable for the output generation
   Path = dir + "/SimResults/" + simCode + "/";
 
-  // Logging configurations from main.cpp
+  // Logging configurations from main.cpp -> no more necessary
+  /*
   std::ifstream fin("main.cpp");
   std::ofstream fout(Path + "config.txt");
   std::string line;
@@ -77,6 +78,7 @@ void OutputManager::generateOutputFolder(const std::string &dir) {
         break;
     }
   }
+  */
   return;
 }
 

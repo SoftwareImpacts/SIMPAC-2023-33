@@ -204,14 +204,12 @@ void Sim3D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
       errorKill(
           "The number of MPI processes must match the number of patches.");
     }
-    /*
     if ( ( disc_dims[0] / patches[0] != disc_dims[1] / patches[1] ) |
          ( disc_dims[0] / patches[0] != disc_dims[2] / patches[2] ) ) {
         std::clog
           << "\nWarning: Patches should be cubic in terms of the lattice "
              "points for the computational efficiency of larger simulations.\n";
     }
-    */
   }
 
   // Initialize the simulation, set up the cartesian communicator
