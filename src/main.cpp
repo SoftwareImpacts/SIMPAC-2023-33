@@ -163,30 +163,30 @@ int main(int argc, char *argv[])
     if (stoi(argv[2]) == 3) {
     ///////////////////// -- 3D -- ///////////////////////
     /** A 3D simulation with specified */
-    array<sunrealtype,2> CVodeTolerances={1.0e-12,1.0e-12};  /// - relative and absolute tolerances of the CVode solver
-    int StencilOrder=13;  /// - accuracy order of the stencils in the range 1-13
-    array<sunrealtype,3> physical_sidelengths={80e-6,80e-6,20e-6}; /// - physical dimensions in meters
-    array<sunindextype,3> latticepoints_per_dim={1600,1600,200};  /// - number of lattice points in any dimension
-    array<int,3> patches_per_dim={8,8,1};  /// - slicing of discrete dimensions into patches
+    array<sunrealtype,2> CVodeTolerances={stod(argv[3]),stod(argv[4])};  /// - relative and absolute tolerances of the CVode solver
+    int StencilOrder=stoi(argv[5]);  /// - accuracy order of the stencils in the range 1-13
+    array<sunrealtype,3> physical_sidelengths={stod(argv[6]),stod(argv[7]),stod(argv[8])}; /// - physical dimensions in meters
+    array<sunindextype,3> latticepoints_per_dim={stoi(argv[9]),stoi(argv[10]),stoi(argv[11])};  /// - number of lattice points in any dimension
+    array<int,3> patches_per_dim={stoi(argv[12]),stoi(argv[13]),stoi(argv[14])};  /// - slicing of discrete dimensions into patches
     constexpr bool periodic=true;  /// - perodic or non-periodic boundaries
-    int processOrder=3;  /// - processes of the weak-field expansion, see README.md
-    sunrealtype simulationTime=10e-6;  /// - physical total simulation time
-    int numberOfSteps=10;  /// - discrete time steps
-    int outputStep=10;  /// - output step multiples
-    char outputStyle='c';  /// - output in csv (c) or binary (b) format
+    int processOrder=stoi(argv[15]);  /// - processes of the weak-field expansion, see README.md
+    sunrealtype simulationTime=stod(argv[16]);  /// - physical total simulation time
+    int numberOfSteps=stoi(argv[17]);  /// - discrete time steps
+    int outputStep=stoi(argv[18]);  /// - output step multiples
+    char outputStyle=*(argv[19]);  /// - output in csv (c) or binary (b) format
 
     /// Add electromagnetic waves.
     vector<planewave> planewaves;
     vector<gaussian3D> Gaussians3D;
     if (stoi(argv[20])) {  // if use of plane waves
-        planewave plane1;  /// A plane wave with
-        plane1.k = {1e5,0,0};  /// - wavevector (normalized to \f$ 1/\lambda \f$)
-        plane1.p = {0,0,0.1};  /// - amplitude/polarization
-        plane1.phi = {0,0,0};  /// - phase shift
+        planewave plane1;  /// A plane wave with 
+        plane1.k = {stod(argv[22]),stod(argv[23]),stod(argv[24])};  /// - wavevector (normalized to \f$ 1/\lambda \f$)
+        plane1.p = {stod(argv[25]),stod(argv[26]),stod(argv[27])};  /// - amplitude/polarization
+        plane1.phi = {stod(argv[28]),stod(argv[29]),stod(argv[30])};  /// - phase shift
         planewave plane2;  /// Another plane wave with
-        plane2.k = {-1e6,0,0};  /// - wavevector (normalized to \f$ 1/\lambda \f$)
-        plane2.p = {0,0,0.5};  /// - amplitude/polarization
-        plane2.phi = {0,0,0};  /// - phase shift
+        plane2.k = {stod(argv[31]),stod(argv[32]),stod(argv[33])};  /// - wavevector
+        plane2.p = {stod(argv[34]),stod(argv[35]),stod(argv[36])};  /// - amplitude/polarization
+        plane2.phi = {stod(argv[37]),stod(argv[38]),stod(argv[39])};  /// - phase shift
         if (stoi(argv[21])>2) {
             cerr<<"You can only use up to two plane waves." << endl;
             exit(1);

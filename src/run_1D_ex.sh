@@ -81,7 +81,7 @@ parameters=(\
     0. `# phase shift of 1D Gaussian 2 in z-direction`\
     `# ---- Parameters for 2D/3D Gaussian pulses -----`\
     0 `# use of 2D/3D Gaussian pulse(s) yes (1) or no (0)`\
-    2 `# number of 2D Gaussian pulses; 0, 1, or 2`\
+    2 `# number of 2D/3D Gaussian pulses; 0, 1, or 2`\
     40e-6 `# shift from center of 2D/3D Gaussian 1 in x-direction`\
     40e-6 `# shift from center of 2D/3D Gaussian 1 in y-direction`\
     10e-6 `# shift from center of 2D/3D Gaussian 1 in z-direction`\

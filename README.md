@@ -19,8 +19,8 @@ and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) 
 
 
 ## Required software
-_CMake_ is used for building and a recent C++ compiler version is required
-since features up to the C++20 standard are used.
+_CMake_ is used for building and a recent _C++_ compiler version is required
+since features up to the _C++20_ standard are used.
 An _MPI_ implementation is required.
 _OpenMP_ is optional to enforce more vectorization and enable multi-threading.
 The latter is useful for performance only when a very large number of compute nodes is used.
@@ -67,12 +67,12 @@ The parameters are given in the following order:
 - Second, the electromagnetic waves are chosen and their parameters specified.
     You can choose plane waves (not much physical content, but useful for checks) and implementations of Gaussians in 1D, 2D, and 3D.
     To see which command line argument is which paramter, see the comments in
-    the short example run scripts which are preconfigured for [1D](src/run_1D_ex.sh),
+    the short example _Bash_ run scripts which are preconfigured for [1D](src/run_1D_ex.sh),
     [2D](src/run_2D_ex.sh), and [3D](src/run_3D_ex.sh) runs.
     Amplitudes are given in units of the critical field strength for pair
     production (Schwinger limit).
     Position and propagation parameters on the y- and z-axis are only effective if the grid has an extend in the corresponding dimension.  
-    A description of the wave implementations is given in the doxygen-generated [code reference](docs/ref.pdf).
+    A description of the wave implementations is given in the _Doxygen_-generated [code reference](docs/ref.pdf).
     Note that the 3D Gaussians, as they are implemented up to now, are propagated only in the xy-plane.
     More waveform implementations will follow in subsequent versions of the code.
 
@@ -88,7 +88,7 @@ Monitor stdout and stderr during the run (or redirect into files).
 The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
 Errors are printed on stderr.  
 **Note**: Convergence of the employed _CVODE_ solver cannot be guaranteed and issues of this kind can hardly be predicted.
-On top, they are even system dependent.
+On top, they are even system-dependent.
 Piece of advice: Only pass decimal numbers for the grid settings and initial conditions.  
 _CVODE_ warnings and errors are reported on stdout and stderr.  
 
@@ -165,7 +165,7 @@ Some example Python analysis scripts can be found in the [examples](examples).
 The [first steps](examples/first_steps) demonstrate how the simulated data is accurately read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.
 Analyses of 3D simulations are more involved due to large volumes of data.
-Visualization requires tools like Paraview; examples are shown
+Visualization requires tools like _Paraview_; examples are shown
 [here](examples/3d_paraview_visualizations).
 There is however _no simulation data provided_ as it would make the repository size unnecessarily large.
 
