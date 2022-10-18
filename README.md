@@ -6,6 +6,8 @@ It solves the equations of motion for electromagnetic waves in the Heisenberg-Eu
 There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable results
 and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
 
+![Probe Pump 3D](examples/figures/probe_pump_3D.png)
+
 ![Harmonic Generation 3D](examples/figures/3d_harmonics.png)
 
 

@@ -87,7 +87,7 @@ parameters=(\
     10e-6 `# shift from center of 2D/3D Gaussian 1 in z-direction`\
     1. `# x-component of normalized direction from which 2D/3D Gaussian 1 approaches the center`\
     0. `# y-component of normalized direction from which 2D/3D Gaussian 1 approaches the center`\
-    0.5 `# amplitude of 2D/3D Gaussian 1`\
+    0.05 `# amplitude of 2D/3D Gaussian 1`\
     0. `# polarization rotation from TE-mode (z-axis) in mulitples of pi/4`\
     2.3e-6 `# taille of 2D/3D Gaussian 1`\
     16.619e-6 `# Rayleigh length of 2D/3D Gaussian 1`\
@@ -98,7 +98,7 @@ parameters=(\
     10e-6 `# shift from center of 2D/3D Gaussian 2 in z-direction`\
     0. `# x-component of normalized direction from which 2D/3D Gaussian 2 approaches the center`\
     1. `# y-component of normalized direction from which 2D/3D Gaussian 2 approaches the center`\
-    0.5 `# amplitude of 2D/3D Gaussian 2`\
+    0.05 `# amplitude of 2D/3D Gaussian 2`\
     0. `# polarization rotation from TE-mode (z-axis) in mulitples of pi/4`\
     2.3e-6 `# taille of 2D/3D Gaussian 2`\
     16.619e-6 `# Rayleigh length of 2D/3D Gaussian 2`\
