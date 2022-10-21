@@ -1,7 +1,7 @@
 # HEWES: Heisenberg-Euler Weak-Field Expansion Simulator
 
 The Heisenberg-Euler Weak-Field Expansion Simulator is a solver for the all-optical QED vacuum.
-It solves the equations of motion for electromagnetic waves in the Heisenberg-Euler effective QED theory in the weak-field expansion with up to six-photon processes.
+It solves the equations of motion for electromagnetic waves in the weak-field expansion of the Heisenberg-Euler effective theory with up to six-photon processes.
 
 There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable results
 and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
@@ -27,7 +27,7 @@ An _MPI_ implementation is required.
 _OpenMP_ is optional to enforce more vectorization and enable multi-threading.
 The latter is useful for performance only when a very large number of compute nodes is used.
 
-The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is installed on-the-fly through _CMake_.
+The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is installed on-the-fly through _CMake_.  
 If _CVODE_ (or the whole [_SUNDIALS_](https://computing.llnl.gov/projects/sundials/cvode) package) is installed manually:
 Version 6 is required, the code is presumably compliant with the upcoming version 7.
 Enable _MPI_ (and _OpenMP_).
@@ -45,24 +45,24 @@ line.
 The parameters are given in the following order:
 
 - First, the general settings are specified.
-    - the path to the output directory
-    -  if you want to simulate in 1D, 2D, or 3D
-    - the relative and absolute integration tolerances of the _CVODE_ solver.  
+    - The path to the output directory.
+    - Whether you want to simulate in 1D, 2D, or 3D.
+    - The relative and absolute integration tolerances of the _CVODE_ solver.  
     Recommended values are between 1e-12 and 1e-16.
     - the order of accuracy of the numerical scheme (the stencil order).
     You can choose an integer in the range 1-13.
-    - the physical side lengths of the grid in meters.
-    - the number of lattice points per dimension.
-    - the slicing of the lattice into patches (relevant only for 2D and 3D simulations, automatic in 1D) – this determines the number of patches and therefore the required distinct processing units for _MPI_.  
-    The total number of processes is given by the product of patches in any dimension.  
+    - The physical side lengths of the grid in meters.
+    - The number of lattice points per dimension.
+    - The slicing of the lattice into patches (relevant only for 2D and 3D simulations, automatic in 1D) – this determines the number of patches and therefore the required distinct processing units for _MPI_.  
+    The total number of processes is given by the product of slices in any dimension.  
     Note: In the 3D case patches should be chosen cubic in terms of lattice points.
     This is decisive for computational efficiency.
-    - whether you want to simulate in the linear vacuum (0), on top of the linear vacuum only 4-photon processes (1), 6-photon processes (2), or 4- and 6-photon processes (3).
-    - the total time of the simulation in units c=1, i.e., the distance propagated by the light waves in meters.
-    - the number of time steps that will be solved stepwise by _CVODE_.   
+    - Whether you want to simulate in the linear vacuum (0), on top of the linear vacuum only 4-photon processes (1), 6-photon processes (2), or 4- and 6-photon processes (3).
+    - The total time of the simulation in units c=1, i.e., the distance propagated by the light waves in meters.
+    - The number of time steps that will be solved stepwise by _CVODE_.   
     In order to keep interpolation errors small do not choose this number too small.
-    - the multiple of steps at which you want the data to be written to disk.  
-    - the output format. It can be csv (comma-separated-values) or binary.
+    - The multiple of steps at which you want the data to be written to disk.  
+    - The output format. It can be csv (comma-separated-values) or binary.
     For csv format the name of the files written to the output directory is of the form `{step_number}_{process_number}.csv`.
     For binary output all data per step are written into one file and the step number is the name of
     the file.
@@ -80,7 +80,7 @@ The parameters are given in the following order:
 
 
 Note that in 2D and 3D simulations the number of _MPI_ processes has to coincide with the actual number of patches, as described above.  
-If the program was built with _OpenMP_, the environment variable `OMP_NUM_THREADS` needs
+If the program was built with _OpenMP_ support, the environment variable `OMP_NUM_THREADS` needs
 to be set.
 
 It can be useful to save the run script along with the output as a log of the
@@ -89,7 +89,7 @@ simulation settings for later reference.
 Monitor stdout and stderr during the run (or redirect into files).
 The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
 Errors are printed on stderr.  
-**Note**: Convergence of the employed _CVODE_ solver cannot be guaranteed and issues of this kind can hardly be predicted.
+Note: Convergence of the employed _CVODE_ solver cannot be guaranteed and issues of this kind can hardly be predicted.
 On top, they are even system-dependent.
 Piece of advice: Only pass decimal numbers for the grid settings and initial conditions.  
 _CVODE_ warnings and errors are reported on stdout and stderr.  
@@ -131,7 +131,7 @@ This is the simplest solution for smaller simulations and a portable way that al
 straightforward to analyze.  
 Or, the option strictly recommended for larger write operations, in binary format with a single file per output step.
 Raw bytes are written to the files as they are in memory.
-This option is more performant and achieved with _MPI IO_.
+This option is more performant and achieved with the help of _MPI IO_.
 However, there is no guarantee of portability; postprocessing/conversion is required.
 The step number is the file name.  
 A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestep of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.
@@ -142,24 +142,9 @@ Each row corresponds to one lattice point.
 Postprocessing is required to read-in the files in order.
 [A Python module](examples/get_field_data.py) taking care of this is provided.  
 Likewise, [another Python module](examples/get_binary_field_data.py) is provided to read the binary
-data of a selected field component into a numpy array – its portability, however, cannot be guaranteed.  
-The process numbers first align along dimension 1 until the number of patches is that direction is reached, then continue on dimension two and finally fill dimension 3.
-For example, for a 3D simulation on 4x4x4=64 cores, the field data is divided over the patches as follows:
-<pre>
-z=1                          z=2                         z=3            z=4
-                                                         ...            ...
-x                            x 
-  ^                            ^
-1 | 0  4  8 12               1 |16 20 24 28
-2 | 1  5  9 13               2 |17 21 25 29
-3 | 2  6 10 14               3 |18 22 26 30
-4 | 3  7 11 15               4 |19 23 27 31
-   –––––––––––––>               –––––––––––––>
-    1  2  3  4   y               1  2  3  4   y
-</pre>
-The axes denote the physical dimensions that are each divided into 4 sectors in this example.
-The numbers inside the 4x4 squares indicate the process number, which is the number of the patch and also the number at the end of the corresponding output csv file.
-The ordering of the array within a patch follows the standard C convention and can be reshaped in 2D and 3D to the actual size of the path.
+data of a selected field component into a numpy array.
+For its use, the byte order of the reading machine has to be the same as that
+of the writing machine.
 
 More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
 and a collection of corresponding analysis notebooks are uploaded to a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x).
@@ -167,10 +152,7 @@ Some example Python analysis scripts can be found in the [examples](examples).
 The [first steps](examples/first_steps) demonstrate how the simulated data is accurately read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.
 Analyses of 3D simulations are more involved due to large volumes of data.
-Visualization requires tools like _Paraview_; examples are shown
-[here](examples/3d_paraview_visualizations).
-There is however _no simulation data provided_ as it would make the repository size unnecessarily large.
-
+Visualization requires tools like _Paraview_, as used for the cover figures.
 
 
 ## Authors
