@@ -174,7 +174,7 @@ Gauss2D::Gauss2D(std::array<sunrealtype, 3> dis_,
         sunrealtype Amp_, sunrealtype phip_, sunrealtype w0_,
         sunrealtype zr_, sunrealtype Ph0_, sunrealtype PhA_) {
   dis = dis_;           /** - center it approaches */
-  axis = axis_;         /** - direction form where it comes */
+  axis = axis_;         /** - direction from where it comes */
   Amp = Amp_;           /** - amplitude */
   phip = phip_;         /** - polarization rotation from TE-mode */
   w0 = w0_;             /** - taille */
@@ -254,7 +254,7 @@ Gauss3D::Gauss3D(std::array<sunrealtype, 3> dis_,
   axis = axis_; /** - direction from where it comes */
   Amp = Amp_;   /** - amplitude */
   // pol=pol_;
-  phip = phip_; /** - polarization rotation form TE-mode */
+  phip = phip_; /** - polarization rotation from TE-mode */
   w0 = w0_;     /** - taille */
   zr = zr_;     /** - Rayleigh length */
   Ph0 = Ph0_;   /** - beam center */
