@@ -151,7 +151,7 @@ private:
   sunrealtype w0;
   /// Rayleigh length \f$ z_R = \pi \omega_0^2 / \lambda \f$
   sunrealtype zr;
-  /// center of beam \f$ \Phi_0 \f$
+  /// center of beam (shift) \f$ \Phi_0 \f$
   sunrealtype Ph0;
   /// length of beam \f$ \Phi_A \f$
   sunrealtype PhA;
@@ -207,7 +207,7 @@ private:
   sunrealtype w0;
   /// Rayleigh length \f$ z_R = \pi \omega_0^2 / \lambda \f$
   sunrealtype zr;
-  /// center of beam \f$ \Phi_0 \f$
+  /// center of beam (shift) \f$ \Phi_0 \f$
   sunrealtype Ph0;
   /// length of beam \f$ \Phi_A \f$
   sunrealtype PhA;

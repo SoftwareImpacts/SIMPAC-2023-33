@@ -82,27 +82,27 @@ parameters=(\
     `# ---- Parameters for 2D/3D Gaussian pulses -----`\
     0 `# use of 2D/3D Gaussian pulse(s) yes (1) or no (0)`\
     2 `# number of 2D/3D Gaussian pulses; 0, 1, or 2`\
-    40e-6 `# shift from center of 2D/3D Gaussian 1 in x-direction`\
-    40e-6 `# shift from center of 2D/3D Gaussian 1 in y-direction`\
-    10e-6 `# shift from center of 2D/3D Gaussian 1 in z-direction`\
+    40e-6 `# center of 2D/3D Gaussian 1 in x-direction`\
+    40e-6 `# center of 2D/3D Gaussian 1 in y-direction`\
+    10e-6 `# center of 2D/3D Gaussian 1 in z-direction`\
     1.0 `# x-component of normalized direction from which 2D/3D Gaussian 1 approaches the center`\
     0. `# y-component of normalized direction from which 2D/3D Gaussian 1 approaches the center`\
     0.5 `# amplitude of 2D/3D Gaussian 1`\
     0. `# polarization rotation from TE-mode (z-axis) in mulitples of pi/4`\
     2.3e-6 `# taille of 2D/3D Gaussian 1`\
     16.619e-6 `# Rayleigh length of 2D/3D Gaussian 1`\
-    2e-5 `# beam center of 2D/3D Gaussian 1`\
+    2e-5 `# shift from center in negative propagation direction of 2D/3D Gaussian 1`\
     0.45e-5 `# beam length of 2D/3D Gaussian 1`\
-    40e-6 `# shift from center of 2D/3D Gaussian 2 in x-direction`\
-    40e-6 `# shift from center of 2D/3D Gaussian 2 in y-direction`\
-    10e-6 `# shift from center of 2D/3D Gaussian 2 in z-direction`\
+    40e-6 `# center of 2D/3D Gaussian 2 in x-direction`\
+    40e-6 `# center of 2D/3D Gaussian 2 in y-direction`\
+    10e-6 `# center of 2D/3D Gaussian 2 in z-direction`\
     -0.7071 `# x-component of normalized direction from which 2D/3D Gaussian 2 approaches the center`\
     0.7071 `# y-component of normalized direction from which 2D/3D Gaussian 2 approaches the center`\
     0.5 `# amplitude of 2D/3D Gaussian 2`\
     0. `# polarization rotation from TE-mode (z-axis) in mulitples of pi/4`\
     2.3e-6 `# taille of 2D/3D Gaussian 2`\
     16.619e-6 `# Rayleigh length of 2D/3D Gaussian 2`\
-    2e-5 `# beam center of 2D/3D Gaussian 2`\
+    2e-5 `# shift from center in negative propagation direction of 2D/3D Gaussian 2`\
     0.45e-5 `# beam length of 2D/3D Gaussian 2`\
 )
 

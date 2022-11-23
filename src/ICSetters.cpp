@@ -179,7 +179,7 @@ Gauss2D::Gauss2D(std::array<sunrealtype, 3> dis_,
   phip = phip_;         /** - polarization rotation from TE-mode */
   w0 = w0_;             /** - taille */
   zr = zr_;             /** - Rayleigh length */
-  Ph0 = Ph0_;           /** - beam center */
+  Ph0 = Ph0_;           /** - shift from center */
   PhA = PhA_;           /** - beam length */
   A1 = Amp * cos(phip); // amplitude in z-direction
   A2 = Amp * sin(phip); // amplitude on xy-plane
@@ -257,7 +257,7 @@ Gauss3D::Gauss3D(std::array<sunrealtype, 3> dis_,
   phip = phip_; /** - polarization rotation from TE-mode */
   w0 = w0_;     /** - taille */
   zr = zr_;     /** - Rayleigh length */
-  Ph0 = Ph0_;   /** - beam center */
+  Ph0 = Ph0_;   /** - shift from center */
   PhA = PhA_;   /** - beam length */
   lambda = std::numbers::pi * w0 * w0 / zr;
   A1 = Amp * cos(phip);
