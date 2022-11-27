@@ -50,35 +50,35 @@ parameters=(\
     0. `# phase shift of plane wave 2 in x-direction`\
     0. `# phase shift of plane wave 2 in y-direction`\
     0. `# phase shift of plane wave 2 in z-direction`\
-    `# ---- Parameters for 1D Gaussian pulses -----`\
+    `# ---- Parameters for 1D Gaussian pulses (not usable in 3D) -----`\
     0 `# use of 1D Gaussian pulse(s) yes (1) or no (0)`\
-    2 `# number of 1D Gaussian pulses; 0, 1, or 2`\
-    1.0e6 `# x-component of 1/lambda normalized wavevector of 1D Gaussian 1`\
-    0. `# y-component of 1/lambda normalized wavevector of 1D Gaussian 1`\
-    0. `# z-component of 1/lambda normalized wavevector of 1D Gaussian 1`\
-    0. `# amplitude of 1D Gaussian 1 in x-direction`\
-    0. `# amplitude of 1D Gaussian 1 in y-direction`\
-    0.1 `# amplitude of 1D Gaussian 1 in y-direction`\
-    100e-6 `# shift from origin in x-direction of 1D Gaussian 1`\
-    0. `# shift from origin in x-direction of 1D Gaussian 1`\
-    0. `# shift from origin in x-direction of 1D Gaussian 1`\
-    5e-6 `# width of 1D Gaussian 1`\
-    0. `# phase shift of 1D Gaussian 1 in x-direction`\
-    0. `# phase shift of 1D Gaussian 1 in y-direction`\
-    0. `# phase shift of 1D Gaussian 1 in z-direction`\
-    -0.2e6 `# x-component of 1/lambda normalized wavevector of 1D Gaussian 2`\
-    0. `# y-component of 1/lambda normalized wavevector of 1D Gaussian 2`\
-    0. `# z-component of 1/lambda normalized wavevector of 1D Gaussian 2`\
-    0. `# amplitude of 1D Gaussian 2 in x-direction`\
-    0. `# amplitude of 1D Gaussian 2 in y-direction`\
-    0.5 `# amplitude of 1D Gaussian 2 in y-direction`\
-    200e-6 `# shift from origin in x-direction of 1D Gaussian 2`\
-    0. `# shift from origin in x-direction of 1D Gaussian 2`\
-    0. `# shift from origin in x-direction of 1D Gaussian 2`\
-    15e-6 `# width of 1D Gaussian 2`\
-    0. `# phase shift of 1D Gaussian 2 in x-direction`\
-    0. `# phase shift of 1D Gaussian 2 in y-direction`\
-    0. `# phase shift of 1D Gaussian 2 in z-direction`\
+    0 `# number of 1D Gaussian pulses; 0, 1, or 2`\
+    0 `# x-component of 1/lambda normalized wavevector of 1D Gaussian 1`\
+    0 `# y-component of 1/lambda normalized wavevector of 1D Gaussian 1`\
+    0 `# z-component of 1/lambda normalized wavevector of 1D Gaussian 1`\
+    0 `# amplitude of 1D Gaussian 1 in x-direction`\
+    0 `# amplitude of 1D Gaussian 1 in y-direction`\
+    0 `# amplitude of 1D Gaussian 1 in y-direction`\
+    0 `# shift from origin in x-direction of 1D Gaussian 1`\
+    0 `# shift from origin in x-direction of 1D Gaussian 1`\
+    0 `# shift from origin in x-direction of 1D Gaussian 1`\
+    0 `# width of 1D Gaussian 1`\
+    0 `# phase shift of 1D Gaussian 1 in x-direction`\
+    0 `# phase shift of 1D Gaussian 1 in y-direction`\
+    0 `# phase shift of 1D Gaussian 1 in z-direction`\
+    0 `# x-component of 1/lambda normalized wavevector of 1D Gaussian 2`\
+    0 `# y-component of 1/lambda normalized wavevector of 1D Gaussian 2`\
+    0 `# z-component of 1/lambda normalized wavevector of 1D Gaussian 2`\
+    0 `# amplitude of 1D Gaussian 2 in x-direction`\
+    0 `# amplitude of 1D Gaussian 2 in y-direction`\
+    0 `# amplitude of 1D Gaussian 2 in y-direction`\
+    0 `# shift from origin in x-direction of 1D Gaussian 2`\
+    0 `# shift from origin in x-direction of 1D Gaussian 2`\
+    0 `# shift from origin in x-direction of 1D Gaussian 2`\
+    0 `# width of 1D Gaussian 2`\
+    0 `# phase shift of 1D Gaussian 2 in x-direction`\
+    0 `# phase shift of 1D Gaussian 2 in y-direction`\
+    0 `# phase shift of 1D Gaussian 2 in z-direction`\
     `# ---- Parameters for 2D/3D Gaussian pulses -----`\
     1 `# use of 2D/3D Gaussian pulse(s) yes (1) or no (0)`\
     2 `# number of 2D/3D Gaussian pulses; 0, 1, or 2`\
