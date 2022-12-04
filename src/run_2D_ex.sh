@@ -58,7 +58,7 @@ parameters=(\
     0 `# z-component of 1/lambda normalized wavevector of 1D Gaussian 1`\
     0 `# amplitude of 1D Gaussian 1 in x-direction`\
     0 `# amplitude of 1D Gaussian 1 in y-direction`\
-    0 `# amplitude of 1D Gaussian 1 in y-direction`\
+    0 `# amplitude of 1D Gaussian 1 in z-direction`\
     0 `# shift from origin in x-direction of 1D Gaussian 1`\
     0 `# shift from origin in x-direction of 1D Gaussian 1`\
     0 `# shift from origin in x-direction of 1D Gaussian 1`\
@@ -71,7 +71,7 @@ parameters=(\
     0 `# z-component of 1/lambda normalized wavevector of 1D Gaussian 2`\
     0 `# amplitude of 1D Gaussian 2 in x-direction`\
     0 `# amplitude of 1D Gaussian 2 in y-direction`\
-    0 `# amplitude of 1D Gaussian 2 in y-direction`\
+    0 `# amplitude of 1D Gaussian 2 in z-direction`\
     0 `# shift from origin in x-direction of 1D Gaussian 2`\
     0 `# shift from origin in x-direction of 1D Gaussian 2`\
     0 `# shift from origin in x-direction of 1D Gaussian 2`\

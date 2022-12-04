@@ -32,7 +32,8 @@ If _CVODE_ (or the whole [_SUNDIALS_](https://computing.llnl.gov/projects/sundia
 Version 6 is required, the code is presumably compliant with the upcoming version 7.
 Enable _MPI_ (and _OpenMP_).
 For optimal performance the `CMAKE_BUILD_TYPE` should be "Release".
-Edit the `SUNDIALS_DIR` in the `CMakeLists.txt`.
+Edit the `SUNDIALS_DIR` variable in the `CMakeLists.txt` to the installation
+directory.
 
 
 ## Short user manual
@@ -78,6 +79,7 @@ The parameters are given in the following order:
     Note that the 3D Gaussians, as they are implemented up to now, are propagated only in the xy-plane.
     More waveform implementations will follow in subsequent versions of the code.
 
+The boundaries are periodic.
 
 Note that in 2D and 3D simulations the number of _MPI_ processes has to coincide with the actual number of patches, as described above.  
 If the program was built with _OpenMP_ support, the environment variable `OMP_NUM_THREADS` needs
@@ -122,7 +124,13 @@ Simulations in 2D with about one million grid points are still feasible for a pe
 The output size per step is in the range of some dozen megabytes.  
 Sensible simulations in 3D require large memory resources and therefore need to be run on distributed systems.
 Hundreds of cores can be kept busy for many hours or days.
-The output size quickly amounts to dozens of gigabytes for just a single state.
+The output size quickly amounts to dozens or hundreds of gigabytes for just a single state.
+
+Some scaling tests are shown in the [paper](https://arxiv.org/abs/2109.08121).
+
+If the output is in binary form, the size can be easily calculated.  Per step
+it is the number of grid points times six (the number of field components)
+times 8 bytes.
 
 
 ### Note on the output analysis
