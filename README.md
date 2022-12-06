@@ -8,6 +8,8 @@ and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) 
 
 ![Probe Pump 3D](examples/figures/probe_pump_3D.png)
 
+![Tube](examples/figures/tube.png)
+
 ![Harmonic Generation 3D](examples/figures/3d_harmonics.png)
 
 
@@ -156,10 +158,13 @@ of the writing machine.
 
 More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
 and a collection of corresponding analysis notebooks are uploaded to a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x).
-Some example Python analysis scripts can be found in the [examples](examples).
-The [first steps](examples/first_steps) demonstrate how the simulated data is accurately read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
-[Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.
+Some small example Python analysis scripts can be found in the [examples](examples).
+The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
+[Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.  
 Analyses of 3D simulations are more involved due to large volumes of data.
+A script with the purpose to extract the ratio of polarization flipped photons
+of a laser pulse due to vacuum birefringence can be found
+[here](examples/birefringence.py).
 Visualization requires tools like _Paraview_, as used for the cover figures.
 
 
