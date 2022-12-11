@@ -8,8 +8,6 @@ and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) 
 
 ![Probe Pump 3D](examples/figures/probe_pump_3D.png)
 
-![Tube](examples/figures/tube.png)
-
 ![Harmonic Generation 3D](examples/figures/3d_harmonics.png)
 
 
@@ -25,11 +23,12 @@ and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) 
 ## Required software
 _CMake_ is used for building and a recent _C++_ compiler version is required
 since features up to the _C++20_ standard are used.
-An _MPI_ implementation is required.
+An _MPI_ implementation supporting the _MPI_ 3.1 standard is required.
 _OpenMP_ is optional to enforce more vectorization and enable multi-threading.
-The latter is useful for performance only when a very large number of compute nodes is used.
+The latter extra layer of parallelization is useful for performance only when a
+very large number of compute nodes is occupied.
 
-The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is installed on-the-fly through _CMake_.  
+The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is fetched on-the-fly through _CMake_.  
 If _CVODE_ (or the whole [_SUNDIALS_](https://computing.llnl.gov/projects/sundials/cvode) package) is installed manually:
 Version 6 is required, the code is presumably compliant with the upcoming version 7.
 Enable _MPI_ (and _OpenMP_).
@@ -43,12 +42,13 @@ directory.
 In order to build the executable with _CMake_, execute, e.g., in the [`src`](src) directory,
 `cmake -S. -Bbuild` and then `cmake --build build`.
 
-You have full control over all high-level simulation settings from the command
-line.
-The parameters are given in the following order:
+You have full control over all high-level simulation settings with command
+line arguments.
 
-- First, the general settings are specified.
-    - The path to the output directory.
+- First, the general settings are specified:
+    - The path to the project directory.
+    Therein, a `SimResults` folder is created and therein a folder named after the timestamp of
+    the start of the simulation.
     - Whether you want to simulate in 1D, 2D, or 3D.
     - The relative and absolute integration tolerances of the _CVODE_ solver.  
     Recommended values are between 1e-12 and 1e-16.
@@ -60,22 +60,21 @@ The parameters are given in the following order:
     The total number of processes is given by the product of slices in any dimension.  
     Note: In the 3D case patches should be chosen cubic in terms of lattice points.
     This is decisive for computational efficiency.
-    - Whether you want to simulate in the linear vacuum (0), on top of the linear vacuum only 4-photon processes (1), 6-photon processes (2), or 4- and 6-photon processes (3).
+    - Whether you want to simulate in the linear vacuum (0), on top of the linear vacuum only 4-photon processes (1), only 6-photon processes (2), or 4- and 6-photon processes (3).
     - The total time of the simulation in units c=1, i.e., the distance propagated by the light waves in meters.
     - The number of time steps that will be solved stepwise by _CVODE_.   
     In order to keep interpolation errors small do not choose this number too small.
-    - The multiple of steps at which you want the data to be written to disk.  
+    - The multiple of steps at which you want the field data to be written to disk.  
     - The output format. It can be csv (comma-separated-values) or binary.
     For csv format the name of the files written to the output directory is of the form `{step_number}_{process_number}.csv`.
     For binary output all data per step are written into one file and the step number is the name of
     the file.
 - Second, the electromagnetic waves are chosen and their parameters specified.
-    You can choose plane waves (not much physical content, but useful for checks) and implementations of Gaussians in 1D, 2D, and 3D.
+    You can choose plane waves (not much physical content, but useful for checks) and implementations of Gaussian pulses in 1D, 2D, and 3D.
     To see which command line argument is which paramter, see the comments in
     the short example _Bash_ run scripts which are preconfigured for [1D](src/run_1D_ex.sh),
-    [2D](src/run_2D_ex.sh), and [3D](src/run_3D_ex.sh) runs.
-    Amplitudes are given in units of the critical field strength for pair
-    production (Schwinger limit).
+    [2D](src/run_2D_ex.sh), and [3D](src/run_3D_ex.sh) simulations.
+    Amplitudes are given in units of the critical field strength (Schwinger limit).
     Position and propagation parameters on the y- and z-axis are only effective if the grid has an extend in the corresponding dimension.  
     A description of the wave implementations is given in the _Doxygen_-generated [code reference](docs/ref.pdf).
     Note that the 3D Gaussians, as they are implemented up to now, are propagated only in the xy-plane.
@@ -91,7 +90,7 @@ It can be useful to save the run script along with the output as a log of the
 simulation settings for later reference.
 
 Monitor stdout and stderr during the run (or redirect into files).
-The unique simulation identifier number (starting timestep = name of data directory), the process steps, and the used wall times per step are printed on stdout.
+The starting timestamp, the process steps, and the used wall times per step are printed on stdout.
 Errors are printed on stderr.  
 Note: Convergence of the employed _CVODE_ solver cannot be guaranteed and issues of this kind can hardly be predicted.
 On top, they are even system-dependent.
@@ -119,14 +118,26 @@ the example scripts.
 
 ### Note on resource occupation
 The computational load depends mostly on the grid size and resolution.
-The order of accuracy of the numerical scheme and _CVODE_ are rather secondary except for simulations running on many processing units, as the communication load is dependent on the stencil order.  
-Simulations in 1D are relatively cheap and can easily be run on a modern laptop within seconds.
-The output size per step is usually less than a megabyte.  
-Simulations in 2D with about one million grid points are still feasible for a personal machine but might take a couple of minutes or longer to finish.
-The output size per step is in the range of some dozen megabytes.  
-Sensible simulations in 3D require large memory resources and therefore need to be run on distributed systems.
-Hundreds of cores can be kept busy for many hours or days.
-The output size quickly amounts to dozens or hundreds of gigabytes for just a single state.
+The order of accuracy of the numerical scheme and _CVODE_ are rather
+secondary, except for simulations running on many processing units. 
+There, the communication load plays a major role which in turn depends on the
+order of the numerical scheme.
+This is because the the order of the scheme determines how many neighboring
+grid points are taken into account for the finite differences derivatives.
+
+Simulations in 1D are relatively cheap and can easily be run on a modern
+notebook within some seconds.
+The output size per step is less than a megabyte.
+Simulations in 2D with about one million grid points are still feasible for a
+personal machine and still take only some minutes.
+The output size per step is in the range of some dozen megabytes.
+Sensible simulations in 3D require large memory resources and therefore need to
+be run on distributed systems.
+This means an increased communication load.
+Even hundreds or thousands of cores can be kept busy for many hours or days.
+The output size quickly amounts to hundreds of gigabytes for just a single
+state.
+This hurdle forms a practical limit to the grid resolution.
 
 Some scaling tests are shown in the [paper](https://arxiv.org/abs/2109.08121).
 
@@ -144,7 +155,7 @@ Raw bytes are written to the files as they are in memory.
 This option is more performant and achieved with the help of _MPI IO_.
 However, there is no guarantee of portability; postprocessing/conversion is required.
 The step number is the file name.  
-A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestep of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.
+A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestamp of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.
 This is where the output files are written into.
 
 There are six columns in the csv files, corresponding to the six components of the electromagnetic field: $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
@@ -152,14 +163,14 @@ Each row corresponds to one lattice point.
 Postprocessing is required to read-in the files in order.
 [A Python module](examples/get_field_data.py) taking care of this is provided.  
 Likewise, [another Python module](examples/get_binary_field_data.py) is provided to read the binary
-data of a selected field component into a numpy array.
+data of a selected field component into a _numpy_ array.
 For its use, the byte order of the reading machine has to be the same as that
 of the writing machine.
 
 More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
 and a collection of corresponding analysis notebooks are uploaded to a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x).
 Some small example Python analysis scripts can be found in the [examples](examples).
-The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read-in from disk to numpy arrays using the provided [get field data module](examples/get_field_data.py).
+The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read-in from disk to _numpy_ arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.  
 Analyses of 3D simulations are more involved due to large volumes of data.
 A script with the purpose to extract the ratio of polarization flipped photons
