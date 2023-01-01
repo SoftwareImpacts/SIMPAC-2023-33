@@ -237,15 +237,12 @@ public:
   void exchangeGhostCells(const int dir);
   /// function to derive the centered values in uAux and save them noncentered
   void derive(const int dir);
-  /// function to check if a flag has been set and if not abort
+  /// function to check if a flag has been set; if not, abort
   void checkFlag(unsigned int flag) const;
 };
 
 /// helper function for error messages
 void errorKill(const std::string & errorMessage);
-
-/// helper function to check MPI errors
-int check_error(int error, const char *funcname, int id);
 
 /// helper function to check CVode errors
 int check_retval(void *returnvalue, const char *funcname, int opt, int id);

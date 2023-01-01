@@ -46,7 +46,7 @@ std::string OutputManager::SimCodeGenerator() {
  * "config.txt" file in that directory to log the settings. */
 void OutputManager::generateOutputFolder(const std::string &dir) {
   // Do this only once for the first process
-  int myPrc;
+  int myPrc = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
   if (myPrc == 0) {
     if (!fs::is_directory(dir))
@@ -64,7 +64,7 @@ void OutputManager::generateOutputFolder(const std::string &dir) {
   std::ifstream fin("main.cpp");
   std::ofstream fout(Path + "config.txt");
   std::string line;
-  int begin=1000;
+  int begin = 1000;
   for (int i = 1; !fin.eof(); i++) {
     getline(fin, line);
     if (line.starts_with("    //------------ B")) {

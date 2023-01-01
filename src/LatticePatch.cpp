@@ -924,20 +924,6 @@ void errorKill(const std::string & errorMessage) {
   }
 }
 
-/** Check MPI errors. Error handler must be set. */
-int check_error(int error, const char *funcname, int id) {
-    int eclass, len;
-    char errorstring[MPI_MAX_ERROR_STRING];
-    if( error != MPI_SUCCESS ) {
-        MPI_Error_class(error,&eclass);
-        MPI_Error_string(error,errorstring,&len);
-        std::cerr << "MPI Error(process " << id << ") in " << funcname << " : "
-            << errorstring << ", from class " << eclass << std::endl;
-        return 1;
-    }
-    return 0;
-}
-
 /** Check function return value. Adapted from CVode examples.
      opt == 0 means SUNDIALS function allocates memory so check if
               returned NULL pointer

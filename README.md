@@ -65,8 +65,8 @@ line arguments.
     - The number of time steps that will be solved stepwise by _CVODE_.   
     In order to keep interpolation errors small do not choose this number too small.
     - The multiple of steps at which you want the field data to be written to disk.  
-    - The output format. It can be csv (comma-separated-values) or binary.
-    For csv format the name of the files written to the output directory is of the form `{step_number}_{process_number}.csv`.
+    - The output format. It can be _CSV_ (comma-separated-values) or binary.
+    For _CSV_ format the name of the files written to the output directory is of the form `{step_number}_{process_number}.csv`.
     For binary output all data per step are written into one file and the step number is the name of
     the file.
 - Second, the electromagnetic waves are chosen and their parameters specified.
@@ -94,7 +94,7 @@ The starting timestamp, the process steps, and the used wall times per step are 
 Errors are printed on stderr.  
 Note: Convergence of the employed _CVODE_ solver cannot be guaranteed and issues of this kind can hardly be predicted.
 On top, they are even system-dependent.
-Piece of advice: Only pass decimal numbers for the grid settings and initial conditions.  
+Piece of advice: Only pass decimals for the grid settings and initial conditions.  
 _CVODE_ warnings and errors are reported on stdout and stderr.  
 
 
@@ -147,7 +147,7 @@ times 8 bytes.
 
 
 ### Note on the output analysis
-The field data are either written in csv format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
+The field data are either written in _CSV_ format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
 This is the simplest solution for smaller simulations and a portable way that also works fast and is
 straightforward to analyze.  
 Or, the option strictly recommended for larger write operations, in binary format with a single file per output step.
@@ -158,9 +158,10 @@ The step number is the file name.
 A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestamp of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.
 This is where the output files are written into.
 
-There are six columns in the csv files, corresponding to the six components of the electromagnetic field: $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
+There are six columns in the _CSV_ files, corresponding to the six components of the electromagnetic field:
+$E_x$, $E_y$, $E_z$, $B_x$, $B_y$, $B_z$.
 Each row corresponds to one lattice point.  
-Postprocessing is required to read-in the files in order.
+Postprocessing is required to read in the files in order.
 [A Python module](examples/get_field_data.py) taking care of this is provided.  
 Likewise, [another Python module](examples/get_binary_field_data.py) is provided to read the binary
 data of a selected field component into a _numpy_ array.
@@ -170,7 +171,7 @@ of the writing machine.
 More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
 and a collection of corresponding analysis notebooks are uploaded to a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x).
 Some small example Python analysis scripts can be found in the [examples](examples).
-The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read-in from disk to _numpy_ arrays using the provided [get field data module](examples/get_field_data.py).
+The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read in from disk to _numpy_ arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.  
 Analyses of 3D simulations are more involved due to large volumes of data.
 A script with the purpose to extract the ratio of polarization flipped photons
