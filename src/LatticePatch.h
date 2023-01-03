@@ -18,20 +18,27 @@
 #include <algorithm>
 
 // MPI & OpenMP
+#if defined(_MPI)
 #include <mpi.h>
+#endif
 #if defined(_OPENMP)
 #include <omp.h>
 #endif
 
 // Sundials
 #include <cvode/cvode.h>              /* prototypes for CVODE fcts. */
+#include <sundials/sundials_types.h>  /* definition of type sunrealtype */
+#if defined(_MPI)
+#include <nvector/nvector_parallel.h> /* definition of MPI N_Vector */
 #if defined(_OPENMP)
 #include <nvector/nvector_openmp.h>   /* definition of OpenMP N_Vector */
 #include <nvector/nvector_mpiplusx.h> /* definition of MPI+X N_Vector */
-#else
-#include <nvector/nvector_parallel.h> /* definition of MPI N_Vector */
 #endif
-#include <sundials/sundials_types.h>  /* definition of type sunrealtype */
+#elif defined(_OPENMP)
+#include <nvector/nvector_openmp.h>   /* definition of OpenMP N_Vector */
+#else
+#include <nvector/nvector_serial.h>   /* definition of standard N_Vector */
+#endif
 
 // stencils
 #include "DerivationStencils.h"
@@ -83,15 +90,24 @@ private:
   unsigned int statusFlags;
 
 public:
+#if defined(_MPI)
   /// number of MPI processes
   int n_prc;
-  /// number of MPI process
+  /// process number
   int my_prc;
   /// personal communicator of the lattice
   MPI_Comm comm;
   /// function to create and deploy the cartesian communicator
   void initializeCommunicator(const int Nx, const int Ny,
           const int Nz, const bool per);
+#else
+  /// number of processes
+  static constexpr int n_prc = 1;
+  /// process number
+  static constexpr int my_prc = 0;
+  // communicator as (null) pointer
+  void* comm;
+#endif
   /// default construction
   Lattice(const int StO);
   /// SUNContext object

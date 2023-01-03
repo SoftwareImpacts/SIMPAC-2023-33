@@ -15,12 +15,20 @@ int TimeEvolution::f(sunrealtype t, N_Vector u, N_Vector udot, void *data_loc) {
 
   // update circle
   // Access provided field values and temp. derivatieves with NVector pointers
-#if defined(_OPENMP)
-  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
-              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
-#else
+#if defined(_MPI)
+#if !defined(_OPENMP)
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
+#elif defined(_OPENMP)
+  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
+              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#endif
+#elif defined(_OPENMP)
+  sunrealtype *udata = NV_DATA_OMP(u),
+              *dudata = NV_DATA_OMP(udot);
+#else
+  sunrealtype *udata = NV_DATA_S(u),
+              *dudata = NV_DATA_S(udot);
 #endif
 
   // Store original data location of the patch
@@ -81,12 +89,20 @@ void linear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 void nonlinear1DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
   // NVector pointers to provided field values and their temp. derivatives
-#if defined(_OPENMP)
-  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
-              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
-#else
+#if defined(_MPI)
+#if !defined(_OPENMP)
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
+#elif defined(_OPENMP)
+  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
+              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#endif
+#elif defined(_OPENMP)
+  sunrealtype *udata = NV_DATA_OMP(u),
+              *dudata = NV_DATA_OMP(udot);
+#else
+  sunrealtype *udata = NV_DATA_S(u),
+              *dudata = NV_DATA_S(udot);
 #endif
 
   // pointer to spatial derivatives via pach data
@@ -324,12 +340,20 @@ void linear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 /// nonlinear 2D HE propagation
 void nonlinear2DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
-#if defined(_OPENMP)
-  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
-              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
-#else
+#if defined(_MPI)
+#if !defined(_OPENMP)
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
+#elif defined(_OPENMP)
+  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
+              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#endif
+#elif defined(_OPENMP)
+  sunrealtype *udata = NV_DATA_OMP(u),
+              *dudata = NV_DATA_OMP(udot);
+#else
+  sunrealtype *udata = NV_DATA_S(u),
+              *dudata = NV_DATA_S(udot);
 #endif
 
   sunrealtype *dxData = data->buffData[1 - 1];
@@ -542,12 +566,20 @@ void linear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 /// nonlinear 3D HE propagation
 void nonlinear3DProp(LatticePatch *data, N_Vector u, N_Vector udot, int *c) {
 
-#if defined(_OPENMP)
-  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
-              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
-#else
+#if defined(_MPI)
+#if !defined(_OPENMP)
   sunrealtype *udata = NV_DATA_P(u),
               *dudata = NV_DATA_P(udot);
+#elif defined(_OPENMP)
+  sunrealtype *udata = N_VGetArrayPointer_MPIPlusX(u),
+              *dudata = N_VGetArrayPointer_MPIPlusX(udot);
+#endif
+#elif defined(_OPENMP)
+  sunrealtype *udata = NV_DATA_OMP(u),
+              *dudata = NV_DATA_OMP(udot);
+#else
+  sunrealtype *udata = NV_DATA_S(u),
+              *dudata = NV_DATA_S(udot);
 #endif
 
   sunrealtype *dxData = data->buffData[1 - 1];

@@ -23,15 +23,16 @@ and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) 
 ## Required software
 _CMake_ is used for building and a recent _C++_ compiler version is required
 since features up to the _C++20_ standard are used.
-An _MPI_ implementation supporting the _MPI_ 3.1 standard is required.
-_OpenMP_ is optional to enforce more vectorization and enable multi-threading.
+An _MPI_ implementation supporting the _MPI_ 3.1 standard is recommended to
+make use of multiprocessing.
+_OpenMP_ is optional to enforce more vectorization and enable multithreading.
 The latter extra layer of parallelization is useful for performance only when a
 very large number of compute nodes is occupied.
 
 The [_CVODE_](https://computing.llnl.gov/projects/sundials) solver is fetched on-the-fly through _CMake_.  
 If _CVODE_ (or the whole [_SUNDIALS_](https://computing.llnl.gov/projects/sundials/cvode) package) is installed manually:
 Version 6 is required, the code is presumably compliant with the upcoming version 7.
-Enable _MPI_ (and _OpenMP_).
+Enable _MPI_ and _OpenMP_, if desired.
 For optimal performance the `CMAKE_BUILD_TYPE` should be "Release".
 Edit the `SUNDIALS_DIR` variable in the `CMakeLists.txt` to the installation
 directory.
@@ -152,14 +153,15 @@ This is the simplest solution for smaller simulations and a portable way that al
 straightforward to analyze.  
 Or, the option strictly recommended for larger write operations, in binary format with a single file per output step.
 Raw bytes are written to the files as they are in memory.
-This option is more performant and achieved with the help of _MPI IO_.
+This option is more performant and achieved with the help of _MPI IO_, and
+hence is only possible if _MPI_ is used.
 However, there is no guarantee of portability; postprocessing/conversion is required.
 The step number is the file name.  
 A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestamp of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.
 This is where the output files are written into.
 
 There are six columns in the _CSV_ files, corresponding to the six components of the electromagnetic field:
-$E_x$, $E_y$, $E_z$, $B_x$, $B_y$, $B_z$.
+$`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
 Each row corresponds to one lattice point.  
 Postprocessing is required to read in the files in order.
 [A Python module](examples/get_field_data.py) taking care of this is provided.  

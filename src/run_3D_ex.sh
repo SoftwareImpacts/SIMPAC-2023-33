@@ -10,7 +10,7 @@ export OMP_NUM_THREADS=8
 # Specify the parameters
 parameters=(\
     `# ---- General simulation settings -----`\
-    /gpfs/scratch/uh3o1/ru68dab/ru68dab/HE/outputs `# output directory`\
+    $SCRATCH/outputs `# output directory`\
     3 `# spatial dimensions of simulation space`\
     1.0e-12 `# CVode relative tolerance`\
     1.0e-12 `# CVode absolute tolerance`\

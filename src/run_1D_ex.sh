@@ -10,7 +10,7 @@ export OMP_NUM_THREADS=1
 # Specify the parameters
 parameters=(\
     `# ---- General simulation settings -----`\
-    /Users/andi/Documents `# output directory`\
+    ~/Documents `# output directory`\
     1 `# spatial dimensions of simulation space`\
     1.0e-16 `# CVode relative tolerance`\
     1.0e-16 `# CVode absolute tolerance`\

@@ -16,14 +16,16 @@ Simulation::Simulation(const int Nx, const int Ny, const int Nz,
     lattice(StencilOrder){
   statusFlags = 0;
   t = 0;
+#if defined(_MPI)
   // Initialize the cartesian communicator
   lattice.initializeCommunicator(Nx, Ny, Nz, periodicity);
+#endif
 
   // Create the SUNContext object associated with the thread of execution
   int retval = 0;
   retval = SUNContext_Create(&lattice.comm, &lattice.sunctx);
   if (check_retval(&retval, "SUNContext_Create", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at SUNContext_Create.");
 }
 
 /// Free the CVode solver memory and Sundials context object with the finish of
@@ -45,7 +47,7 @@ void Simulation::setDiscreteDimensionsOfLattice(const sunindextype nx,
   statusFlags |= LatticeDiscreteSetUp;
 }
 
-/// Set the physical dimensions with lenghts in micro meters
+/// Set the physical dimensions with lengths in micro meters
 void Simulation::setPhysicalDimensionsOfLattice(const sunrealtype lx,
         const sunrealtype ly, const sunrealtype lz) {
   checkNoFlag(LatticePatchworkSetUp);
@@ -60,6 +62,10 @@ void Simulation::initializePatchwork(const int nx, const int ny,
   checkFlag(LatticePhysicalSetUp);
 
   // Generate the patchwork
+#if !defined(_MPI)
+  if( nx>1 || ny>1 || nz>1 )
+      errorKill("Splitting the lattice does not work without MPI.");
+#endif
   generatePatchwork(lattice, latticePatch, nx, ny, nz);
   latticePatch.initializeBuffers();
 
@@ -83,43 +89,44 @@ void Simulation::initializeCVODEobject(const sunrealtype reltol,
       cvode_mem,
       &latticePatch); // patch contains the user data as used in CVRhsFn
   if (check_retval(&retval, "CVodeSetUserData", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at CVodeSetUserData.");
 
   // Initialize CVODE solver
   retval = CVodeInit(cvode_mem, TimeEvolution::f, 0,
                      latticePatch.u); // allocate memory, CVRhsFn f, t_i=0, u
                                       // contains the initial values
   if (check_retval(&retval, "CVodeInit", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at CVodeInit.");
 
   // Create fixed point nonlinear solver object (suitable for non-stiff ODE) and
   // attach it to CVode
   NLS = SUNNonlinSol_FixedPoint(latticePatch.u, 0, lattice.sunctx);
   retval = CVodeSetNonlinearSolver(cvode_mem, NLS);
   if (check_retval(&retval, "CVodeSetNonlinearSolver", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at CVodeSetNonlinearSolver.");
 
   // Anderson damping factor
   retval = SUNNonlinSolSetDamping_FixedPoint(NLS,1);
   if (check_retval(&retval, "SUNNonlinSolSetDamping_FixedPoint", 1,
-              lattice.my_prc)) MPI_Abort(lattice.comm, 1);
+              lattice.my_prc))
+      errorKill("at SUNNonlinSolSetDamping_FixedPoint.");
 
   // Specify integration tolerances -- a scalar relative tolerance and scalar
   // absolute tolerance
   retval = CVodeSStolerances(cvode_mem, reltol, abstol);
   if (check_retval(&retval, "CVodeSStolerances", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at CVodeSStolerances.");
 
   // Specify the maximum number of steps to be taken by the solver in its
   // attempt to reach the next tout
   retval = CVodeSetMaxNumSteps(cvode_mem, 10000);
   if (check_retval(&retval, "CVodeSetMaxNumSteps", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at CVodeSetMaxNumSteps.");
 
   // maximum number of warnings for too small h
   retval = CVodeSetMaxHnilWarns(cvode_mem,3);
   if (check_retval(&retval, "CVodeSetMaxHnilWarns", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at CVodeSetMaxHnilWarns.");
 
   statusFlags |= CvodeObjectSetUp;
 }
@@ -218,7 +225,7 @@ void Simulation::advanceToTime(const sunrealtype &tEnd) {
                            // interpolate to return latticePatch.u, return time
                            // reached by the solver as t
   if (check_retval(&retval, "CVode", 1, lattice.my_prc))
-    MPI_Abort(lattice.comm, 1);
+      errorKill("at CVode integration.");
 }
 
 /// Write specified simulation steps to disk

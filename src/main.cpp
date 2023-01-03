@@ -19,9 +19,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+#if defined(_MPI)
     // Initialize MPI environment
     int provided;
     MPI_Init_thread(&argc, &argv, MPI_THREAD_SINGLE, &provided);
+#endif
 
     
     //------------ BEGIN OF CONFIGURATION ------------//
@@ -232,8 +234,10 @@ int main(int argc, char *argv[])
 
     //------------- END OF CONFIGURATION -------------//
 
+#if defined(_MPI)
     // Finalize MPI environment
     MPI_Finalize();
+#endif
 
     return 0;
 }

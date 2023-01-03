@@ -52,8 +52,10 @@ public:
           const bool periodicity);
   /// destructor function freeing CVode memory and Sundials context
   ~Simulation();
+#if defined(_MPI)
   /// reference to the cartesian communicator of the lattice (for debugging)
   MPI_Comm *get_cart_comm() { return &lattice.comm; }
+#endif
   /// function to set discrete dimensions of the lattice
   void setDiscreteDimensionsOfLattice(const sunindextype _tot_nx,
           const sunindextype _tot_ny, const sunindextype _tot_nz);

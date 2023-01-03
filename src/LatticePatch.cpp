@@ -11,6 +11,7 @@
 //// Implementation of Lattice component functions ////
 ///////////////////////////////////////////////////////
 
+#if defined(_MPI)
 /// Initialize the cartesian communicator
 void Lattice::initializeCommunicator(const int Nx, const int Ny,
         const int Nz, const bool per) {
@@ -27,6 +28,7 @@ void Lattice::initializeCommunicator(const int Nx, const int Ny,
   constexpr char lattice_comm_name[] = "Lattice";
   MPI_Comm_set_name(comm, lattice_comm_name);
 }
+#endif
 
 /// Construct the lattice and set the stencil order
 Lattice::Lattice(const int StO) : stencilOrder(StO),
@@ -93,6 +95,7 @@ LatticePatch::~LatticePatch() {
   // Deallocate memory for solution vector
   if (statusFlags & FLatticePatchSetUp) {
     // Destroy data vectors
+#if defined(_MPI)
 #if defined(_OPENMP)
     N_VDestroy(u);
     N_VDestroy(du);
@@ -101,6 +104,13 @@ LatticePatch::~LatticePatch() {
 #else
     N_VDestroy_Parallel(u);
     N_VDestroy_Parallel(du);
+#endif
+#elif defined(_OPENMP)
+    N_VDestroy_OpenMP(u);
+    N_VDestroy_OpenMP(du);
+#else
+    N_VDestroy_Serial(u);
+    N_VDestroy_Serial(du);
 #endif
   }
 }
@@ -133,9 +143,10 @@ int generatePatchwork(const Lattice &envelopeLattice,
   const sunindextype firstXPoint = local_NOXP * LIx;
   const sunindextype firstYPoint = local_NOYP * LIy;
   const sunindextype firstZPoint = local_NOZP * LIz;
-  // total number of points in the patch
+#if defined(_MPI)
+  // total number of points in a patch
   const sunindextype local_NODP = dPD * local_NOXP * local_NOYP * local_NOZP;
-
+#endif
   // Set patch up with above derived quantities
   patchToMold.dx = envelopeLattice.get_dx();
   patchToMold.dy = envelopeLattice.get_dy();
@@ -153,8 +164,8 @@ int generatePatchwork(const Lattice &envelopeLattice,
   patchToMold.ly = patchToMold.ny * patchToMold.dy;
   patchToMold.lz = patchToMold.nz * patchToMold.dz;
 
-  #ifdef _OPENMP
-  // OpenMP and MPI+X NVector interoperability
+#if defined(_MPI)
+#if defined(_OPENMP)  // OpenMP and MPI+X NVector interoperability
   // OpenMP NVectors with local patch size
   int num_threads = 1;
   num_threads = omp_get_max_threads();
@@ -170,7 +181,7 @@ int generatePatchwork(const Lattice &envelopeLattice,
   // Pointers to local vectors
   patchToMold.uData = N_VGetArrayPointer_MPIPlusX(patchToMold.u);
   patchToMold.duData = N_VGetArrayPointer_MPIPlusX(patchToMold.du);
-#else 
+#else  // only MPI
   // MPI NVectors with local patch and global lattice size
   patchToMold.u =
       N_VNew_Parallel(envelopeLattice.comm, local_NODP,
@@ -180,7 +191,28 @@ int generatePatchwork(const Lattice &envelopeLattice,
                       envelopeLattice.get_tot_noDP(), envelopeLattice.sunctx);
   patchToMold.uData = NV_DATA_P(patchToMold.u);
   patchToMold.duData = NV_DATA_P(patchToMold.du);
-#endif 
+#endif
+#elif defined(_OPENMP)  // only OpenMP
+  // OpenMP NVectors with global lattice size
+  int num_threads = 1;
+  num_threads = omp_get_max_threads();
+  patchToMold.u =
+      N_VNew_OpenMP(envelopeLattice.get_tot_noDP(), num_threads,
+              envelopeLattice.sunctx);
+  patchToMold.du =
+      N_VNew_OpenMP(envelopeLattice.get_tot_noDP(), num_threads,
+              envelopeLattice.sunctx);
+  patchToMold.uData = NV_DATA_OMP(patchToMold.u);
+  patchToMold.duData = NV_DATA_OMP(patchToMold.du);
+#else  // just serial
+  // Serial NVectors with global lattice size
+  patchToMold.u =
+      N_VNew_Serial(envelopeLattice.get_tot_noDP(), envelopeLattice.sunctx);
+  patchToMold.du =
+      N_VNew_Serial(envelopeLattice.get_tot_noDP(), envelopeLattice.sunctx);
+  patchToMold.uData = NV_DATA_S(patchToMold.u);
+  patchToMold.duData = NV_DATA_S(patchToMold.du);
+#endif
 
   // Allocate space for auxiliary uAux so that the lattice and all possible
   // directions of ghost Layers fit
@@ -253,7 +285,7 @@ sunrealtype LatticePatch::getDelta(const int dir) const {
 void LatticePatch::generateTranslocationLookup() {
   // Check that the lattice has been set up
   checkFlag(FLatticeDimensionSet);
-  // lenghts for auxilliary layers, including ghost layers
+  // lengths for auxilliary layers, including ghost layers
   const int gLW = envelopeLattice->get_ghostLayerWidth();
   const sunindextype mx = nx + 2 * gLW;
   const sunindextype my = ny + 2 * gLW;
@@ -562,8 +594,6 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   ghostCellRight.resize(ghostCellLeft.size());
   ghostCellLeftToSend.resize(ghostCellLeft.size());
   ghostCellRightToSend.resize(ghostCellLeft.size());
-  gCLData = &ghostCellLeft[0];
-  gCRData = &ghostCellRight[0];
   statusFlags |= GhostLayersInitialized;
 
   // Initialize running index li for the halo buffers, and index ui of uData for
@@ -590,6 +620,13 @@ void LatticePatch::exchangeGhostCells(const int dir) {
     }
   }
 
+#if !defined(_MPI)
+  std::copy(&ghostCellLeftToSend[0], &ghostCellLeftToSend[exchangeSize],
+          &ghostCellRight[0]);
+  std::copy(&ghostCellRightToSend[0], &ghostCellRightToSend[exchangeSize],
+          &ghostCellLeft[0]);
+
+#elif defined(_MPI)
   /* Send and receive the data to and from neighboring latticePatches */
   // Adjust direction to cartesian communicator
   int dim = 2; // default for dir==1
@@ -615,7 +652,6 @@ void LatticePatch::exchangeGhostCells(const int dir) {
   rank_source, 2, envelopeLattice->comm, &requests[3]);
   MPI_Waitall(4, requests, MPI_STATUS_IGNORE);
   
-
   // blocking Sendrecv:
   /*
   MPI_Sendrecv(&ghostCellLeftToSend[0], exchangeSize, MPI_SUNREALTYPE,
@@ -625,6 +661,9 @@ void LatticePatch::exchangeGhostCells(const int dir) {
                rank_source, 2, &ghostCellLeft[0], exchangeSize, MPI_SUNREALTYPE,
                rank_dest, 2, envelopeLattice->comm, MPI_STATUS_IGNORE);
   */
+#endif
+  gCLData = &ghostCellLeft[0];
+  gCRData = &ghostCellRight[0];
 }
 
 /// Check if all flags are set
@@ -915,11 +954,17 @@ void LatticePatch::derive(const int dir) {
 /// Print a specific error message to stderr
 void errorKill(const std::string & errorMessage) {
   int my_prc=0;
+#if defined(_MPI)
   MPI_Comm_rank(MPI_COMM_WORLD,&my_prc);
+#endif
   if (my_prc==0) {
     std::cerr << std::endl << "Error: " << errorMessage
         << "\nAborting..." << std::endl;
+#if defined(_MPI)
     MPI_Abort(MPI_COMM_WORLD, 1);
+#else
+    exit(1);
+#endif
     return;
   }
 }
@@ -937,8 +982,8 @@ int check_retval(void *returnvalue, const char *funcname, int opt, int id) {
   /* Check if SUNDIALS function returned NULL pointer - no memory allocated */
   if (opt == 0 && returnvalue == nullptr) {
     fprintf(stderr,
-            "\nSUNDIALS_ERROR(%d): %s() failed - returned NULL pointer\n\n", id,
-            funcname);
+            "\nSUNDIALS_ERROR(process %d): %s() failed - "
+            "returned NULL pointer\n\n", id, funcname);
     return (1);
   }
 
@@ -947,8 +992,8 @@ int check_retval(void *returnvalue, const char *funcname, int opt, int id) {
     retval = (int *)returnvalue;
     char *flagname = CVodeGetReturnFlagName(*retval);
     if (*retval < 0) {
-      fprintf(stderr, "\nSUNDIALS_ERROR(%d): %s() failed with retval = %d: "
-              "%s\n\n",
+      fprintf(stderr, "\nSUNDIALS_ERROR(process %d): %s() failed "
+              "with retval = %d: %s\n\n",
               id, funcname, *retval, flagname);
       return (1);
     }
@@ -957,8 +1002,8 @@ int check_retval(void *returnvalue, const char *funcname, int opt, int id) {
   /* Check if function returned NULL pointer - no memory allocated */
   else if (opt == 2 && returnvalue == nullptr) {
     fprintf(stderr,
-            "\nMEMORY_ERROR(%d): %s() failed - returned NULL pointer\n\n", id,
-            funcname);
+            "\nMEMORY_ERROR(process %d): %s() failed - "
+            "returned NULL pointer\n\n", id, funcname);
     return (1);
   }
 

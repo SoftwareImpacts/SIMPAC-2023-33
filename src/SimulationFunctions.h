@@ -80,5 +80,5 @@ void Sim3D(const std::array<sunrealtype,2>, const int,
         const int, const char,
         const std::vector<planewave> &, const std::vector<gaussian3D> &);
 
-/// MPI timer function
+/// timer function
 void timer(double &, double &);

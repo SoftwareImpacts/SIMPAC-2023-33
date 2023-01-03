@@ -6,7 +6,7 @@
 
 #include "SimulationFunctions.h"
 
-/** Calculate and print the total simulation time */
+/** Calculate and print the elapsed wall time */
 inline void timer(double &t1, double &t2) {
   printf("Elapsed time:  %fs\n", (t2 - t1));
 }
@@ -28,8 +28,9 @@ void Sim1D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
         const std::vector<gaussian1D> &gaussians) {
 
   // MPI data
+  int myPrc = 0, nPrc = 1;
+#if defined(_MPI)
   double ts = MPI_Wtime();
-  int myPrc = 0, nPrc = 0;
   MPI_Comm_size(MPI_COMM_WORLD, &nPrc);
   MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
 
@@ -40,6 +41,9 @@ void Sim1D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
                   "divisible by the number of processes.");
       }
   }
+#elif !defined(_MPI) && defined(_OPENMP)
+    double ts = omp_get_wtime();
+#endif
 
   // Initialize the simulation, set up the cartesian communicator
   std::array<int, 3> patches = {nPrc, 1, 1};
@@ -82,13 +86,21 @@ void Sim1D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
     if (step % outputStep == 0) {
+#if defined(_MPI)
       MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
+#endif
       sim.outAllFieldData(step);
     }
+#if defined(_MPI)
     double tn = MPI_Wtime();
+#elif !defined(_MPI) && defined(_OPENMP)
+    double tn = omp_get_wtime();
+#endif
     if (!myPrc) {
       std::cout << "\rStep " << step << "\t\t" << std::flush;
+#if defined(_MPI) || defined(_OPENMP)
       timer(ts, tn);
+#endif
     }
   }
 
@@ -107,8 +119,9 @@ void Sim2D(const std::array<sunrealtype,2> CVodeTol, int const StencilOrder,
         const std::vector<gaussian2D> &gaussians) {
 
   // MPI data
+  int myPrc = 0, nPrc = 1; // Get process rank and number of processes
+#if defined(_MPI)
   double ts = MPI_Wtime();
-  int myPrc = 0, nPrc = 0; // Get process rank and number of processes
   MPI_Comm_rank(MPI_COMM_WORLD,
                 &myPrc); // Return process rank, number \in [1,nPrc]
   MPI_Comm_size(MPI_COMM_WORLD,
@@ -121,9 +134,18 @@ void Sim2D(const std::array<sunrealtype,2> CVodeTol, int const StencilOrder,
           "The number of MPI processes must match the number of patches.");
     }
   }
+#elif !defined(_MPI) && defined(_OPENMP)
+    double ts = omp_get_wtime();
+#endif
 
   // Initialize the simulation, set up the cartesian communicator
   Simulation sim(patches[0], patches[1], 1, StencilOrder, periodic);
+
+  /* // Check that lattice communicator is unique; same as used in patchwork
+  generation char cart_comm_name[MPI_MAX_OBJECT_NAME]; int cart_namelen;
+  MPI_Comm_get_name(*sim.get_cart_comm(), cart_comm_name, &cart_namelen);
+  printf("sim.get_cart_comm gives %s \n", cart_comm_name);
+  */
 
   // Configure the patchwork
   sim.setPhysicalDimensionsOfLattice(phys_dims[0],
@@ -166,13 +188,21 @@ void Sim2D(const std::array<sunrealtype,2> CVodeTol, int const StencilOrder,
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
     if (step % outputStep == 0) {
+#if defined(_MPI)
       MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
+#endif
       sim.outAllFieldData(step);
     }
+#if defined(_MPI)
     double tn = MPI_Wtime();
+#elif !defined(_MPI) && defined(_OPENMP)
+    double tn = omp_get_wtime();
+#endif
     if (!myPrc) {
       std::cout << "\rStep " << step << "\t\t" << std::flush;
+#if defined(_MPI) || defined(_OPENMP)
       timer(ts, tn);
+#endif
     }
   }
 
@@ -191,8 +221,9 @@ void Sim3D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
         const std::vector<gaussian3D> &gaussians) {
 
   // MPI data
+  int myPrc = 0, nPrc = 1; // Get process rank and numer of process
+#if defined(_MPI)
   double ts = MPI_Wtime();
-  int myPrc = 0, nPrc = 0; // Get process rank and numer of process
   MPI_Comm_rank(MPI_COMM_WORLD,
                 &myPrc); // rank of the process inside the world communicator
   MPI_Comm_size(MPI_COMM_WORLD,
@@ -206,11 +237,14 @@ void Sim3D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
     }
     if ( ( disc_dims[0] / patches[0] != disc_dims[1] / patches[1] ) |
          ( disc_dims[0] / patches[0] != disc_dims[2] / patches[2] ) ) {
-        std::clog
+         std::clog
           << "\nWarning: Patches should be cubic in terms of the lattice "
              "points for the computational efficiency of larger simulations.\n";
     }
   }
+#elif !defined(_MPI) && defined(_OPENMP)
+    double ts = omp_get_wtime();
+#endif
 
   // Initialize the simulation, set up the cartesian communicator
   Simulation sim(patches[0], patches[1], patches[2],
@@ -223,6 +257,7 @@ void Sim3D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
       disc_dims[0], disc_dims[1],
       disc_dims[2]); // Spacing equivalence to points
   sim.initializePatchwork(patches[0], patches[1], patches[2]);
+  //sim.initializeGhostCells();
 
   // Add em-waves
   for (const auto &plane : planes)
@@ -255,13 +290,21 @@ void Sim3D(const std::array<sunrealtype,2> CVodeTol, const int StencilOrder,
   for (int step = 1; step <= numberOfSteps; step++) {
     sim.advanceToTime(endTime / numberOfSteps * step);
     if (step % outputStep == 0) {
+#if defined(_MPI)
       MPI_Barrier(MPI_COMM_WORLD);  // insure correct output
+#endif
       sim.outAllFieldData(step);
     }
+#if defined(_MPI)
     double tn = MPI_Wtime();
+#elif !defined(_MPI) && defined(_OPENMP)
+    double tn = omp_get_wtime();
+#endif
     if (!myPrc) {
       std::cout << "\rStep " << step << "\t\t" << std::flush;
+#if defined(_MPI) || defined(_OPENMP)
       timer(ts, tn);
+#endif
     }
   }
   return;

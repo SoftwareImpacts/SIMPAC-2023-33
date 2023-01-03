@@ -47,7 +47,9 @@ std::string OutputManager::SimCodeGenerator() {
 void OutputManager::generateOutputFolder(const std::string &dir) {
   // Do this only once for the first process
   int myPrc = 0;
+#if defined(_MPI)
   MPI_Comm_rank(MPI_COMM_WORLD, &myPrc);
+#endif
   if (myPrc == 0) {
     if (!fs::is_directory(dir))
       fs::create_directory(dir);
@@ -113,7 +115,7 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   ofs.close();
   break;
                 }
-
+#if defined(_MPI)
       case 'b': { // a single binary file
   // Open the output file
   MPI_File fh;
@@ -135,6 +137,7 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   MPI_File_close(&fh);
   break;
                 }
+#endif
       default: {
   errorKill("No valid output style defined."
           " Choose between (c): one csv file per process,"
