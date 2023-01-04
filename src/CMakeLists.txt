@@ -24,27 +24,31 @@ message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
 
 # Use of MPI
+option(USE_MPI "Use of MPI" ON)
 find_package(MPI 3.1 COMPONENTS CXX)
-if(${MPI_FOUND} AND NOT DEFINED USE_MPI)
-    set(USE_MPI ON)
+if(${MPI_FOUND} AND USE_MPI)
     message(STATUS "Using MPI.")
     cmake_print_variables(MPI_INCLUDE_PATH)
     cmake_print_variables(MPI_CXX_LIBRARIES)
+elseif(NOT USE_MPI)
+    message(STATUS "Not using MPI.")
 endif()
 
 # Use of OpenMP
+option(USE_OPENMP "Use of OpenMP" ON)
 find_package(OpenMP 4.5 COMPONENTS C CXX)  # C required for Sundials
-if(${OpenMP_FOUND} AND NOT DEFINED USE_OPENMP)
-    set(USE_OPENMP ON)
+if(${OpenMP_FOUND} AND USE_OPENMP)
     message(STATUS "Using OpenMP.")
     cmake_print_variables(OpenMP_CXX_INCLUDE_DIRS)
     cmake_print_variables(OpenMP_CXX_LIBRARIES)
+elseif(NOT USE_OPENMP)
+    message(STATUS "Not using OpenMP.")
 endif()
 
 # Find SUNDIALS
 # Set path via `cmake -D SUNDIALS_DIR=/path/to/sundials/installation` or here
 if(NOT DEFINED SUNDIALS_DIR)
-    set(SUNDIALS_DIR "~/Documents/sundials-6.3.0/INSTDIR_Rel")
+    #set(SUNDIALS_DIR "~/Documents/sundials-6.3.0/INSTDIR_Rel")
     #set(SUNDIALS_DIR "~/Downloads/sundials-6.2.0/INSTDIR_Rel")
 endif()
 # Search only in given path to avoid unintended package manager installation
@@ -55,6 +59,7 @@ else()
     message(WARNING "SUNDIALS not found. Fetching CVODE ...")
     include(FetchContent)
     set(BUILD_STATIC_LIBS OFF CACHE INTERNAL "")
+    set(BUILD_SHARED_LIBS ON CACHE INTERNAL "")
     if(${MPI_FOUND})
         set(ENABLE_MPI ON CACHE INTERNAL "")
     endif()
