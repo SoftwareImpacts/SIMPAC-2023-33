@@ -8,6 +8,15 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+#if defined(_MPI)
+    // Initialize MPI environment
+    int provided;
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_SINGLE, &provided);
+#endif
+    // Check if all CL args are provided
+    if(argc != 92) {
+        errorKill("\nPlease check the command-line arguments.\n");
+    }
     /** Determine the output directory.                      
      * A "SimResults" folder will be created if non-existent 
      * with a subdirectory named in the identifier format    
@@ -15,16 +24,8 @@ int main(int argc, char *argv[])
     string outputDirectory = argv[1];  // command line
 
     if(!filesystem::exists(outputDirectory)) {
-        cerr<<"\nOutput directory nonexistent.\n";
-        exit(1);
+        errorKill("\nOutput directory nonexistent.\n");
     }
-
-#if defined(_MPI)
-    // Initialize MPI environment
-    int provided;
-    MPI_Init_thread(&argc, &argv, MPI_THREAD_SINGLE, &provided);
-#endif
-
     
     //------------ BEGIN OF CONFIGURATION ------------//
     

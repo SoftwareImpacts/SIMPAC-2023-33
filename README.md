@@ -41,9 +41,14 @@ directory.
 ## Short user manual
 
 In order to build the executable with _CMake_, execute, e.g., in the [`src`](src) directory,
-`cmake -S. -Bbuild` and then `cmake --build build`.
+`cmake -S. -Bbuild` and then `cmake --build build`.  
+On Windows a subsequent installation of the _SUNDIALS_ modules is required.
+With `CMake` this can be done via `cmake --install build --config Debug`.
+The installation type has to be "Debug" on Windows due to some issue with _SUNDIALS_.
+To use _MPI_ on Windows, [_MSMPI_](https://learn.microsoft.com/en-us/message-passing-interface/microsoft-mpi)
+is required.
 
-You have full control over all high-level simulation settings with command
+You have full control over all high-level simulation settings via command
 line arguments.
 
 - First, the general settings are specified:
@@ -75,6 +80,7 @@ line arguments.
     To see which command line argument is which paramter, see the comments in
     the short example _Bash_ run scripts which are preconfigured for [1D](src/run_1D_ex.sh),
     [2D](src/run_2D_ex.sh), and [3D](src/run_3D_ex.sh) simulations.
+    (One example is also provided as a _Windows Powershell_ [script](src/run_1D_ex_win.ps1).)
     Amplitudes are given in units of the critical field strength (Schwinger limit).
     Position and propagation parameters on the y- and z-axis are only effective if the grid has an extend in the corresponding dimension.  
     A description of the wave implementations is given in the _Doxygen_-generated [code reference](docs/ref.pdf).

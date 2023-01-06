@@ -130,18 +130,25 @@ void OutputManager::outUState(const int &state, const Lattice &lattice,
   // "native" representation
   MPI_File_set_view(fh,offset,MPI_SUNREALTYPE,MPI_SUNREALTYPE,"native",
           MPI_INFO_NULL);
+#if !defined(WIN32)  // MSMPI does not yet support nonblocking collective write
   MPI_Request write_request;
   MPI_File_iwrite_all(fh,latticePatch.uData,count,MPI_SUNREALTYPE,
           &write_request);
   MPI_Wait(&write_request,MPI_STATUS_IGNORE);
+#else
+  MPI_Status status;
+  MPI_File_write_at_all(fh,offset,latticePatch.uData,count,MPI_SUNREALTYPE,
+          &status);
+#endif
   MPI_File_close(&fh);
   break;
                 }
 #endif
       default: {
-  errorKill("No valid output style defined."
-          " Choose between (c): one csv file per process,"
-          " (b) one binary file");
+  errorKill("No valid output style defined.\n"
+          "Choose between csv: one CSV file per process, and "
+          "binary: one binary file. In case MPI is not used, you "
+          "may only choose csv.");
   break;
                }
   }
