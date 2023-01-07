@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(HEWES LANGUAGES C CXX VERSION 0.2.3)
+project(HEWES LANGUAGES C CXX VERSION 0.2.4)
 
 # Print helper
 include(CMakePrintHelpers)
@@ -23,6 +23,12 @@ cmake_print_variables(CMAKE_CXX_STANDARD)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build")
 cmake_print_variables(CMAKE_INSTALL_PREFIX)
 
+# Warning on exotic system
+if(NOT UNIX AND NOT WIN32)
+    message(WARNING "Installation has only been tested on UNIX-like OS's \
+    and Windows.")
+endif()
+
 # Built type
 if(WIN32)  # Sundials only installs in Debug mode on Windows for whatever reason
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
@@ -30,16 +36,16 @@ if(WIN32)  # Sundials only installs in Debug mode on Windows for whatever reason
     Sundials issue on Windows.")
 else()  # Release is fastest
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING
-        "Choose the type of build, options are: \
-    Debug Release RelWithDebInfo MinSizeRel." FORCE)
+        "Type of build (for SUNDIALS). Options are: \
+    Debug, Release, RelWithDebInfo, MinSizeRel." FORCE)
     message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 endif()
 
 # Dynamic or static libraries
-if(UNIX)
+if(WIN32)  # Otherwise problems with Sundials
+    set(BUILD_SHARED_LIBS OFF)
+else()
     option(BUILD_SHARED_LIBS "Build shared libraries." ON)
-elseif(WIN32)  # Otherwise problems with Sundials
-    set(BUILD_SHARED_LIBS "Build shared libraries." OFF)
 endif()
 
 # Use of MPI
@@ -75,7 +81,7 @@ elseif(NOT USE_OPENMP)
 endif()
 
 # Find SUNDIALS
-# Set path via `cmake -D SUNDIALS_DIR=/path/to/sundials/installation` or here
+# Set path via `cmake -D SUNDIALS_DIR="/path/to/sundials/installation"` or here
 if(NOT DEFINED SUNDIALS_DIR)
     set(SUNDIALS_DIR "~/Documents/sundials-6.3.0/INSTDIR_Rel")
 endif()
@@ -132,10 +138,16 @@ if(${MPI_FOUND} AND ${USE_MPI})
 endif()
 
 # Compile options
-if(NOT WIN32)  # Problems with 02 interference with RTc1 on Windows
-target_compile_options(hewes PUBLIC -O2)
+if(MSVC)  # Otherwise 02 interference with RTC1
+    set(CMAKE_CXX_FLAGS_DEBUG "")
 endif()
-
+target_compile_options(hewes PUBLIC -O2)
+# Target host CPU
+option(MARCH_NATIVE "Build with -march=native" OFF)
+if(MARCH_NATIVE)
+    add_compile_options(-march=native)
+    message(STATUS "Building with -march=native.")
+endif()
 
 # Link Sundials, MPI, and OpenMP and the corresponding components
 target_link_libraries(hewes PRIVATE
@@ -163,27 +175,20 @@ endif()
 message(STATUS "\nSystem info:")
 foreach(key
   IN ITEMS
+    HOSTNAME
     OS_NAME
     OS_RELEASE
     OS_VERSION
     OS_PLATFORM
+    PROCESSOR_NAME
+    PROCESSOR_DESCRIPTION
     NUMBER_OF_LOGICAL_CORES
     NUMBER_OF_PHYSICAL_CORES
+    IS_64BIT
     TOTAL_VIRTUAL_MEMORY
     AVAILABLE_VIRTUAL_MEMORY
     TOTAL_PHYSICAL_MEMORY
     AVAILABLE_PHYSICAL_MEMORY
-    IS_64BIT
-    HAS_FPU
-    HAS_MMX
-    HAS_MMX_PLUS
-    HAS_SSE
-    HAS_SSE2
-    HAS_SSE_FP
-    HAS_SSE_MMX
-    HAS_AMD_3DNOW
-    HAS_AMD_3DNOW_PLUS
-    HAS_IA64
   )
   cmake_host_system_information(RESULT _${key} QUERY ${key})
   cmake_print_variables(_${key})

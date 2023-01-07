@@ -4,11 +4,11 @@ The Heisenberg-Euler Weak-Field Expansion Simulator is a solver for the all-opti
 It solves the equations of motion for electromagnetic waves in the weak-field expansion of the Heisenberg-Euler effective theory with up to six-photon processes.
 
 There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable results
-and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
+and a _Mendeley Data_ [repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
 
-![Probe Pump 3D](examples/figures/probe_pump_3D.png)
+![3D Probe Pump setup](examples/figures/probe_pump_3D.png)
 
-![Harmonic Generation 3D](examples/figures/3d_harmonics.png)
+![3D Harmonic Generation](examples/figures/3d_harmonics.png)
 
 
 ## Contents
@@ -23,8 +23,10 @@ and a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x) 
 ## Required software
 _CMake_ is used for building and a recent _C++_ compiler version is required
 since features up to the _C++20_ standard are used.
-An _MPI_ implementation supporting the _MPI_ 3.1 standard is recommended to
-make use of multiprocessing.
+
+An _MPI_ implementation supporting the _MPI_ 3.1 standard is strongly
+recommended to make use of multiprocessing.
+
 _OpenMP_ is optional to enforce more vectorization and enable multithreading.
 The latter extra layer of parallelization is useful for performance only when a
 very large number of compute nodes is occupied.
@@ -42,11 +44,11 @@ directory.
 
 In order to build the executable with _CMake_, execute, e.g., in the [`src`](src) directory,
 `cmake -S. -Bbuild` and then `cmake --build build`.  
-On Windows a subsequent installation of the _SUNDIALS_ modules is required.
+On _Windows_ a subsequent installation of the _SUNDIALS_ modules is required.
 With `CMake` this can be done via `cmake --install build --config Debug`.
-The installation type has to be "Debug" on Windows due to some issue with _SUNDIALS_.
-To use _MPI_ on Windows, [_MSMPI_](https://learn.microsoft.com/en-us/message-passing-interface/microsoft-mpi)
-is required.
+The installation type has to be "Debug" with _MSVC_ due to some issue with _SUNDIALS_.
+[_MSMPI_](https://learn.microsoft.com/en-us/message-passing-interface/microsoft-mpi)
+is required, even though it only complies with _MPI_-2.0.
 
 You have full control over all high-level simulation settings via command
 line arguments.
@@ -154,13 +156,13 @@ times 8 bytes.
 
 
 ### Note on the output analysis
-The field data are either written in _CSV_ format to one file per MPI process, the ending of which (after an underscore) corresponds to the process number, as described above.
+The field data are either written in _CSV_ format to one file per _MPI_ process, the ending of which (after an underscore) corresponds to the process number, as described above.
 This is the simplest solution for smaller simulations and a portable way that also works fast and is
 straightforward to analyze.  
 Or, the option strictly recommended for larger write operations, in binary format with a single file per output step.
 Raw bytes are written to the files as they are in memory.
-This option is more performant and achieved with the help of _MPI IO_, and
-hence is only possible if _MPI_ is used.
+This option is more performant and achieved with the help of _MPI IO_, and hence
+only possible if _MPI_ is used.
 However, there is no guarantee of portability; postprocessing/conversion is required.
 The step number is the file name.  
 A `SimResults` folder is created in the chosen output directory if it does not exist and therein a folder named after the starting timestamp of the simulation (in the form `yy-mm-dd_hh-MM-ss`) is created.
@@ -170,21 +172,21 @@ There are six columns in the _CSV_ files, corresponding to the six components of
 $`E_x`$, $`E_y`$, $`E_z`$, $`B_x`$, $`B_y`$, $`B_z`$.
 Each row corresponds to one lattice point.  
 Postprocessing is required to read in the files in order.
-[A Python module](examples/get_field_data.py) taking care of this is provided.  
-Likewise, [another Python module](examples/get_binary_field_data.py) is provided to read the binary
-data of a selected field component into a _numpy_ array.
+A _Python_ [module](examples/get_field_data.py) taking care of this is provided.  
+Likewise, another _Python_ [module](examples/get_binary_field_data.py) is provided to read the binary
+data of a selected field component into a _NumPy_ array.
 For its use, the byte order of the reading machine has to be the same as that
 of the writing machine.
 
 More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
-and a collection of corresponding analysis notebooks are uploaded to a [Mendeley Data repository](https://data.mendeley.com/datasets/f9wntyw39x).
-Some small example Python analysis scripts can be found in the [examples](examples).
-The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read in from disk to _numpy_ arrays using the provided [get field data module](examples/get_field_data.py).
+and a collection of corresponding analysis notebooks are uploaded to a _Mendeley Data_ [repository](https://data.mendeley.com/datasets/f9wntyw39x).
+Some small example _Python_ analysis scripts can be found in the [examples](examples).
+The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read in from disk to _NumPy_ arrays using the provided [get field data module](examples/get_field_data.py).
 [Harmonic generation](examples/harmonic_generation) in various forms is sketched as one application showing nonlinear quantum vacuum effects.  
 Analyses of 3D simulations are more involved due to large volumes of data.
 A script with the purpose to extract the ratio of polarization flipped photons
-of a laser pulse due to vacuum birefringence can be found
-[here](examples/birefringence.py).
+of a laser pulse due to vacuum birefringence can be found in the examples
+as [birefringence.py](examples/birefringence.py).
 Visualization requires tools like _Paraview_, as used for the cover figures.
 
 

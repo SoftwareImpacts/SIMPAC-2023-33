@@ -3,7 +3,6 @@
 # If the permission to execute scripts cannot be given, copy the
 # whole command to the prompt.
 
-# To run without MPI leave the mpiexec command out
 mpiexec /np 4 .\build\Debug\hewes.exe `
     C:\Users\schor\Documents <# output directory #>`
     1 <# spatial dimensions of simulation space #>`
