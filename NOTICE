@@ -1,0 +1,50 @@
+This project was developed at the chair of computational and plasma physics of
+the Ludwig-Maximilians University (LMU) Munich under the supervision of Prof.
+Dr.  Hartmut Ruhl.
+
+Funding was provided by the Munich Cluster of Excellence (MAP), by the
+international Max-Planck Research School for Advanced Photonic Sciences
+(IMPRS-APS), by the Transregio TR-18 project B12, and the German Research
+Foundation (DFG) under Grant Nos. 416611371, 416607684 within the Research Unit
+FOR 2783.
+Large parts of the computations during the production and verification process
+have been performed on the KSC cluster computing system of the Arnold
+Sommerfeld Center (ASC) for Theoretical Physics at LMU Munich, hosted at the
+Leibniz-Rechenzentrum (LRZ) in Garching and funded by the German Research
+Foundation under the project number 409562408.
+
+
+This project makes use of SUNDIALS.
+
+All SUNDIALS packages are licensed under the BSD 3-Clause and are subject to
+the following Copyright notice.
+
+ BSD 3-Clause License
+
+Copyright (c) 2002-2022, Lawrence Livermore National Security and Southern
+Methodist University.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
