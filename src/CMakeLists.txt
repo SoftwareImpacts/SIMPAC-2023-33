@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(HEWES LANGUAGES C CXX VERSION 0.2.4)
+project(HEWES LANGUAGES C CXX VERSION 0.2.5)
 
 # Print helper
 include(CMakePrintHelpers)

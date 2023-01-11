@@ -1,7 +1,11 @@
+[![Code Ocean](https://codeocean.com/codeocean-assets/badge/open-in-code-ocean.svg)](https://codeocean.com/capsule/5672141/tree)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 # HEWES: Heisenberg-Euler Weak-Field Expansion Simulator
 
 The Heisenberg-Euler Weak-Field Expansion Simulator is a solver for the all-optical QED vacuum.
-It solves the equations of motion for electromagnetic waves in the weak-field expansion of the Heisenberg-Euler effective theory with up to six-photon processes.
+Vacuum polarization, due to omnipresent quantum fluctuations, supplements Maxwell's linear equations of electromgnetism by nonlinear photon-photon interactions.
+HEWES solves the nonlinear equations of motion for electromagnetic waves in the weak-field limit of the Heisenberg-Euler effective theory of QED with up to six-photon processes.
 
 There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable results
 and a _Mendeley Data_ [repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
