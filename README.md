@@ -114,7 +114,7 @@ _CVODE_ warnings and errors are reported on stdout and stderr.
 ### Note on simulation settings
 You may want to start with two Gaussian pulses in 1D colliding head-on in a pump-probe setup.
 For this event, specify a high-frequency probe pulse with a low amplitude and a low-frequency pump pulse with a high frequency.
-Both frequencies should be chosen to be below a forth of the Nyquist frequency to minimize nonphysical dispersion effects on the lattice.
+Both frequencies should be chosen to be below a fourth of the Nyquist frequency to minimize nonphysical dispersion effects on the lattice.
 The wavelengths should neither be chosen too large (bulky wave) on a fine patchwork of narrow patches.
 Their communication might be problematic with too small halo layer depths.
 You would observe a blurring over time.
