@@ -7,7 +7,7 @@ The Heisenberg-Euler Weak-Field Expansion Simulator is a solver for the all-opti
 Vacuum polarization, due to omnipresent quantum fluctuations, supplements Maxwell's linear equations of electromgnetism by nonlinear photon-photon interactions.
 HEWES solves the nonlinear equations of motion for electromagnetic waves in the weak-field limit of the Heisenberg-Euler effective theory of QED with up to six-photon processes.
 
-There is a [paper](https://arxiv.org/abs/2109.08121) that introduces the algorithm and shows remarkable results
+There is a [paper](https://doi.org/10.1016/j.jcpx.2023.100124) that introduces the algorithm and shows remarkable results
 and a _Mendeley Data_ [repository](https://data.mendeley.com/datasets/f9wntyw39x) with extra and supplementary materials.
 
 ![3D Probe Pump setup](examples/figures/probe_pump_3D.png)
@@ -152,7 +152,7 @@ The output size quickly amounts to hundreds of gigabytes for just a single
 state.
 This hurdle forms a practical limit to the grid resolution.
 
-Some scaling tests are shown in the [paper](https://arxiv.org/abs/2109.08121).
+Some scaling tests are shown in the [arXiv paper](https://arxiv.org/abs/2109.08121).
 
 If the output is in binary form, the size can be easily calculated.  Per step
 it is the number of grid points times six (the number of field components)
@@ -182,7 +182,7 @@ data of a selected field component into a _NumPy_ array.
 For its use, the byte order of the reading machine has to be the same as that
 of the writing machine.
 
-More information describing settings and analysis procedures used for actual scientific results are given in an open-access [paper](https://arxiv.org/abs/2109.08121)
+More information describing settings and analysis procedures used for actual scientific results are given in the [arXiv paper](https://arxiv.org/abs/2109.08121)
 and a collection of corresponding analysis notebooks are uploaded to a _Mendeley Data_ [repository](https://data.mendeley.com/datasets/f9wntyw39x).
 Some small example _Python_ analysis scripts can be found in the [examples](examples).
 The [first steps](examples/first_steps) demonstrate how the simulated data is correctly read in from disk to _NumPy_ arrays using the provided [get field data module](examples/get_field_data.py).
